@@ -21,6 +21,7 @@
   <url>https://github.com/bremersee/api-client</url>
 
   <modules>
+    <module>api-client-webflux-spring</module>
   </modules>
 
   <properties>
@@ -86,6 +87,11 @@
       <dependency>
         <groupId>org.bremersee</groupId>
         <artifactId>common-exception</artifactId>
+        <version>${common-exception.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.bremersee</groupId>
+        <artifactId>common-exception-spring-webflux</artifactId>
         <version>${common-exception.version}</version>
       </dependency>
     </dependencies>
