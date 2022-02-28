@@ -29,7 +29,7 @@
     <!--suppress UnresolvedMavenProperty -->
     <gh-pages-staging-dir>${maven.multiModuleProjectDirectory}/target/staging</gh-pages-staging-dir>
 
-    <common-exception.version>0.0.1-SNAPSHOT</common-exception.version>
+    <common-exception.version>0.0.1</common-exception.version>
   </properties>
 
   <developers>

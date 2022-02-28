@@ -11,7 +11,7 @@ import org.bremersee.apiclient.webflux.spring.app.ControllerOne;
 import org.bremersee.apiclient.webflux.spring.app.ControllerTwo;
 import org.bremersee.apiclient.webflux.spring.app.FormDataController;
 import org.bremersee.apiclient.webflux.spring.app.TestConfiguration;
-import org.bremersee.exception.webclient.WebClientException;
+import org.bremersee.exception.RestApiResponseException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -164,7 +164,7 @@ class ApiClientBuilderIntegrationTest {
         .verifyComplete();
 
     StepVerifier.create(newControllerOneClient().patchOk("name", "exception", "payload"))
-        .expectError(WebClientException.class)
+        .expectError(RestApiResponseException.class)
         .verifyThenAssertThat();
   }
 

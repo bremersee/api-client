@@ -35,10 +35,6 @@ import org.springframework.http.HttpStatus;
 @SuppressWarnings("WeakerAccess")
 public class InvocationFunctions {
 
-  public static final Predicate<HttpStatus> DEFAULT_ERROR_PREDICATE =
-      httpStatus -> httpStatus.series() == HttpStatus.Series.CLIENT_ERROR
-          || httpStatus.series() == HttpStatus.Series.SERVER_ERROR;
-
   private RequestUriSpecBuilder uriSpecBuilder;
 
   private RequestUriBuilder uriBuilder;
@@ -61,7 +57,7 @@ public class InvocationFunctions {
         RequestHeadersBuilder.defaultBuilder(),
         RequestCookiesBuilder.defaultBuilder(),
         RequestBodyInserter.defaultInserter(),
-        DEFAULT_ERROR_PREDICATE,
+        HttpStatus::isError,
         new DefaultWebClientErrorDecoder(),
         RequestResponseBuilder.defaultBuilder());
   }
