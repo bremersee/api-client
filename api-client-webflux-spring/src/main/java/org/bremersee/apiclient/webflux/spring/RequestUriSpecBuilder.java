@@ -61,11 +61,11 @@ public interface RequestUriSpecBuilder {
 
     @Override
     public RequestHeadersUriSpec<?> build(
-        final InvocationParameters parameters,
-        final WebClient webClient) {
+        InvocationParameters parameters,
+        WebClient webClient) {
 
-      final Method method = parameters.getMethod();
-      final RequestMapping requestMapping = findAnnotation(method, RequestMapping.class);
+      Method method = parameters.getMethod();
+      RequestMapping requestMapping = findAnnotation(method, RequestMapping.class);
       if (requestMapping != null && requestMapping.method().length > 0) {
         switch (requestMapping.method()[0]) {
           case GET:

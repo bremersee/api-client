@@ -43,7 +43,7 @@ class MethodDescription {
    *
    * @param method the method
    */
-  MethodDescription(final Method method) {
+  MethodDescription(Method method) {
     Assert.notNull(method, "Method must not be null");
     this.methodName = method.getName();
     this.parameterTypes = method.getParameterTypes();

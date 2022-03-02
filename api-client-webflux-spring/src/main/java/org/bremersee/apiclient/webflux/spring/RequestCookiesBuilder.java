@@ -55,18 +55,18 @@ public interface RequestCookiesBuilder {
 
     @Override
     public void build(
-        final InvocationParameters parameters,
-        final MultiValueMap<String, String> cookies) {
+        InvocationParameters parameters,
+        MultiValueMap<String, String> cookies) {
 
-      final Method method = parameters.getMethod();
-      final Object[] args = parameters.getArgs();
-      final Annotation[][] parameterAnnotations = method.getParameterAnnotations();
+      Method method = parameters.getMethod();
+      Object[] args = parameters.getArgs();
+      Annotation[][] parameterAnnotations = method.getParameterAnnotations();
       for (int i = 0; i < parameterAnnotations.length; i++) {
-        for (final Annotation annotation : parameterAnnotations[i]) {
+        for (Annotation annotation : parameterAnnotations[i]) {
           if (annotation instanceof CookieValue) {
-            final CookieValue param = (CookieValue) annotation;
-            final String name = StringUtils.hasText(param.value()) ? param.value() : param.name();
-            final Object value = args[i];
+            CookieValue param = (CookieValue) annotation;
+            String name = StringUtils.hasText(param.value()) ? param.value() : param.name();
+            Object value = args[i];
             putToMultiValueMap(name, value, cookies);
           }
         }

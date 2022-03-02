@@ -16,6 +16,8 @@
 
 package org.bremersee.apiclient.webflux.spring;
 
+import static java.util.Objects.nonNull;
+
 import java.util.function.Predicate;
 import lombok.AccessLevel;
 import lombok.Builder;
@@ -32,7 +34,6 @@ import org.springframework.http.HttpStatus;
  */
 @Getter
 @Setter(AccessLevel.PRIVATE)
-@SuppressWarnings("WeakerAccess")
 public class InvocationFunctions {
 
   private RequestUriSpecBuilder uriSpecBuilder;
@@ -74,7 +75,7 @@ public class InvocationFunctions {
    * @param errorDecoder the error decoder
    * @param responseBuilder the response builder
    */
-  @Builder
+  @Builder(toBuilder = true)
   public InvocationFunctions(
       final RequestUriSpecBuilder uriSpecBuilder,
       final RequestUriBuilder uriBuilder,
@@ -115,29 +116,29 @@ public class InvocationFunctions {
       final InvocationFunctions source,
       final InvocationFunctions destination) {
 
-    if (source != null) {
-      if (source.getUriSpecBuilder() != null) {
+    if (nonNull(source)) {
+      if (nonNull(source.getUriSpecBuilder())) {
         destination.setUriSpecBuilder(source.getUriSpecBuilder());
       }
-      if (source.getUriBuilder() != null) {
+      if (nonNull(source.getUriBuilder())) {
         destination.setUriBuilder(source.getUriBuilder());
       }
-      if (source.getHeadersBuilder() != null) {
+      if (nonNull(source.getHeadersBuilder())) {
         destination.setHeadersBuilder(source.getHeadersBuilder());
       }
-      if (source.getCookiesBuilder() != null) {
+      if (nonNull(source.getCookiesBuilder())) {
         destination.setCookiesBuilder(source.getCookiesBuilder());
       }
-      if (source.getBodyInserter() != null) {
+      if (nonNull(source.getBodyInserter())) {
         destination.setBodyInserter(source.getBodyInserter());
       }
-      if (source.getErrorDecoder() != null) {
+      if (nonNull(source.getErrorDecoder())) {
         destination.setErrorDecoder(source.getErrorDecoder());
       }
-      if (source.getErrorDetector() != null) {
+      if (nonNull(source.getErrorDetector())) {
         destination.setErrorDetector(source.getErrorDetector());
       }
-      if (source.getResponseBuilder() != null) {
+      if (nonNull(source.getResponseBuilder())) {
         destination.setResponseBuilder(source.getResponseBuilder());
       }
     }

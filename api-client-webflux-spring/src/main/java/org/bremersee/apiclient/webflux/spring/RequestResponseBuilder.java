@@ -20,6 +20,7 @@ import static org.springframework.core.GenericTypeResolver.resolveReturnTypeArgu
 
 import java.lang.reflect.Method;
 import org.bremersee.exception.ServiceException;
+import org.reactivestreams.Publisher;
 import org.springframework.web.reactive.function.client.WebClient.ResponseSpec;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -38,7 +39,7 @@ public interface RequestResponseBuilder {
    * @param responseSpec the response spec
    * @return the object
    */
-  Object build(final InvocationParameters parameters, final ResponseSpec responseSpec);
+  Publisher<?> build(final InvocationParameters parameters, final ResponseSpec responseSpec);
 
   /**
    * Default request response builder.
@@ -55,7 +56,10 @@ public interface RequestResponseBuilder {
   class Default implements RequestResponseBuilder {
 
     @Override
-    public Object build(InvocationParameters parameters, ResponseSpec responseSpec) {
+    public Publisher<?> build(
+        InvocationParameters parameters,
+        ResponseSpec responseSpec) {
+
       final Method method = parameters.getMethod();
       final Class<?> responseClass = method.getReturnType();
       if (Mono.class.isAssignableFrom(responseClass)) {

@@ -59,11 +59,11 @@ public interface RequestHeadersBuilder {
    * @param headers the headers
    */
   default void setAcceptHeader(
-      final InvocationParameters parameters,
-      final HttpHeaders headers) {
+      InvocationParameters parameters,
+      HttpHeaders headers) {
 
-    final Method method = parameters.getMethod();
-    final String value = InvocationUtils.findAcceptHeader(method);
+    Method method = parameters.getMethod();
+    String value = InvocationUtils.findAcceptHeader(method);
     if (StringUtils.hasText(value)) {
       headers.set(HttpHeaders.ACCEPT, value);
     }
@@ -76,15 +76,15 @@ public interface RequestHeadersBuilder {
    * @param headers the headers
    */
   default void setContentTypeHeader(
-      final InvocationParameters parameters,
-      final HttpHeaders headers) {
+      InvocationParameters parameters,
+      HttpHeaders headers) {
 
-    final Method method = parameters.getMethod();
-    final MediaType mediaType = InvocationUtils.findFirstContentTypeHeader(method);
+    Method method = parameters.getMethod();
+    MediaType mediaType = InvocationUtils.findFirstContentTypeHeader(method);
     if (mediaType != null) {
       headers.setContentType(mediaType);
     } else {
-      final String value = InvocationUtils.findFirstContentTypeHeaderAsString(method);
+      String value = InvocationUtils.findFirstContentTypeHeaderAsString(method);
       if (StringUtils.hasText(value)) {
         headers.set(HttpHeaders.CONTENT_TYPE, value);
       }
@@ -106,16 +106,16 @@ public interface RequestHeadersBuilder {
   class Default implements RequestHeadersBuilder {
 
     @Override
-    public void setHeaders(final InvocationParameters parameters, final HttpHeaders headers) {
-      final Method method = parameters.getMethod();
-      final Object[] args = parameters.getArgs();
-      final Annotation[][] parameterAnnotations = method.getParameterAnnotations();
+    public void setHeaders(InvocationParameters parameters, HttpHeaders headers) {
+      Method method = parameters.getMethod();
+      Object[] args = parameters.getArgs();
+      Annotation[][] parameterAnnotations = method.getParameterAnnotations();
       for (int i = 0; i < parameterAnnotations.length; i++) {
-        for (final Annotation annotation : parameterAnnotations[i]) {
+        for (Annotation annotation : parameterAnnotations[i]) {
           if (annotation instanceof RequestHeader) {
-            final RequestHeader param = (RequestHeader) annotation;
-            final String name = StringUtils.hasText(param.value()) ? param.value() : param.name();
-            final Object value = args[i];
+            RequestHeader param = (RequestHeader) annotation;
+            String name = StringUtils.hasText(param.value()) ? param.value() : param.name();
+            Object value = args[i];
             putToMultiValueMap(name, value, headers);
           }
         }

@@ -26,7 +26,7 @@ import org.springframework.web.util.UriBuilder;
 import reactor.test.StepVerifier;
 
 /**
- * The web client proxy builder test.
+ * The api client integration test.
  *
  * @author Christian Bremer
  */
@@ -36,39 +36,37 @@ import reactor.test.StepVerifier;
     properties = {"security.basic.enabled=false"})
 @AutoConfigureWebTestClient
 @Slf4j
-class ApiClientBuilderIntegrationTest {
+class ApiClientIntegrationTest {
 
   @LocalServerPort
-  @SuppressWarnings("unused")
-  private int port;
+  int port;
 
   @Autowired
-  private WebTestClient webClient;
+  WebTestClient webClient;
 
-  private String baseUrl() {
+  String baseUrl() {
     return "http://localhost:" + port;
   }
 
-  private WebClient newWebClient() {
+  WebClient newWebClient() {
     return WebClient.builder()
         .baseUrl(baseUrl())
         .build();
   }
 
   private ControllerOne newControllerOneClient() {
-    return ApiClientBuilder.builder()
-        .webClient(newWebClient())
-        .build(ControllerOne.class);
+    return new ApiClient.Default()
+        .newInstance(ControllerOne.class, baseUrl());
   }
 
   private ControllerTwo newControllerTwoClient() {
-    return ApiClientBuilder.builder()
+    return ApiClient.builder()
         .webClient(newWebClient())
         .build(ControllerTwo.class);
   }
 
   private FormDataController newFormDataController() {
-    return ApiClientBuilder.builder()
+    return ApiClient.builder()
         .webClient(newWebClient())
         .commonFunctions(InvocationFunctions.builder().build())
         .build(FormDataController.class);

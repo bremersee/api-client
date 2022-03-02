@@ -27,7 +27,6 @@ import lombok.Getter;
  */
 @Getter
 @AllArgsConstructor
-@SuppressWarnings("WeakerAccess")
 public class InvocationParameters {
 
   private Class<?> targetClass;

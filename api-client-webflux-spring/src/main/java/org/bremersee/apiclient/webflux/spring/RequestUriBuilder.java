@@ -55,10 +55,10 @@ public interface RequestUriBuilder {
   class Default implements RequestUriBuilder {
 
     @Override
-    public URI build(final InvocationParameters parameters, final UriBuilder uriBuilder) {
-      final Class<?> targetClass = parameters.getTargetClass();
-      final Method method = parameters.getMethod();
-      final Object[] args = parameters.getArgs();
+    public URI build(InvocationParameters parameters, UriBuilder uriBuilder) {
+      Class<?> targetClass = parameters.getTargetClass();
+      Method method = parameters.getMethod();
+      Object[] args = parameters.getArgs();
 
       UriBuilder builder = uriBuilder;
       builder = builder.path(getRequestPath(targetClass, method));

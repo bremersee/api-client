@@ -51,10 +51,10 @@ class WebClientInvocationHandler implements InvocationHandler {
    * @param targetClass the target class
    */
   WebClientInvocationHandler(
-      final Map<MethodDescription, InvocationFunctions> methodFunctions,
-      final InvocationFunctions commonFunctions,
-      final WebClient webClient,
-      final Class<?> targetClass) {
+      Map<MethodDescription, InvocationFunctions> methodFunctions,
+      InvocationFunctions commonFunctions,
+      WebClient webClient,
+      Class<?> targetClass) {
     this.methodFunctions = methodFunctions;
     this.commonFunctions = commonFunctions;
     this.webClient = webClient;
@@ -62,7 +62,7 @@ class WebClientInvocationHandler implements InvocationHandler {
   }
 
   @Override
-  public Object invoke(final Object proxy, final Method method, final Object[] args) {
+  public Object invoke(Object proxy, Method method, Object[] args) {
     if (ReflectionUtils.isObjectMethod(method)) {
       if (ReflectionUtils.isEqualsMethod(method)) {
         return this.equals(args[0]);
@@ -74,11 +74,11 @@ class WebClientInvocationHandler implements InvocationHandler {
         return ReflectionUtils.invokeMethod(method, this, args);
       }
     }
-    final InvocationParameters parameters = new InvocationParameters(targetClass, method, args);
-    final InvocationFunctions functions = InvocationFunctions.merge(
+    InvocationParameters parameters = new InvocationParameters(targetClass, method, args);
+    InvocationFunctions functions = InvocationFunctions.merge(
         commonFunctions,
         methodFunctions.get(new MethodDescription(method)));
-    final RequestHeadersUriSpec<?> uriSpec = functions.getUriSpecBuilder()
+    RequestHeadersUriSpec<?> uriSpec = functions.getUriSpecBuilder()
         .build(parameters, webClient);
     uriSpec
         .uri(uriBuilder -> functions.getUriBuilder().build(parameters, uriBuilder))
@@ -88,8 +88,9 @@ class WebClientInvocationHandler implements InvocationHandler {
     if (uriSpec instanceof RequestBodyUriSpec) {
       functions.getBodyInserter().insert(parameters, (RequestBodyUriSpec) uriSpec);
     }
-    final ResponseSpec responseSpec = uriSpec.retrieve();
+    ResponseSpec responseSpec = uriSpec.retrieve();
     responseSpec.onStatus(functions.getErrorDetector(), functions.getErrorDecoder());
+    //noinspection ReactiveStreamsUnusedPublisher
     return functions.getResponseBuilder().build(parameters, responseSpec);
   }
 }

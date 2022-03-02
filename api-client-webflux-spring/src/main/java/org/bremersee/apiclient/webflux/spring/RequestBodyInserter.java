@@ -54,14 +54,14 @@ public interface RequestBodyInserter {
   class Default implements RequestBodyInserter {
 
     @Override
-    public void insert(final InvocationParameters parameters, final RequestBodyUriSpec uriSpec) {
-      final Method method = parameters.getMethod();
-      final Object[] args = parameters.getArgs();
-      final Annotation[][] parameterAnnotations = method.getParameterAnnotations();
+    public void insert(InvocationParameters parameters, RequestBodyUriSpec uriSpec) {
+      Method method = parameters.getMethod();
+      Object[] args = parameters.getArgs();
+      Annotation[][] parameterAnnotations = method.getParameterAnnotations();
       for (int i = 0; i < parameterAnnotations.length; i++) {
-        for (final Annotation annotation : parameterAnnotations[i]) {
+        for (Annotation annotation : parameterAnnotations[i]) {
           if (annotation instanceof RequestBody) {
-            final Object value = args[i];
+            Object value = args[i];
             if (matches(value, MultiValueMap.class, method,
                 MediaType.APPLICATION_FORM_URLENCODED)) {
               //noinspection unchecked,rawtypes
@@ -79,16 +79,16 @@ public interface RequestBodyInserter {
     }
 
     private boolean matches(
-        final Object value,
-        @SuppressWarnings("SameParameterValue") final Class<?> valueClass,
-        final Method method,
-        final MediaType mediaType) {
+        Object value,
+        @SuppressWarnings("SameParameterValue") Class<?> valueClass,
+        Method method,
+        MediaType mediaType) {
       return value != null
           && valueClass.isAssignableFrom(value.getClass())
           && matches(method, mediaType);
     }
 
-    private boolean matches(final Method method, final MediaType mediaType) {
+    private boolean matches(Method method, MediaType mediaType) {
       return InvocationUtils.findContentTypeHeader(method).stream()
           .anyMatch(mediaType::isCompatibleWith);
     }
