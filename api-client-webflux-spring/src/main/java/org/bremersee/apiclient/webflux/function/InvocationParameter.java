@@ -1,17 +1,17 @@
 package org.bremersee.apiclient.webflux.function;
 
 import static org.springframework.core.annotation.AnnotationUtils.findAnnotation;
+import static org.springframework.util.ObjectUtils.isEmpty;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Array;
 import java.lang.reflect.Parameter;
 import java.util.Arrays;
-import java.util.Objects;
 import java.util.Optional;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
+import org.springframework.core.DefaultParameterNameDiscoverer;
+import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
 import org.springframework.util.Assert;
-import org.springframework.util.ObjectUtils;
 
 @Getter
 @EqualsAndHashCode(callSuper = true)
@@ -26,14 +26,41 @@ public class InvocationParameter extends Invocation {
   public InvocationParameter(Invocation invocation, Parameter parameter, Object value, int index) {
     super(invocation.getTargetClass(), invocation.getMethod(), invocation.getArgs());
     Assert.notNull(parameter, "Parameter must be present.");
+    Assert.isTrue(
+        index >= 0 && index < invocation.getMethod().getParameters().length,
+        String.format("Illegal index [%s].", index));
     this.parameter = parameter;
     this.value = value;
     this.index = index;
   }
 
+  public String getParameterName() {
+    try {
+      //noinspection ConstantConditions
+      String name = new DefaultParameterNameDiscoverer()
+          .getParameterNames(getMethod())[index];
+      if (!isEmpty(name)) {
+        return name;
+      }
+    } catch (Exception ignored) {
+      // ignored
+    }
+    try {
+      //noinspection ConstantConditions
+      String name = new LocalVariableTableParameterNameDiscoverer()
+          .getParameterNames(getMethod())[index];
+      if (!isEmpty(name)) {
+        return name;
+      }
+    } catch (Exception ignored) {
+      // ignored
+    }
+    return parameter.getName();
+  }
+
   @SuppressWarnings("unchecked")
   public boolean hasNoneParameterAnnotation(Class<? extends Annotation>... annotationTypes) {
-    if (ObjectUtils.isEmpty(annotationTypes)) {
+    if (isEmpty(annotationTypes)) {
       return false;
     }
     return Arrays.stream(annotationTypes).noneMatch(this::hasParameterAnnotation);
@@ -52,7 +79,7 @@ public class InvocationParameter extends Invocation {
     return "InvocationParameter{"
         + "targetClass=" + getTargetClass().getName()
         + ", method=" + getMethod().getName()
-        + ", parameter=" + parameter.getName()
+        + ", parameter=" + getParameterName()
         + ", value=" + value
         + ", index=" + index
         + '}';

@@ -5,12 +5,13 @@ import static org.springframework.util.ObjectUtils.isEmpty;
 import static org.springframework.util.ObjectUtils.toObjectArray;
 
 import java.lang.annotation.Annotation;
-import java.lang.reflect.Parameter;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.bremersee.apiclient.webflux.function.InvocationParameter;
@@ -21,12 +22,14 @@ public abstract class AbstractInvocationParameterResolver<E, T extends MultiValu
     implements InvocationParameterResolver<E, T> {
 
   private <A extends Annotation> String getKey(
-      Parameter parameter,
+      InvocationParameter invocationParameter,
       A annotation,
       Function<A, String> keyExtractor) {
 
-    String key = keyExtractor.apply(annotation);
-    return isEmpty(key) ? parameter.getName() : key;
+    return Optional.ofNullable(annotation)
+        .map(keyExtractor)
+        .filter(name -> !name.isBlank())
+        .orElseGet(invocationParameter::getParameterName);
   }
 
   protected <A extends Annotation> MultiValueMap<String, E> toMultiValueMap(
@@ -41,7 +44,7 @@ public abstract class AbstractInvocationParameterResolver<E, T extends MultiValu
       map.putAll(toMultiValueMap((Map<?, ?>) value, valueMapper));
     } else {
       String key = getKey(
-          invocationParameter.getParameter(),
+          invocationParameter,
           annotation,
           keyExtractor);
       map.put(key, toList(value, valueMapper));
@@ -64,22 +67,24 @@ public abstract class AbstractInvocationParameterResolver<E, T extends MultiValu
   }
 
   private List<E> toList(Object value, Function<Object, E> valueMapper) {
+    List<E> list = new ArrayList<>();
     if (isEmpty(value)) {
-      return List.of();
+      return list;
     }
     if (isArray(value)) {
       return Arrays.stream(toObjectArray(value))
           .filter(Objects::nonNull)
           .map(valueMapper)
-          .collect(Collectors.toUnmodifiableList());
+          .collect(Collectors.toList());
     }
     if (value instanceof Collection<?>) {
       return ((Collection<?>) value).stream()
           .filter(Objects::nonNull)
           .map(valueMapper)
-          .collect(Collectors.toUnmodifiableList());
+          .collect(Collectors.toList());
     }
-    return List.of(valueMapper.apply(value));
+    list.add(valueMapper.apply(value));
+    return list;
   }
 
 }

@@ -1,6 +1,5 @@
 package org.bremersee.apiclient.webflux.function.resolver.spring;
 
-import static java.util.Objects.isNull;
 import static java.util.Objects.nonNull;
 
 import java.util.ArrayList;
@@ -10,8 +9,6 @@ import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
-import lombok.NonNull;
-import lombok.Setter;
 import org.bremersee.apiclient.webflux.function.Invocation;
 import org.bremersee.apiclient.webflux.function.InvocationParameter;
 import org.bremersee.exception.ServiceException;
@@ -23,15 +20,22 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 public class RequestBodyResolver implements Function<Invocation, Optional<InvocationParameter>> {
 
-  @Setter
-  @NonNull
-  private Predicate<InvocationParameter> possibleBody = new PossibleRequestBodyPredicate();
+  private static final String ERROR_CODE = "org.bremersee:api-client:9b12803a-e54e-4d3a-85cd-5377d9f2355b";
+
+  private Predicate<InvocationParameter> possibleBodyPredicate = new PossibleRequestBodyPredicate();
+
+  public RequestBodyResolver withPossibleBodyPredicate(Predicate<InvocationParameter> possibleBodyPredicate) {
+    if (nonNull(possibleBodyPredicate)) {
+      this.possibleBodyPredicate = possibleBodyPredicate;
+    }
+    return this;
+  }
 
   @Override
   public Optional<InvocationParameter> apply(Invocation invocation) {
 
     List<InvocationParameter> possibleBodies = invocation.toMethodParameterStream()
-        .filter(possibleBody)
+        .filter(possibleBodyPredicate)
         .sorted(new InvocationParameterComparator())
         .collect(Collectors.toList());
     if (possibleBodies.isEmpty()) {
@@ -41,7 +45,9 @@ public class RequestBodyResolver implements Function<Invocation, Optional<Invoca
     if (possibleBodies.size() == 1 || bodyParameter.hasParameterAnnotation(RequestBody.class)) {
       return Optional.of(bodyParameter);
     }
-    throw ServiceException.internalServerError("", ""); // TODO
+    throw ServiceException.internalServerError(
+        "Resolving body failed. There are more than one parameters which are not annotated with @RequestBody.",
+        ERROR_CODE);
   }
 
   public static class PossibleRequestBodyPredicate implements Predicate<InvocationParameter> {
@@ -57,9 +63,6 @@ public class RequestBodyResolver implements Function<Invocation, Optional<Invoca
 
     @Override
     public boolean test(InvocationParameter invocationParameter) {
-      if (isNull(invocationParameter.getValue())) {
-        return false;
-      }
       if (invocationParameter.hasParameterAnnotation(RequestBody.class)) {
         return true;
       }
@@ -86,7 +89,9 @@ public class RequestBodyResolver implements Function<Invocation, Optional<Invoca
       boolean a1 = o1.hasParameterAnnotation(RequestBody.class);
       boolean a2 = o2.hasParameterAnnotation(RequestBody.class);
       if (a1 && a2) {
-        throw ServiceException.internalServerError("", ""); // TODO
+        throw ServiceException.internalServerError(
+            "Resolving body failed. There are more than one parameters which are annotated with @RequestBody.",
+            "org.bremersee:api-client:47dbf2f1-1d89-43d2-8eab-16402477b8aa");
       }
       if (a1) {
         return -1;

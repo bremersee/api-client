@@ -4,7 +4,6 @@ import java.util.function.BiConsumer;
 import java.util.function.Function;
 import lombok.Builder;
 import lombok.NonNull;
-import org.bremersee.apiclient.webflux.function.resolver.CookiesResolver;
 import org.springframework.util.MultiValueMap;
 
 @Builder(toBuilder = true)

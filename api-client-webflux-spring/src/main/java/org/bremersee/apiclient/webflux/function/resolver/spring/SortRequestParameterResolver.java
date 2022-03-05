@@ -1,9 +1,9 @@
 package org.bremersee.apiclient.webflux.function.resolver.spring;
 
+import static org.springframework.util.ObjectUtils.isEmpty;
+
 import java.util.Optional;
 import java.util.stream.Collectors;
-import lombok.NonNull;
-import lombok.Setter;
 import org.bremersee.apiclient.webflux.function.InvocationParameter;
 import org.bremersee.apiclient.webflux.function.resolver.AbstractInvocationParameterResolver;
 import org.springframework.data.domain.Sort;
@@ -14,17 +14,32 @@ import org.springframework.util.MultiValueMap;
 public class SortRequestParameterResolver
     extends AbstractInvocationParameterResolver<Object, MultiValueMap<String, Object>> {
 
-  @Setter
-  @NonNull
   private String requestParamName = "sort";
 
-  @Setter
-  @NonNull
   private String separatorValue = ",";
 
-  @Setter
-  @NonNull
   private String descValue = "desc";
+
+  public SortRequestParameterResolver withRequestParamName(String requestParamName) {
+    if (!isEmpty(requestParamName)) {
+      this.requestParamName = requestParamName;
+    }
+    return this;
+  }
+
+  public SortRequestParameterResolver withSeparatorValue(String separatorValue) {
+    if (!isEmpty(separatorValue)) {
+      this.separatorValue = separatorValue;
+    }
+    return this;
+  }
+
+  public SortRequestParameterResolver withDescValue(String descValue) {
+    if (!isEmpty(descValue)) {
+      this.descValue = descValue;
+    }
+    return this;
+  }
 
   @Override
   public boolean canResolve(InvocationParameter invocationParameter) {

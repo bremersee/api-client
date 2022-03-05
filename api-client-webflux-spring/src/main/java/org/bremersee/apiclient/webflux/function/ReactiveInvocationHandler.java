@@ -22,7 +22,6 @@ import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import lombok.extern.slf4j.Slf4j;
 import org.bremersee.apiclient.webflux.ErrorFunctionBundle;
-import org.bremersee.apiclient.webflux.function.resolver.ResolverBundle;
 import org.bremersee.apiclient.webflux.function.resolver.spring.SpringResolverBundle;
 import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
@@ -58,13 +57,14 @@ public class ReactiveInvocationHandler implements InvocationHandler {
     this.targetClass = targetClass;
     this.webClient = webClient;
     this.functionBundle = isNull(functionBundle)
-        ? ResolverBundle.builder(new SpringResolverBundle()).build().getFunctionBundle()
+        ? new SpringResolverBundle().getFunctionBundle()
         : functionBundle;
     this.errorFunctionBundle = isNull(errorFunctionBundle)
         ? ErrorFunctionBundle.builder().build()
         : errorFunctionBundle;
   }
 
+  @SuppressWarnings("SuspiciousInvocationHandlerImplementation")
   @Override
   public Object invoke(Object proxy, Method method, Object[] args) {
     if (ReflectionUtils.isObjectMethod(method)) {

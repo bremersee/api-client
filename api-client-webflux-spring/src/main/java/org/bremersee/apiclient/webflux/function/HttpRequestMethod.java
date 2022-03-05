@@ -14,6 +14,7 @@ public enum HttpRequestMethod {
   PATCH(WebClient::patch),
   DELETE(WebClient::delete),
   OPTIONS(WebClient::options);
+  //TRACE();
 
   private final Function<WebClient, RequestHeadersUriSpec<?>> uriSpecFunction;
 

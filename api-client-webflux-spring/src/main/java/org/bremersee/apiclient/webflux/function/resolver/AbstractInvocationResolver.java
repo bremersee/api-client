@@ -1,9 +1,10 @@
 package org.bremersee.apiclient.webflux.function.resolver;
 
+import static java.util.Objects.nonNull;
+
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -16,35 +17,14 @@ public abstract class AbstractInvocationResolver<E, T extends MultiValueMap<Stri
 
   private final List<InvocationParameterResolver<E, T>> resolvers = new ArrayList<>();
 
-  public AbstractInvocationResolver() {
-  }
-
   public AbstractInvocationResolver(Collection<? extends InvocationParameterResolver<E, T>> resolvers) {
-    Optional.ofNullable(resolvers).stream().flatMap(Collection::stream).forEach(this::addResolver);
-  }
-
-  public List<InvocationParameterResolver<E, T>> getResolvers() {
-    return List.copyOf(resolvers);
-  }
-
-  public AbstractInvocationResolver<E, T> addResolver(InvocationParameterResolver<E, T> resolver) {
-    return addResolver(resolvers.size(), resolver);
-  }
-
-  public AbstractInvocationResolver<E, T> addResolver(
-      int index,
-      InvocationParameterResolver<E, T> resolver) {
-
-    Supplier<String> f;
-    if (Objects.nonNull(resolver)) {
-      int validIndex = Math.min(Math.abs(index), resolvers.size());
-      resolvers.add(validIndex, resolver);
+    if (nonNull(resolvers)) {
+      this.resolvers.addAll(resolvers);
     }
-    return this;
   }
 
   protected Optional<InvocationParameterResolver<E, T>> findResolver(InvocationParameter invocationParameter) {
-    return getResolvers().stream()
+    return resolvers.stream()
         .filter(resolver -> resolver.canResolve(invocationParameter))
         .findFirst();
   }
@@ -61,7 +41,7 @@ public abstract class AbstractInvocationResolver<E, T extends MultiValueMap<Stri
             }))
         .flatMap(Optional::stream)
         .reduce((first, second) -> {
-          first.putAll(second);
+          first.addAll(second);
           return first;
         })
         .orElseGet(this);

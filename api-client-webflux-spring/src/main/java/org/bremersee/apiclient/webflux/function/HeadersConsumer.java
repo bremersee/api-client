@@ -1,5 +1,6 @@
 package org.bremersee.apiclient.webflux.function;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.BiConsumer;
@@ -26,7 +27,9 @@ public class HeadersConsumer implements BiConsumer<Invocation, HttpHeaders> {
   public void accept(Invocation invocation, HttpHeaders httpHeaders) {
     contentTypeResolver.apply(invocation)
         .ifPresent(httpHeaders::setContentType);
-    httpHeaders.setAccept(List.of(acceptResolver.apply(invocation)));
+    List<MediaType> accepts = new ArrayList<>();
+    accepts.add(acceptResolver.apply(invocation));
+    httpHeaders.setAccept(accepts);
     httpHeaders.addAll(headersResolver.apply(invocation));
   }
 

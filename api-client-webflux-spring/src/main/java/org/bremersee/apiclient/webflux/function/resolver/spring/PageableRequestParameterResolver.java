@@ -1,9 +1,9 @@
 package org.bremersee.apiclient.webflux.function.resolver.spring;
 
+import static org.springframework.util.ObjectUtils.isEmpty;
+
 import java.util.List;
 import java.util.Optional;
-import lombok.NonNull;
-import lombok.Setter;
 import org.bremersee.apiclient.webflux.function.InvocationParameter;
 import org.bremersee.apiclient.webflux.function.resolver.AbstractInvocationParameterResolver;
 import org.springframework.data.domain.Pageable;
@@ -13,17 +13,33 @@ import org.springframework.util.MultiValueMap;
 public class PageableRequestParameterResolver
     extends AbstractInvocationParameterResolver<Object, MultiValueMap<String, Object>> {
 
-  @Setter
-  @NonNull
   private SortRequestParameterResolver sortRequestParameterResolver = new SortRequestParameterResolver();
 
-  @Setter
-  @NonNull
   private String pageNumberRequestParamName = "page";
 
-  @Setter
-  @NonNull
   private String pageSizeRequestParamName = "size";
+
+  public PageableRequestParameterResolver withSortRequestParameterResolver(
+      SortRequestParameterResolver sortRequestParameterResolver) {
+    if (!isEmpty(sortRequestParameterResolver)) {
+      this.sortRequestParameterResolver = sortRequestParameterResolver;
+    }
+    return this;
+  }
+
+  public PageableRequestParameterResolver withPageNumberRequestParamName(String pageNumberRequestParamName) {
+    if (!isEmpty(pageNumberRequestParamName)) {
+      this.pageNumberRequestParamName = pageNumberRequestParamName;
+    }
+    return this;
+  }
+
+  public PageableRequestParameterResolver withPageSizeRequestParamName(String pageSizeRequestParamName) {
+    if (!isEmpty(pageSizeRequestParamName)) {
+      this.pageSizeRequestParamName = pageSizeRequestParamName;
+    }
+    return this;
+  }
 
   @Override
   public boolean canResolve(InvocationParameter invocationParameter) {

@@ -17,8 +17,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 public class AcceptResolver implements Function<Invocation, MediaType> {
 
   @Override
-  public MediaType apply(Invocation parameters) {
-    Method method = parameters.getMethod();
+  public MediaType apply(Invocation invocation) {
+    Method method = invocation.getMethod();
     return Arrays.stream(
             findAnnotationValue(method, RequestMapping.class, a -> a.produces().length > 0, RequestMapping::produces)
                 .or(() -> findAnnotationValue(

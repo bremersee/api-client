@@ -35,7 +35,7 @@ import reactor.test.StepVerifier;
     properties = {"security.basic.enabled=false"})
 @AutoConfigureWebTestClient
 @Slf4j
-class ApiClientIntegrationTest {
+class ReactiveApiClientIntegrationTest {
 
   @LocalServerPort
   int port;

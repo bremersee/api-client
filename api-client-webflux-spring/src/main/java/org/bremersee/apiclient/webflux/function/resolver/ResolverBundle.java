@@ -18,16 +18,14 @@ import org.bremersee.apiclient.webflux.function.RequestUriSpecFunction;
 import org.bremersee.apiclient.webflux.function.ResponseFunction;
 import org.immutables.value.Value;
 import org.springframework.http.MediaType;
-import org.springframework.util.Assert;
 import org.springframework.util.MultiValueMap;
 
 @Value.Immutable
 @Valid
 public interface ResolverBundle {
 
-  static ImmutableResolverBundle.Builder builder(ResolverBundle resolverBundle) {
-    Assert.notNull(resolverBundle, "Resolver bundle must be present.");
-    return ImmutableResolverBundle.builder().from(resolverBundle);
+  static ImmutableResolverBundle.Builder builder() {
+    return ImmutableResolverBundle.builder();
   }
 
   @NotNull
