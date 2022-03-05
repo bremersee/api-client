@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RequestPart;
 
 public abstract class Extensions {
 
@@ -15,7 +16,8 @@ public abstract class Extensions {
       RequestBody.class,
       RequestHeader.class,
       RequestParam.class,
-      PathVariable.class
+      PathVariable.class,
+      RequestPart.class // TODO together with FilePart
   };
 
   public static final boolean isSortPresent;
