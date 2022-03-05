@@ -5,8 +5,8 @@ import static java.util.Objects.isNull;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
 import org.bremersee.apiclient.ApiClient;
-import org.bremersee.apiclient.webflux.function.FunctionBundle;
-import org.bremersee.apiclient.webflux.function.ReactiveInvocationHandler;
+import org.bremersee.apiclient.webflux.contract.FunctionBundle;
+import org.bremersee.apiclient.webflux.contract.ReactiveInvocationHandler;
 import org.springframework.util.Assert;
 import org.springframework.web.reactive.function.client.WebClient;
 
