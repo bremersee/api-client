@@ -7,6 +7,7 @@ import java.util.Objects;
 import java.util.Optional;
 import org.bremersee.apiclient.webflux.Invocation;
 import org.bremersee.apiclient.webflux.InvocationParameter;
+import org.reactivestreams.Publisher;
 import org.springframework.core.ResolvableType;
 import org.springframework.http.MediaType;
 import org.springframework.util.LinkedMultiValueMap;
@@ -69,7 +70,10 @@ public class MultipartDataInserter extends SingleBodyInserter<MultiValueMap<Stri
 
      */
     MultiValueMap<String, Objects> m = new LinkedMultiValueMap<>();
-    requestBodyUriSpec.body(BodyInserters.fromMultipartData(m));
+
+    Publisher<?> p;
+
+    // requestBodyUriSpec.body(BodyInserters.fromPublisher());
 
     //noinspection rawtypes
     return (RequestHeadersUriSpec) requestBodyUriSpec.body(BodyInserters.fromFormData(body));

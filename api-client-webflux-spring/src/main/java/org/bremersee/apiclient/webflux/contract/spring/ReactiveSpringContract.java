@@ -79,6 +79,7 @@ public class ReactiveSpringContract implements ReactiveContract {
             .withContentTypeResolver(contentTypeResolver))
         .addRequestBodyInserters(new ResourceInserter())
         .addRequestBodyInserters(new DataBuffersInserter())
+        .addRequestBodyInserters(new PublisherInserter())
         .addRequestBodyInserters(new ValueInserter())
         .build();
   }

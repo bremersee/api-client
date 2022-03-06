@@ -20,6 +20,7 @@ import org.springframework.web.reactive.function.client.WebClient.RequestBodyUri
 import org.springframework.web.reactive.function.client.WebClient.RequestHeadersUriSpec;
 
 public abstract class SingleBodyInserter<T> implements RequestBodyInserter {
+  // Zwischenschritt: Liste sammeln possible
 
   @Override
   public boolean canInsert(Invocation invocation) {
@@ -35,6 +36,7 @@ public abstract class SingleBodyInserter<T> implements RequestBodyInserter {
         .count() == 1;
   }
 
+  // immer parameter zurück geben
   protected Optional<T> findBody(Invocation invocation) {
     List<InvocationParameter> possibleBodies = invocation.toMethodParameterStream()
         .filter(this::isPossibleBody)
@@ -46,7 +48,12 @@ public abstract class SingleBodyInserter<T> implements RequestBodyInserter {
         .stream()
         .flatMap(Collection::stream)
         .findFirst()
-        .map(invocationParameter -> (T) invocationParameter.getValue());
+        .map(this::mapBody);
+  }
+
+  // TODO abstract
+  public T mapBody(InvocationParameter invocationParameter) {
+    return (T) invocationParameter.getValue();
   }
 
   protected boolean isPossibleBody(InvocationParameter invocationParameter) {
@@ -66,7 +73,7 @@ public abstract class SingleBodyInserter<T> implements RequestBodyInserter {
         RequestAttribute.class,
         RequestHeader.class,
         RequestParam.class,
-        RequestPart.class,
+        RequestPart.class, // bei sammeln der Liste beachten -> als methode zurück geben, Liste!
         SessionAttribute.class
     );
   }
