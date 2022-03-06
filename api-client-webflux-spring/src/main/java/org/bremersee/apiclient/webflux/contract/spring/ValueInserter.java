@@ -15,6 +15,11 @@ public class ValueInserter extends SingleBodyInserter<Object> {
   }
 
   @Override
+  protected Object mapBody(InvocationParameter invocationParameter) {
+    return invocationParameter.getValue();
+  }
+
+  @Override
   protected RequestHeadersUriSpec<?> insert(Object body, RequestBodyUriSpec requestBodyUriSpec) {
     //noinspection rawtypes
     return (RequestHeadersUriSpec) requestBodyUriSpec.body(BodyInserters.fromValue(body));

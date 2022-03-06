@@ -18,7 +18,7 @@ public class PublisherInserter extends SingleBodyInserter<InvocationParameter> {
     return invocationParameter.getValue() instanceof Publisher;
   }
 
-  public InvocationParameter mapBody(InvocationParameter invocationParameter) {
+  protected InvocationParameter mapBody(InvocationParameter invocationParameter) {
     return invocationParameter;
   }
 

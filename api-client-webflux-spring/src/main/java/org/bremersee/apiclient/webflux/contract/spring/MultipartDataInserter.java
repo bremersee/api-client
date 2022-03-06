@@ -39,6 +39,12 @@ public class MultipartDataInserter extends SingleBodyInserter<MultiValueMap<Stri
   }
 
   @Override
+  protected MultiValueMap<String, String> mapBody(InvocationParameter invocationParameter) {
+    //noinspection unchecked
+    return (MultiValueMap<String, String>) invocationParameter.getValue();
+  }
+
+  @Override
   protected boolean isPossibleBodyValue(InvocationParameter invocationParameter) {
     return invocationParameter.getValue() instanceof MultiValueMap && isString(invocationParameter);
   }

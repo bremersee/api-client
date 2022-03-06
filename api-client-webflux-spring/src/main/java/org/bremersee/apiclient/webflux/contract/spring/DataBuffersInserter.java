@@ -14,7 +14,8 @@ public class DataBuffersInserter extends SingleBodyInserter<Publisher<DataBuffer
 
   @Override
   protected boolean isPossibleBodyValue(InvocationParameter invocationParameter) {
-    return invocationParameter.getValue() instanceof Publisher && isDataBuffer(invocationParameter);
+    return invocationParameter.getValue() instanceof Publisher
+        && isDataBuffer(invocationParameter);
   }
 
   private boolean isDataBuffer(InvocationParameter invocationParameter) {
@@ -25,6 +26,12 @@ public class DataBuffersInserter extends SingleBodyInserter<Publisher<DataBuffer
         .map(resolvableType -> resolvableType.resolveGeneric(0))
         .filter(DataBuffer.class::isAssignableFrom)
         .isPresent();
+  }
+
+  @Override
+  protected Publisher<DataBuffer> mapBody(InvocationParameter invocationParameter) {
+    //noinspection unchecked
+    return (Publisher<DataBuffer>) invocationParameter.getValue();
   }
 
   @Override

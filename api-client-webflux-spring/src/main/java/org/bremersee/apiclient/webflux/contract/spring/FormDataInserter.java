@@ -38,6 +38,12 @@ public class FormDataInserter extends SingleBodyInserter<MultiValueMap<String, S
   }
 
   @Override
+  protected MultiValueMap<String, String> mapBody(InvocationParameter invocationParameter) {
+    //noinspection unchecked
+    return (MultiValueMap<String, String>) invocationParameter.getValue();
+  }
+
+  @Override
   protected boolean isPossibleBodyValue(InvocationParameter invocationParameter) {
     return invocationParameter.getValue() instanceof MultiValueMap && isString(invocationParameter);
   }

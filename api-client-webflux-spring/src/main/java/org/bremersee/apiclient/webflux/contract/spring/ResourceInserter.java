@@ -14,6 +14,12 @@ public class ResourceInserter extends SingleBodyInserter<Resource> {
   }
 
   @Override
+  protected Resource mapBody(InvocationParameter invocationParameter) {
+    //noinspection
+    return (Resource) invocationParameter.getValue();
+  }
+
+  @Override
   protected RequestHeadersUriSpec<?> insert(
       Resource body,
       RequestBodyUriSpec requestBodyUriSpec) {
