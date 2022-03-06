@@ -20,7 +20,6 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
@@ -32,45 +31,19 @@ import reactor.core.publisher.Mono;
  * The form data controller.
  *
  * <p>In a WebFlux application, form data is accessed via {@code ServerWebExchange.getFormData()}.
- * For this reason the controller can't implement the interface, because it's signature differs from
- * this implementation.
+ * For this reason the controller can't implement the interface, because it's signature differs from this
+ * implementation.
  *
  * @author Christian Bremer
  */
 @RestController
 public class FormDataControllerImpl { // Can't implement FormDataController
 
-  /**
-   * The constant OK_RESPONSE.
-   */
-  static final String OK_RESPONSE = "OK";
-
-  /**
-   * Post form data.
-   *
-   * @param exchange the exchange with the form data
-   * @return the result
-   */
-  @PostMapping(path = "/api/oks",
-      produces = MediaType.TEXT_PLAIN_VALUE,
-      consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-  public Mono<String> addOk(ServerWebExchange exchange) {
-    return exchange.getFormData().map(form -> form.isEmpty() ? "FAILED" : OK_RESPONSE);
-  }
-
-  /**
-   * Upload mono.
-   *
-   * @param headerValue the header value
-   * @param lastValue the last value
-   * @param exchange the exchange with the form data
-   * @return the result
-   */
   @RequestMapping(path = "/upload",
       method = RequestMethod.POST,
       consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
       produces = MediaType.APPLICATION_JSON_VALUE)
-  public Mono<Map<String, Object>> upload(
+  public Mono<Map<String, Object>> postFormData(
       @RequestHeader(name = "x-ok-flag") String headerValue,
       @CookieValue(name = "last") String lastValue,
       ServerWebExchange exchange) {

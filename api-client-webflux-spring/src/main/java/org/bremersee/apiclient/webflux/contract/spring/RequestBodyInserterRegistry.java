@@ -25,11 +25,7 @@ public interface RequestBodyInserterRegistry extends
   default RequestHeadersUriSpec<?> apply(Invocation invocation, RequestBodyUriSpec requestBodyUriSpec) {
     //noinspection unchecked,rawtypes
     return getRequestBodyInserters().stream()
-        .filter(inserter -> {
-          boolean result = inserter.canInsert(invocation);
-          System.out.println(inserter.getClass().getSimpleName() + " -> " + result);
-          return result;
-        })
+        .filter(inserter -> inserter.canInsert(invocation))
         .findFirst()
         .map(inserter -> inserter.apply(invocation, requestBodyUriSpec))
         .orElse((RequestHeadersUriSpec) requestBodyUriSpec);

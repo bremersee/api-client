@@ -77,18 +77,25 @@ public class ReactiveInvocationHandler implements InvocationHandler {
         return ReflectionUtils.invokeMethod(method, this, args);
       }
     }
-    Invocation parameters = new Invocation(targetClass, method, args);
-    RequestHeadersUriSpec<?> uriSpec = contract.getRequestUriSpecFunction().apply(parameters, webClient);
-    uriSpec = (RequestHeadersUriSpec<?>) uriSpec.uri(uriBuilder -> contract.getRequestUriFunction()
-            .apply(parameters, uriBuilder))
-        .headers(httpHeaders -> contract.getHeadersConsumer().accept(parameters, httpHeaders))
-        .cookies(cookies -> contract.getCookiesConsumer().accept(parameters, cookies));
+    Invocation invocation = new Invocation(targetClass, method, args);
+    RequestHeadersUriSpec<?> uriSpec = contract
+        .getRequestUriSpecFunction()
+        .apply(invocation, webClient);
+    uriSpec = (RequestHeadersUriSpec<?>) uriSpec.uri(uriBuilder -> contract
+            .getRequestUriFunction()
+            .apply(invocation, uriBuilder))
+        .headers(httpHeaders -> contract.getHeadersConsumer().accept(invocation, httpHeaders))
+        .cookies(cookies -> contract.getCookiesConsumer().accept(invocation, cookies));
     if (uriSpec instanceof RequestBodyUriSpec) {
-      uriSpec = contract.getRequestBodyInserterFunction().apply(parameters, (RequestBodyUriSpec) uriSpec);
+      uriSpec = contract
+          .getRequestBodyInserterFunction()
+          .apply(invocation, (RequestBodyUriSpec) uriSpec);
     }
     ResponseSpec responseSpec = uriSpec.retrieve();
     responseSpec = responseSpec
         .onStatus(errorHandler.getErrorPredicate(), errorHandler.getErrorFunction());
-    return contract.getResponseFunction().apply(parameters, responseSpec);
+    return contract
+        .getResponseFunction()
+        .apply(invocation, responseSpec);
   }
 }

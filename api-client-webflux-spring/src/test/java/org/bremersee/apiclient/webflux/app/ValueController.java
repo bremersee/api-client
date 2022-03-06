@@ -16,29 +16,37 @@
 
 package org.bremersee.apiclient.webflux.app;
 
+import java.util.List;
 import java.util.Map;
 import org.springframework.http.MediaType;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
- * Test controller one.
+ * The value controller.
  *
  * @author Christian Bremer
  */
-public interface ControllerOne {
+public interface ValueController {
 
-  /**
-   * The constant OK_RESPONSE.
-   */
-  String OK_RESPONSE = "OK";
+  String STRING_VALUE = "OK";
+
+  List<Map<String, Object>> JSON_VALUES = List.of(
+      Map.of("key0", "value0"),
+      Map.of("key1", "value1"),
+      Map.of("key2", "value2")
+  );
 
   /**
    * Simple get mono.
@@ -46,15 +54,15 @@ public interface ControllerOne {
    * @return the mono
    */
   @GetMapping
-  Mono<String> simpleGet();
+  Mono<String> getStringValue();
 
   /**
    * Gets oks.
    *
    * @return the oks
    */
-  @GetMapping(path = "/api/oks", produces = MediaType.APPLICATION_JSON_VALUE)
-  Flux<Map<String, Object>> getOks();
+  @GetMapping(path = "/api/value", produces = MediaType.APPLICATION_JSON_VALUE)
+  Flux<Map<String, Object>> getJsonValues();
 
   /**
    * Update ok mono.
@@ -63,10 +71,11 @@ public interface ControllerOne {
    * @param payload the payload
    * @return the mono
    */
-  @PutMapping(path = "/api/oks/{name}",
+  @PutMapping(path = "/api/value/{name}",
       produces = MediaType.TEXT_PLAIN_VALUE,
       consumes = MediaType.TEXT_PLAIN_VALUE)
-  Mono<String> updateOk(@PathVariable("name") String name,
+  Mono<String> putStringValue(
+      @PathVariable("name") String name,
       @RequestBody String payload);
 
   /**
@@ -77,12 +86,22 @@ public interface ControllerOne {
    * @param payload the payload
    * @return the mono
    */
-  @PatchMapping(path = "/api/oks/{name}",
+  @PatchMapping(path = "/api/value/{name}",
       consumes = MediaType.TEXT_PLAIN_VALUE)
-  Mono<Void> patchOk(
+  Mono<Void> patchStringValue(
       @PathVariable("name") String name,
       @RequestParam(name = "suffix") String suffix,
       @RequestBody String payload);
+
+  @PostMapping(path = "/api/value/{name}",
+      consumes = MediaType.APPLICATION_JSON_VALUE,
+      produces = MediaType.APPLICATION_JSON_VALUE)
+  Mono<Map<String, Object>> postValue(
+      @PathVariable("name") String name,
+      @RequestHeader MultiValueMap<String, String> headers,
+      @CookieValue(name = "sweet") String cookie,
+      @RequestParam Map<String, Object> requestParams,
+      @RequestBody Map<String, Object> payload);
 
   /**
    * Delete ok mono.
@@ -90,7 +109,7 @@ public interface ControllerOne {
    * @param name the name
    * @return the mono
    */
-  @DeleteMapping(path = "/api/oks/{name}", produces = MediaType.APPLICATION_JSON_VALUE)
-  Mono<Boolean> deleteOk(@PathVariable("name") String name);
+  @DeleteMapping(path = "/api/value/{name}", produces = MediaType.APPLICATION_JSON_VALUE)
+  Mono<Boolean> deleteValue(@PathVariable("name") String name);
 
 }

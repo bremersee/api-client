@@ -30,7 +30,7 @@ import org.springframework.web.reactive.config.EnableWebFlux;
 @SpringBootConfiguration
 @EnableAutoConfiguration(exclude = {ReactiveSecurityAutoConfiguration.class})
 @EnableWebFlux
-@ComponentScan(basePackageClasses = {ControllerOne.class})
+@ComponentScan(basePackageClasses = {ValueController.class})
 public class TestConfiguration {
 
 }

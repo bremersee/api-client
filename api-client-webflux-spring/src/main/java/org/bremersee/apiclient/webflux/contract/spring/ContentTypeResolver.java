@@ -34,6 +34,7 @@ public class ContentTypeResolver implements Function<Invocation, Optional<MediaT
                     method, DeleteMapping.class, a -> a.consumes().length > 0, DeleteMapping::consumes))
                 .orElse(new String[0]))
         .map(this::parseMediaType)
+        .filter(MediaType::isConcrete)
         .findFirst();
   }
 

@@ -20,7 +20,6 @@ import java.util.Map;
 import org.springframework.http.MediaType;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -34,30 +33,11 @@ import reactor.core.publisher.Mono;
  */
 public interface FormDataController {
 
-  /**
-   * Post form data.
-   *
-   * @param form the form
-   * @return the result
-   */
-  @PostMapping(path = "/api/oks",
-      produces = MediaType.TEXT_PLAIN_VALUE,
-      consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE)
-  Mono<String> addOk(@RequestBody MultiValueMap<String, String> form);
-
-  /**
-   * Upload form data with header and cookie..
-   *
-   * @param headerValue the x header value
-   * @param lastValue the last value
-   * @param data the data
-   * @return the result
-   */
   @RequestMapping(path = "/upload",
       method = RequestMethod.POST,
       consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,
       produces = MediaType.APPLICATION_JSON_VALUE)
-  Mono<Map<String, Object>> upload(
+  Mono<Map<String, Object>> postFormData(
       @RequestHeader(name = "x-ok-flag") String headerValue,
       @CookieValue(name = "last") String lastValue,
       @RequestBody MultiValueMap<String, String> data);

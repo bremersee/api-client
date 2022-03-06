@@ -18,8 +18,8 @@ package org.bremersee.apiclient.webflux.app;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.stream.Stream;
 import org.bremersee.exception.ServiceException;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -30,31 +30,25 @@ import reactor.core.publisher.Mono;
  * @author Christian Bremer
  */
 @RestController
-public class ControllerOneImpl implements ControllerOne {
+public class ValueControllerImpl implements ValueController {
 
   @Override
-  public Mono<String> simpleGet() {
-    return Mono.just(OK_RESPONSE);
+  public Mono<String> getStringValue() {
+    return Mono.just(STRING_VALUE);
   }
 
   @Override
-  public Flux<Map<String, Object>> getOks() {
-    Map<String, Object> ok0 = new LinkedHashMap<>();
-    ok0.put("value", "OK_0");
-    Map<String, Object> ok1 = new LinkedHashMap<>();
-    ok1.put("value", "OK_1");
-    Map<String, Object> ok2 = new LinkedHashMap<>();
-    ok2.put("value", "OK_2");
-    return Flux.fromStream(Stream.of(ok0, ok1, ok2));
+  public Flux<Map<String, Object>> getJsonValues() {
+    return Flux.fromStream(JSON_VALUES.stream());
   }
 
   @Override
-  public Mono<String> updateOk(String name, String payload) {
+  public Mono<String> putStringValue(String name, String payload) {
     return Mono.just(name + "=" + payload);
   }
 
   @Override
-  public Mono<Void> patchOk(String name, String suffix, String payload) {
+  public Mono<Void> patchStringValue(String name, String suffix, String payload) {
     if ("exception".equalsIgnoreCase(suffix)) {
       throw ServiceException.badRequest("'exception' is an illegal suffix");
     }
@@ -62,7 +56,24 @@ public class ControllerOneImpl implements ControllerOne {
   }
 
   @Override
-  public Mono<Boolean> deleteOk(String name) {
+  public Mono<Map<String, Object>> postValue(
+      String name,
+      MultiValueMap<String, String> headers,
+      String cookie,
+      Map<String, Object> requestParams,
+      Map<String, Object> payload) {
+
+    Map<String, Object> map = new LinkedHashMap<>();
+    map.put("PathVariable", name);
+    map.put("x-custom", headers.getFirst("x-custom"));
+    map.put("sweet", cookie);
+    map.putAll(requestParams);
+    map.putAll(payload);
+    return Mono.just(map);
+  }
+
+  @Override
+  public Mono<Boolean> deleteValue(String name) {
     return Mono.just(true);
   }
 
