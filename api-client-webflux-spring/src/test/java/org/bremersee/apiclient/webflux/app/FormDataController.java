@@ -60,6 +60,6 @@ public interface FormDataController {
   Mono<Map<String, Object>> upload(
       @RequestHeader(name = "x-ok-flag") String headerValue,
       @CookieValue(name = "last") String lastValue,
-      @RequestBody MultiValueMap<String, ?> data);
+      @RequestBody MultiValueMap<String, String> data);
 
 }

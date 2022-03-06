@@ -54,7 +54,7 @@ class ReactiveApiClientIntegrationTest {
   }
 
   private ControllerOne newControllerOneClient() {
-    return new ReactiveApiClient(WebClient.builder())
+    return new ReactiveApiClient(WebClient.builder(), null, null) // TODO
         .newInstance(ControllerOne.class, baseUrl());
   }
 
@@ -177,7 +177,7 @@ class ReactiveApiClientIntegrationTest {
 
   /**
    * Upload.
-   */
+   *
   @Test
   void upload() {
     MultiValueMap<String, String> data = new LinkedMultiValueMap<>();

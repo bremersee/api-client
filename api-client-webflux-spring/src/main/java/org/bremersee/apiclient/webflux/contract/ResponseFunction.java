@@ -4,6 +4,7 @@ import static org.springframework.core.GenericTypeResolver.resolveReturnTypeArgu
 
 import java.lang.reflect.Method;
 import java.util.function.BiFunction;
+import org.bremersee.apiclient.webflux.Invocation;
 import org.bremersee.exception.ServiceException;
 import org.reactivestreams.Publisher;
 import org.springframework.web.reactive.function.client.WebClient.ResponseSpec;

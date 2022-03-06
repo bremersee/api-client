@@ -2,19 +2,26 @@ package org.bremersee.apiclient.webflux.contract;
 
 import java.util.function.BiConsumer;
 import java.util.function.Function;
-import lombok.Builder;
-import lombok.NonNull;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import org.bremersee.apiclient.webflux.Invocation;
+import org.immutables.value.Value;
 import org.springframework.util.MultiValueMap;
 
-@Builder(toBuilder = true)
-public class CookiesConsumer implements BiConsumer<Invocation, MultiValueMap<String, String>> {
+@Value.Immutable
+@Valid
+public interface CookiesConsumer extends BiConsumer<Invocation, MultiValueMap<String, String>> {
 
-  @NonNull
-  private Function<Invocation, MultiValueMap<String, String>> cookiesResolver;
+  static ImmutableCookiesConsumer.Builder builder() {
+    return ImmutableCookiesConsumer.builder();
+  }
+
+  @NotNull
+  Function<Invocation, MultiValueMap<String, String>> getCookiesResolver();
 
   @Override
-  public void accept(Invocation invocation, MultiValueMap<String, String> cookies) {
-    cookies.addAll(cookiesResolver.apply(invocation));
+  default void accept(Invocation invocation, MultiValueMap<String, String> cookies) {
+    cookies.addAll(getCookiesResolver().apply(invocation));
   }
 
 }

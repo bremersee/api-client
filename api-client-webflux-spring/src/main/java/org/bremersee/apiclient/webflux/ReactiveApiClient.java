@@ -5,8 +5,6 @@ import static java.util.Objects.isNull;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
 import org.bremersee.apiclient.ApiClient;
-import org.bremersee.apiclient.webflux.contract.FunctionBundle;
-import org.bremersee.apiclient.webflux.contract.ReactiveInvocationHandler;
 import org.springframework.util.Assert;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -14,14 +12,26 @@ public class ReactiveApiClient extends ApiClient {
 
   private final WebClient.Builder webClientBuilder;
 
-  public ReactiveApiClient(WebClient.Builder webClientBuilder) {
+  private final ReactiveContract contract;
+
+  private final ReactiveErrorHandler errorHandler;
+
+  public ReactiveApiClient(
+      WebClient.Builder webClientBuilder,
+      ReactiveContract contract,
+      ReactiveErrorHandler errorHandler) {
+
     this.webClientBuilder = isNull(webClientBuilder) ? WebClient.builder() : webClientBuilder;
+    this.contract = contract;
+    this.errorHandler = errorHandler;
   }
 
   @Override
   public <T> T newInstance(Class<T> target, String baseUrl) {
     return new Builder()
         .webClient(webClientBuilder.baseUrl(baseUrl).build())
+        .contract(contract)
+        .errorHandler(errorHandler)
         .build(target);
   }
 
@@ -41,9 +51,9 @@ public class ReactiveApiClient extends ApiClient {
 
     private WebClient webClient;
 
-    private FunctionBundle functionBundle;
+    private ReactiveContract contract;
 
-    private ErrorFunctionBundle errorFunctionBundle;
+    private ReactiveErrorHandler errorHandler;
 
     /**
      * Sets the web client with the base url.
@@ -56,13 +66,13 @@ public class ReactiveApiClient extends ApiClient {
       return this;
     }
 
-    public Builder functionBundle(FunctionBundle functionBundle) {
-      this.functionBundle = functionBundle;
+    public Builder contract(ReactiveContract functionBundle) {
+      this.contract = functionBundle;
       return this;
     }
 
-    public Builder errorFunctionBundle(ErrorFunctionBundle errorFunctionBundle) {
-      this.errorFunctionBundle = errorFunctionBundle;
+    public Builder errorHandler(ReactiveErrorHandler errorFunctionBundle) {
+      this.errorHandler = errorFunctionBundle;
       return this;
     }
 
@@ -78,8 +88,8 @@ public class ReactiveApiClient extends ApiClient {
       InvocationHandler handler = new ReactiveInvocationHandler(
           target,
           webClient,
-          functionBundle,
-          errorFunctionBundle);
+          contract,
+          errorHandler);
       //noinspection unchecked
       return (T) Proxy.newProxyInstance(target.getClassLoader(), new Class<?>[]{target}, handler);
     }

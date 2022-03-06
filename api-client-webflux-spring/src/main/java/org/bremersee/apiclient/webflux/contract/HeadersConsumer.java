@@ -5,32 +5,39 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
-import lombok.Builder;
-import lombok.NonNull;
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import org.bremersee.apiclient.webflux.Invocation;
+import org.immutables.value.Value;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.util.MultiValueMap;
 
-@Builder(toBuilder = true)
-public class HeadersConsumer implements BiConsumer<Invocation, HttpHeaders> {
+@Value.Immutable
+@Valid
+public interface HeadersConsumer extends BiConsumer<Invocation, HttpHeaders> {
 
-  @NonNull
-  private Function<Invocation, Optional<MediaType>> contentTypeResolver;
+  static ImmutableHeadersConsumer.Builder builder() {
+    return ImmutableHeadersConsumer.builder();
+  }
 
-  @NonNull
-  private Function<Invocation, MediaType> acceptResolver;
+  @NotNull
+  Function<Invocation, Optional<MediaType>> getContentTypeResolver();
 
-  @NonNull
-  private Function<Invocation, MultiValueMap<String, String>> headersResolver;
+  @NotNull
+  Function<Invocation, MediaType> getAcceptResolver();
+
+  @NotNull
+  Function<Invocation, MultiValueMap<String, String>> getHeadersResolver();
 
   @Override
-  public void accept(Invocation invocation, HttpHeaders httpHeaders) {
-    contentTypeResolver.apply(invocation)
+  default void accept(Invocation invocation, HttpHeaders httpHeaders) {
+    getContentTypeResolver().apply(invocation)
         .ifPresent(httpHeaders::setContentType);
     List<MediaType> accepts = new ArrayList<>();
-    accepts.add(acceptResolver.apply(invocation));
+    accepts.add(getAcceptResolver().apply(invocation));
     httpHeaders.setAccept(accepts);
-    httpHeaders.addAll(headersResolver.apply(invocation));
+    httpHeaders.addAll(getHeadersResolver().apply(invocation));
   }
 
 }
