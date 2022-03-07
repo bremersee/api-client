@@ -4,8 +4,8 @@ import java.lang.reflect.Method;
 import java.util.Optional;
 import org.bremersee.apiclient.webflux.InvocationParameter;
 import org.reactivestreams.Publisher;
+import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.ResolvableType;
-import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient.RequestBodyUriSpec;
 import org.springframework.web.reactive.function.client.WebClient.RequestHeadersUriSpec;
 
@@ -22,18 +22,19 @@ public class PublisherInserter extends SingleBodyInserter<InvocationParameter> {
   }
 
   @Override
-  protected RequestHeadersUriSpec<?> insert(InvocationParameter invocationParameter,
+  protected RequestHeadersUriSpec<?> insert(
+      InvocationParameter invocationParameter,
       RequestBodyUriSpec requestBodyUriSpec) {
+
     Method method = invocationParameter.getMethod();
     int index = invocationParameter.getIndex();
-    Class<?> cls = Optional.of(ResolvableType.forMethodParameter(method, index))
+    //noinspection rawtypes
+    return Optional.of(ResolvableType.forMethodParameter(method, index))
         .filter(ResolvableType::hasGenerics)
         .map(resolvableType -> resolvableType.resolveGeneric(0))
-        .orElse((Class) Object.class);
-    Publisher<?> publisher = (Publisher<?>) invocationParameter.getValue();
-    //noinspection rawtypes
-    return (RequestHeadersUriSpec) requestBodyUriSpec
-        .body(BodyInserters.fromPublisher(publisher, (Class) cls));
+        .map(ParameterizedTypeReference::forType)
+        .map(ref -> (RequestHeadersUriSpec) requestBodyUriSpec.body(invocationParameter.getValue(), ref))
+        .orElse(requestBodyUriSpec);
   }
 
 }
