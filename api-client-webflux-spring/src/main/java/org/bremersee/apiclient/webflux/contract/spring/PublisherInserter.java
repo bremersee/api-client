@@ -1,7 +1,5 @@
 package org.bremersee.apiclient.webflux.contract.spring;
 
-import static java.util.Objects.nonNull;
-
 import java.lang.reflect.Method;
 import java.util.Optional;
 import org.bremersee.apiclient.webflux.InvocationParameter;
@@ -18,12 +16,14 @@ public class PublisherInserter extends SingleBodyInserter<InvocationParameter> {
     return invocationParameter.getValue() instanceof Publisher;
   }
 
+  @Override
   protected InvocationParameter mapBody(InvocationParameter invocationParameter) {
     return invocationParameter;
   }
 
   @Override
-  protected RequestHeadersUriSpec<?> insert(InvocationParameter invocationParameter, RequestBodyUriSpec requestBodyUriSpec) {
+  protected RequestHeadersUriSpec<?> insert(InvocationParameter invocationParameter,
+      RequestBodyUriSpec requestBodyUriSpec) {
     Method method = invocationParameter.getMethod();
     int index = invocationParameter.getIndex();
     Class<?> cls = Optional.of(ResolvableType.forMethodParameter(method, index))
