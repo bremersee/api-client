@@ -3,13 +3,14 @@ package org.bremersee.apiclient.webflux;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.bremersee.apiclient.webflux.app.MultipartDataController;
 import org.bremersee.apiclient.webflux.app.TestConfiguration;
 import org.bremersee.apiclient.webflux.contract.spring.ReactiveSpringContract;
 import org.bremersee.apiclient.webflux.contract.spring.multipart.PartBuilder;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -54,6 +55,11 @@ class MultipartDataControllerIntegrationTest {
       FORM_FIELD_NAME, FORM_FIELD_VALUE,
       FILE_PART_NAME, FILE_PART_CONTENT
   );
+
+  private static Map<String, Object> trim(Map<String, Object> response) {
+    return response.entrySet().stream()
+        .collect(Collectors.toMap(Entry::getKey, e -> String.valueOf(e.getValue()).trim()));
+  }
 
   @LocalServerPort
   int port;
@@ -129,16 +135,14 @@ class MultipartDataControllerIntegrationTest {
             .body(BodyInserters.fromMultipartData(builder.build()))
             .retrieve()
             .bodyToMono(new MapRef()))
-        .assertNext(response -> assertThat(response)
+        .assertNext(response -> assertThat(trim(response))
             .containsExactlyInAnyOrderEntriesOf(EXPECTED))
         .expectNextCount(0)
         .verifyComplete();
   }
 
-  @Disabled
   @Test
   void postMonoMultipartDataMap() {
-    // TODO fails
     MultiValueMap<String, Part> partMap = new LinkedMultiValueMap<>();
     partMap.add(
         FORM_FIELD_NAME,
@@ -148,7 +152,7 @@ class MultipartDataControllerIntegrationTest {
         PartBuilder.part(FILE_PART_NAME, new ClassPathResource(FILE_PART_RESOURCE)).build());
 
     StepVerifier.create(apiClient.postMonoMultipartDataMap(Mono.just(partMap)))
-        .assertNext(response -> assertThat(response)
+        .assertNext(response -> assertThat(trim(response))
             .containsExactlyInAnyOrderEntriesOf(EXPECTED))
         .expectNextCount(0)
         .verifyComplete();
@@ -167,20 +171,19 @@ class MultipartDataControllerIntegrationTest {
             .body(BodyInserters.fromMultipartData(builder.build()))
             .retrieve()
             .bodyToMono(new MapRef()))
-        .assertNext(response -> assertThat(response)
+        .assertNext(response -> assertThat(trim(response))
             .containsExactlyInAnyOrderEntriesOf(EXPECTED))
         .expectNextCount(0)
         .verifyComplete();
   }
 
-  @Disabled
   @Test
   void postParts() {
     Part stringPart = PartBuilder.part(FORM_FIELD_NAME, FORM_FIELD_VALUE).contentType(MediaType.TEXT_PLAIN).build();
     Part resourcePart = PartBuilder.part(FILE_PART_NAME, new ClassPathResource(FILE_PART_RESOURCE)).build();
 
     StepVerifier.create(apiClient.postParts(stringPart, resourcePart))
-        .assertNext(response -> assertThat(response)
+        .assertNext(response -> assertThat(trim(response))
             .containsExactlyInAnyOrderEntriesOf(EXPECTED))
         .expectNextCount(0)
         .verifyComplete();
@@ -199,7 +202,19 @@ class MultipartDataControllerIntegrationTest {
             .body(BodyInserters.fromMultipartData(builder.build()))
             .retrieve()
             .bodyToMono(new MapRef()))
-        .assertNext(response -> assertThat(response)
+        .assertNext(response -> assertThat(trim(response))
+            .containsExactlyInAnyOrderEntriesOf(EXPECTED))
+        .expectNextCount(0)
+        .verifyComplete();
+  }
+
+  @Test
+  void postMonoParts() {
+    Part stringPart = PartBuilder.part(FORM_FIELD_NAME, FORM_FIELD_VALUE).contentType(MediaType.TEXT_PLAIN).build();
+    Part resourcePart = PartBuilder.part(FILE_PART_NAME, new ClassPathResource(FILE_PART_RESOURCE)).build();
+
+    StepVerifier.create(apiClient.postMonoParts(Mono.just(stringPart), Mono.just(resourcePart)))
+        .assertNext(response -> assertThat(trim(response))
             .containsExactlyInAnyOrderEntriesOf(EXPECTED))
         .expectNextCount(0)
         .verifyComplete();
@@ -218,7 +233,7 @@ class MultipartDataControllerIntegrationTest {
             .body(BodyInserters.fromMultipartData(builder.build()))
             .retrieve()
             .bodyToMono(new MapRef()))
-        .assertNext(response -> assertThat(response)
+        .assertNext(response -> assertThat(trim(response))
             .containsExactlyInAnyOrderEntriesOf(EXPECTED))
         .expectNextCount(0)
         .verifyComplete();
@@ -240,7 +255,7 @@ class MultipartDataControllerIntegrationTest {
                 }))
             .retrieve()
             .bodyToMono(new MapRef()))
-        .assertNext(response -> assertThat(response)
+        .assertNext(response -> assertThat(trim(response))
             .containsExactlyInAnyOrderEntriesOf(EXPECTED))
         .expectNextCount(0)
         .verifyComplete();
@@ -258,7 +273,7 @@ class MultipartDataControllerIntegrationTest {
             .body(BodyInserters.fromMultipartData(builder.build()))
             .retrieve()
             .bodyToMono(new MapRef()))
-        .assertNext(response -> assertThat(response)
+        .assertNext(response -> assertThat(trim(response))
             .containsExactlyInAnyOrderEntriesOf(Map.of("parts", FILE_PART_CONTENT)))
         .expectNextCount(0)
         .verifyComplete();
