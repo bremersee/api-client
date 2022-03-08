@@ -294,7 +294,8 @@ class MultipartDataControllerIntegrationTest {
     Part stringPart = partBuilder.part(FORM_FIELD_NAME, FORM_FIELD_VALUE).contentType(MediaType.TEXT_PLAIN).build();
     Part resourcePart = partBuilder.part(FILE_PART_NAME, new ClassPathResource(FILE_PART_RESOURCE)).build();
 
-    StepVerifier.create(apiClient.postMonoParts(Mono.just(stringPart), Mono.just(resourcePart)))
+    StepVerifier.create(apiClient
+            .postMonoParts(Mono.just(stringPart), Mono.just(resourcePart), Mono.empty(), Mono.empty()))
         .assertNext(response -> assertThat(response)
             .containsExactlyInAnyOrderEntriesOf(expected()))
         .expectNextCount(0)

@@ -11,6 +11,7 @@ import org.springframework.core.io.buffer.DataBufferUtils;
 import org.springframework.http.MediaType;
 import org.springframework.http.codec.multipart.Part;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
@@ -74,8 +75,10 @@ public class MultipartDataControllerImpl implements MultipartDataController {
   @Override
   public Mono<Map<String, Object>> postMonoParts(
       Mono<Part> stringPart,
-      Mono<Part> resourcePart) {
-    return Flux.concat(stringPart, resourcePart)
+      Mono<Part> resourcePart,
+      Mono<Part> dataBufferPart,
+      Mono<Part> filePart) {
+    return Flux.concat(stringPart, resourcePart, dataBufferPart, filePart)
         .flatMap(part -> content(part).map(str -> Tuples.of(part.name(), str)))
         .collectMap(Tuple2::getT1, Tuple2::getT2);
   }

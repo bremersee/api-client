@@ -40,7 +40,9 @@ public interface MultipartDataController {
       produces = MediaType.APPLICATION_JSON_VALUE)
   Mono<Map<String, Object>> postMonoParts(
       @RequestPart(name = "string") Mono<Part> stringPart,
-      @RequestPart(name = "resource") Mono<Part> resourcePart);
+      @RequestPart(name = "resource") Mono<Part> resourcePart,
+      @RequestPart(name = "buf", required = false) Mono<Part> dataBufferPart,
+      @RequestPart(name = "files", required = false) Mono<Part> filePart);
 
   @PostMapping(
       path = "/api/multipart/flux-parts",
