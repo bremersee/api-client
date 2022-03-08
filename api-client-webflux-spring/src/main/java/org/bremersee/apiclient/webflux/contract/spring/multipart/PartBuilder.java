@@ -14,96 +14,103 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.codec.multipart.FormFieldPart;
 import org.springframework.http.codec.multipart.Part;
+import org.springframework.util.Assert;
 import reactor.core.publisher.Flux;
 import reactor.core.scheduler.Scheduler;
 import reactor.core.scheduler.Schedulers;
 
-public abstract class PartBuilder<T extends Part> {
+public class PartBuilder {
 
-  private DataBufferFactory dataBufferFactory = new DefaultDataBufferFactory();
-
-  private int bufferSize = 1024;
-
-  private final HttpHeaders headers = new HttpHeaders();
-
-  protected PartBuilder() {
+  public PartBuilder() {
   }
 
-  // TODO statt static part builder nur mit build methoden, die dann den eigentlichen builder zurück geben
-  public static FormFieldPartBuilder part(String name, String value) {
+  public FormFieldPartBuilder part(String name, String value) {
     return new FormFieldPartBuilder(name, value);
   }
 
-  public static FilePartBuilder part(String name, Path file) {
+  public FilePartBuilder part(String name, Path file) {
     return new FilePartBuilder(name, file);
   }
 
-  public static ResourcePartBuilder part(String name, Resource resource) {
+  public ResourcePartBuilder part(String name, Resource resource) {
     return new ResourcePartBuilder(name, resource);
   }
 
-  public static DataBufferPartBuilder part(String name, Flux<DataBuffer> content) {
+  public DataBufferPartBuilder part(String name, Flux<DataBuffer> content) {
     return new DataBufferPartBuilder(name, content);
   }
 
-  public static DataBufferPartBuilder part(String name, String filename, Flux<DataBuffer> content) {
+  public DataBufferPartBuilder part(String name, String filename, Flux<DataBuffer> content) {
     return new DataBufferPartBuilder(name, filename, content);
   }
 
-  protected DataBufferFactory getDataBufferFactory() {
-    return dataBufferFactory;
-  }
+  public static abstract class AbstractPartBuilder<T extends Part> {
 
-  protected int getBufferSize() {
-    return bufferSize;
-  }
+    private DataBufferFactory dataBufferFactory = new DefaultDataBufferFactory();
 
-  protected HttpHeaders getHeaders() {
-    return headers;
-  }
+    private int bufferSize = 1024;
 
-  public PartBuilder<T> withDataBufferFactory(DataBufferFactory dataBufferFactory) {
-    if (!isEmpty(dataBufferFactory)) {
-      this.dataBufferFactory = dataBufferFactory;
+    private final HttpHeaders headers = new HttpHeaders();
+
+    protected AbstractPartBuilder() {
     }
-    return this;
-  }
 
-  public PartBuilder<T> withBufferSize(int bufferSize) {
-    if (bufferSize > 0) {
-      this.bufferSize = bufferSize;
+    protected DataBufferFactory getDataBufferFactory() {
+      return dataBufferFactory;
     }
-    return this;
-  }
 
-  public PartBuilder<T> contentType(MediaType contentType) {
-    if (!isEmpty(contentType)) {
-      headers.setContentType(contentType);
+    protected int getBufferSize() {
+      return bufferSize;
     }
-    return this;
-  }
 
-  public PartBuilder<T> header(String headerName, String... headerValues) {
-    if (!isEmpty(headerName) && !isEmpty(headerValues)) {
-      headers.addAll(headerName, Arrays.asList(headerValues));
+    protected HttpHeaders getHeaders() {
+      return headers;
     }
-    return this;
-  }
 
-  public PartBuilder<T> headers(Consumer<HttpHeaders> headersConsumer) {
-    if (!isEmpty(headersConsumer)) {
-      headersConsumer.accept(headers);
+    public AbstractPartBuilder<T> withDataBufferFactory(DataBufferFactory dataBufferFactory) {
+      if (!isEmpty(dataBufferFactory)) {
+        this.dataBufferFactory = dataBufferFactory;
+      }
+      return this;
     }
-    return this;
+
+    public AbstractPartBuilder<T> withBufferSize(int bufferSize) {
+      if (bufferSize > 0) {
+        this.bufferSize = bufferSize;
+      }
+      return this;
+    }
+
+    public AbstractPartBuilder<T> contentType(MediaType contentType) {
+      if (!isEmpty(contentType)) {
+        headers.setContentType(contentType);
+      }
+      return this;
+    }
+
+    public AbstractPartBuilder<T> header(String headerName, String... headerValues) {
+      if (!isEmpty(headerName) && !isEmpty(headerValues)) {
+        headers.addAll(headerName, Arrays.asList(headerValues));
+      }
+      return this;
+    }
+
+    public AbstractPartBuilder<T> headers(Consumer<HttpHeaders> headersConsumer) {
+      if (!isEmpty(headersConsumer)) {
+        headersConsumer.accept(headers);
+      }
+      return this;
+    }
+
+    public abstract T build();
   }
 
-  public abstract T build();
-
-  public static class FormFieldPartBuilder extends PartBuilder<FormFieldPart> {
+  public static class FormFieldPartBuilder extends AbstractPartBuilder<FormFieldPart> {
 
     private final String value;
 
     public FormFieldPartBuilder(String name, String value) {
+      Assert.hasText(name, "Name must be present.");
       getHeaders().setContentDispositionFormData(name, null);
       this.value = value;
     }
@@ -114,9 +121,9 @@ public abstract class PartBuilder<T extends Part> {
     }
   }
 
-  public static abstract class AbstractPartBuilder extends PartBuilder<Part> {
+  public static abstract class AbstractFilePartBuilder extends AbstractPartBuilder<Part> {
 
-    public AbstractPartBuilder filename(String filename) {
+    public AbstractFilePartBuilder filename(String filename) {
       if (!isEmpty(filename) && !isEmpty(getHeaders().getContentDisposition())) {
         String name = getHeaders().getContentDisposition().getName();
         if (!isEmpty(name)) {
@@ -125,16 +132,17 @@ public abstract class PartBuilder<T extends Part> {
       }
       return this;
     }
-
   }
 
-  public static class FilePartBuilder extends AbstractPartBuilder {
+  public static class FilePartBuilder extends AbstractFilePartBuilder {
 
     private Scheduler blockingOperationScheduler = Schedulers.boundedElastic();
 
     private final Path file;
 
     public FilePartBuilder(String name, Path file) {
+      Assert.hasText(name, "Name must be present.");
+      Assert.notNull(file, "File must be present.");
       this.file = file;
       getHeaders().setContentDispositionFormData(name, String.valueOf(file.getFileName()));
     }
@@ -152,11 +160,13 @@ public abstract class PartBuilder<T extends Part> {
     }
   }
 
-  public static class ResourcePartBuilder extends AbstractPartBuilder {
+  public static class ResourcePartBuilder extends AbstractFilePartBuilder {
 
     private final Resource resource;
 
     public ResourcePartBuilder(String name, Resource resource) {
+      Assert.hasText(name, "Name must be present.");
+      Assert.notNull(resource, "Resource must be present.");
       this.resource = resource;
       getHeaders().setContentDispositionFormData(name, resource.getFilename());
     }
@@ -167,7 +177,7 @@ public abstract class PartBuilder<T extends Part> {
     }
   }
 
-  public static class DataBufferPartBuilder extends AbstractPartBuilder {
+  public static class DataBufferPartBuilder extends AbstractFilePartBuilder {
 
     private final Flux<DataBuffer> content;
 
@@ -176,6 +186,8 @@ public abstract class PartBuilder<T extends Part> {
     }
 
     public DataBufferPartBuilder(String name, String filename, Flux<DataBuffer> content) {
+      Assert.hasText(name, "Name must be present.");
+      Assert.notNull(content, "Content must be present.");
       this.content = content;
       getHeaders().setContentDispositionFormData(name, filename);
     }

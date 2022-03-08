@@ -69,6 +69,17 @@ class MultipartDataControllerIntegrationTest {
 
   private static final String REAL_FILES_PART_NAME = "files";
 
+  final PartBuilder partBuilder = new PartBuilder();
+
+  Path tmpFile;
+
+  @LocalServerPort
+  int port;
+
+  WebClient webClient;
+
+  MultipartDataController apiClient;
+
   private static Map<String, Object> expected() {
     return expected(null, null);
   }
@@ -100,15 +111,6 @@ class MultipartDataControllerIntegrationTest {
   private Flux<DataBuffer> toDataBuffer(byte[] bytes, int bufferSize) {
     return DataBufferUtils.read(new ByteArrayResource(bytes), new DefaultDataBufferFactory(), bufferSize);
   }
-
-  Path tmpFile;
-
-  @LocalServerPort
-  int port;
-
-  WebClient webClient;
-
-  MultipartDataController apiClient;
 
   String baseUrl() {
     return "http://localhost:" + port;
@@ -174,15 +176,15 @@ class MultipartDataControllerIntegrationTest {
     MultiValueMap<String, Part> partMap = new LinkedMultiValueMap<>();
     partMap.add(
         FORM_FIELD_NAME,
-        PartBuilder.part(FORM_FIELD_NAME, FORM_FIELD_VALUE).contentType(MediaType.TEXT_PLAIN).build());
+        partBuilder.part(FORM_FIELD_NAME, FORM_FIELD_VALUE).contentType(MediaType.TEXT_PLAIN).build());
     partMap.add(
         FILE_PART_NAME,
-        PartBuilder.part(FILE_PART_NAME, new ClassPathResource(FILE_PART_RESOURCE)).build());
+        partBuilder.part(FILE_PART_NAME, new ClassPathResource(FILE_PART_RESOURCE)).build());
 
     byte[] dataBuf = randomBytes(16 * 1024 + 8);
     partMap.add(
         DATA_BUFFER_PART_NAME,
-        PartBuilder.part(DATA_BUFFER_PART_NAME, toDataBuffer(dataBuf, 256))
+        partBuilder.part(DATA_BUFFER_PART_NAME, toDataBuffer(dataBuf, 256))
             .contentType(MediaType.APPLICATION_OCTET_STREAM)
             .build());
 
@@ -190,7 +192,7 @@ class MultipartDataControllerIntegrationTest {
     writeToTmpFile(fileBytes);
     partMap.add(
         REAL_FILES_PART_NAME,
-        PartBuilder.part(REAL_FILES_PART_NAME, tmpFile)
+        partBuilder.part(REAL_FILES_PART_NAME, tmpFile)
             .contentType(MediaType.APPLICATION_OCTET_STREAM)
             .build());
 
@@ -225,10 +227,10 @@ class MultipartDataControllerIntegrationTest {
     MultiValueMap<String, Part> partMap = new LinkedMultiValueMap<>();
     partMap.add(
         FORM_FIELD_NAME,
-        PartBuilder.part(FORM_FIELD_NAME, FORM_FIELD_VALUE).contentType(MediaType.TEXT_PLAIN).build());
+        partBuilder.part(FORM_FIELD_NAME, FORM_FIELD_VALUE).contentType(MediaType.TEXT_PLAIN).build());
     partMap.add(
         FILE_PART_NAME,
-        PartBuilder.part(FILE_PART_NAME, new ClassPathResource(FILE_PART_RESOURCE)).build());
+        partBuilder.part(FILE_PART_NAME, new ClassPathResource(FILE_PART_RESOURCE)).build());
 
     StepVerifier.create(apiClient.postMonoMultipartDataMap(Mono.just(partMap)))
         .assertNext(response -> assertThat(response)
@@ -258,10 +260,10 @@ class MultipartDataControllerIntegrationTest {
 
   @Test
   void postParts() {
-    Part stringPart = PartBuilder.part(FORM_FIELD_NAME, FORM_FIELD_VALUE).contentType(MediaType.TEXT_PLAIN).build();
-    Part resourcePart = PartBuilder.part(FILE_PART_NAME, new ClassPathResource(FILE_PART_RESOURCE)).build();
+    Part stringPart = partBuilder.part(FORM_FIELD_NAME, FORM_FIELD_VALUE).contentType(MediaType.TEXT_PLAIN).build();
+    Part resourcePart = partBuilder.part(FILE_PART_NAME, new ClassPathResource(FILE_PART_RESOURCE)).build();
 
-    StepVerifier.create(apiClient.postParts(stringPart, resourcePart))
+    StepVerifier.create(apiClient.postParts(stringPart, resourcePart, null, null))
         .assertNext(response -> assertThat(response)
             .containsExactlyInAnyOrderEntriesOf(expected()))
         .expectNextCount(0)
@@ -289,8 +291,8 @@ class MultipartDataControllerIntegrationTest {
 
   @Test
   void postMonoParts() {
-    Part stringPart = PartBuilder.part(FORM_FIELD_NAME, FORM_FIELD_VALUE).contentType(MediaType.TEXT_PLAIN).build();
-    Part resourcePart = PartBuilder.part(FILE_PART_NAME, new ClassPathResource(FILE_PART_RESOURCE)).build();
+    Part stringPart = partBuilder.part(FORM_FIELD_NAME, FORM_FIELD_VALUE).contentType(MediaType.TEXT_PLAIN).build();
+    Part resourcePart = partBuilder.part(FILE_PART_NAME, new ClassPathResource(FILE_PART_RESOURCE)).build();
 
     StepVerifier.create(apiClient.postMonoParts(Mono.just(stringPart), Mono.just(resourcePart)))
         .assertNext(response -> assertThat(response)

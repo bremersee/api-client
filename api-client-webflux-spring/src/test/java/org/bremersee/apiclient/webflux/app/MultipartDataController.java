@@ -30,7 +30,9 @@ public interface MultipartDataController {
       produces = MediaType.APPLICATION_JSON_VALUE)
   Mono<Map<String, Object>> postParts(
       @RequestPart(name = "string") Part stringPart,
-      @RequestPart(name = "resource") Part resourcePart);
+      @RequestPart(name = "resource") Part resourcePart,
+      @RequestPart(name = "buf", required = false) Part dataBufferPart,
+      @RequestPart(name = "files", required = false) Part filePart);
 
   @PostMapping(
       path = "/api/multipart/mono-parts",

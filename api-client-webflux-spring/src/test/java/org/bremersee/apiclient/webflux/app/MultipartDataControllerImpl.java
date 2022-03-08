@@ -3,9 +3,10 @@ package org.bremersee.apiclient.webflux.app;
 import static java.util.Objects.nonNull;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.List;
 import java.util.Map;
-import java.util.stream.Stream;
 import org.springframework.core.io.buffer.DataBufferUtils;
 import org.springframework.http.MediaType;
 import org.springframework.http.codec.multipart.Part;
@@ -28,8 +29,7 @@ public class MultipartDataControllerImpl implements MultipartDataController {
           return bytes;
         })
         .map(bytes -> {
-          if (nonNull(part.headers().getContentType())
-              && part.headers().getContentType().isCompatibleWith(MediaType.APPLICATION_OCTET_STREAM)) {
+          if (MediaType.APPLICATION_OCTET_STREAM.isCompatibleWith(part.headers().getContentType())) {
             return Base64.getEncoder().encodeToString(bytes);
           }
           return new String(bytes, StandardCharsets.UTF_8).trim();
@@ -53,8 +53,20 @@ public class MultipartDataControllerImpl implements MultipartDataController {
   @Override
   public Mono<Map<String, Object>> postParts(
       Part stringPart,
-      Part resourcePart) {
-    return Flux.fromStream(Stream.of(stringPart, resourcePart))
+      Part resourcePart,
+      Part dataBufferPart,
+      Part filePart) {
+
+    List<Part> parts = new ArrayList<>();
+    parts.add(stringPart);
+    parts.add(resourcePart);
+    if (nonNull(dataBufferPart)) {
+      parts.add(dataBufferPart);
+    }
+    if (nonNull(filePart)) {
+      parts.add(filePart);
+    }
+    return Flux.fromStream(parts.stream())
         .flatMap(part -> content(part).map(str -> Tuples.of(part.name(), str)))
         .collectMap(Tuple2::getT1, Tuple2::getT2);
   }
