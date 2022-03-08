@@ -13,7 +13,7 @@ import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient.RequestBodyUriSpec;
 import org.springframework.web.reactive.function.client.WebClient.RequestHeadersUriSpec;
 
-public class FormDataInserter extends SingleBodyInserter<MultiValueMap<String, String>> {
+public class FormDataInserter extends SingleBodyInserter<MultiValueMap<String, ?>> {
 
   private ContentTypeResolver contentTypeResolver = new ContentTypeResolver();
 
@@ -36,9 +36,9 @@ public class FormDataInserter extends SingleBodyInserter<MultiValueMap<String, S
   }
 
   @Override
-  protected MultiValueMap<String, String> mapBody(InvocationParameter invocationParameter) {
+  protected MultiValueMap<String, ?> mapBody(InvocationParameter invocationParameter) {
     //noinspection unchecked
-    return (MultiValueMap<String, String>) invocationParameter.getValue();
+    return (MultiValueMap<String, ?>) invocationParameter.getValue();
   }
 
   @Override
@@ -51,24 +51,19 @@ public class FormDataInserter extends SingleBodyInserter<MultiValueMap<String, S
     int index = invocationParameter.getIndex();
     return Optional.of(ResolvableType.forMethodParameter(method, index))
         .filter(resolvableType -> resolvableType.getGenerics().length >= 2)
-        .filter(resolvableType -> {
-          Class<?> resolvedGeneric0 = resolvableType.resolveGeneric(0);
-          Class<?> resolvedGeneric1 = resolvableType.resolveGeneric(1);
-          return nonNull(resolvedGeneric0)
-              && nonNull(resolvedGeneric1)
-              && String.class.isAssignableFrom(resolvedGeneric0)
-              && String.class.isAssignableFrom(resolvedGeneric1);
-        })
+        .map(resolvableType -> resolvableType.resolveGeneric(0))
+        .filter(String.class::isAssignableFrom)
         .isPresent();
   }
 
   @Override
   protected RequestHeadersUriSpec<?> insert(
-      MultiValueMap<String, String> body,
+      MultiValueMap<String, ?> body,
       RequestBodyUriSpec requestBodyUriSpec) {
 
-    //noinspection rawtypes
-    return (RequestHeadersUriSpec) requestBodyUriSpec.body(BodyInserters.fromFormData(body));
+    //noinspection rawtypes,unchecked
+    return (RequestHeadersUriSpec) requestBodyUriSpec
+        .body(BodyInserters.fromFormData((MultiValueMap<String, String>) body));
   }
 
 }
