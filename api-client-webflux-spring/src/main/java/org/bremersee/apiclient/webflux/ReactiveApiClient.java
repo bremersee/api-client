@@ -16,14 +16,6 @@ public class ReactiveApiClient extends ApiClient {
 
   private final ReactiveErrorHandler errorHandler;
 
-  public ReactiveApiClient() {
-    this(null);
-  }
-
-  public ReactiveApiClient(WebClient.Builder webClientBuilder) {
-    this(webClientBuilder, null);
-  }
-
   public ReactiveApiClient(
       WebClient.Builder webClientBuilder,
       ReactiveContract contract) {

@@ -6,6 +6,7 @@ import java.util.LinkedHashMap;
 import lombok.extern.slf4j.Slf4j;
 import org.bremersee.apiclient.webflux.app.FormDataController;
 import org.bremersee.apiclient.webflux.app.TestConfiguration;
+import org.bremersee.apiclient.webflux.contract.spring.ReactiveSpringContract;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
@@ -40,11 +41,8 @@ class FormDataIntegrationTest {
 
   @BeforeEach
   void init() {
-    apiClient = ReactiveApiClient.builder()
-        .webClient(WebClient.builder()
-            .baseUrl(baseUrl())
-            .build())
-        .build(FormDataController.class);
+    apiClient = new ReactiveApiClient(WebClient.builder(), new ReactiveSpringContract())
+        .newInstance(FormDataController.class, baseUrl());
   }
 
   @Test

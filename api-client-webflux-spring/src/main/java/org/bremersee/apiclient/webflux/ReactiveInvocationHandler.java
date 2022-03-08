@@ -16,12 +16,11 @@
 
 package org.bremersee.apiclient.webflux;
 
-import static java.util.Objects.isNull;
+import static java.util.Objects.nonNull;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import lombok.extern.slf4j.Slf4j;
-import org.bremersee.apiclient.webflux.contract.spring.ReactiveSpringContract;
 import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -35,7 +34,7 @@ import org.springframework.web.reactive.function.client.WebClient.ResponseSpec;
  * @author Christian Bremer
  */
 @Slf4j
-public class ReactiveInvocationHandler implements InvocationHandler {
+class ReactiveInvocationHandler implements InvocationHandler {
 
   private final Class<?> targetClass;
 
@@ -45,7 +44,7 @@ public class ReactiveInvocationHandler implements InvocationHandler {
 
   private final ReactiveErrorHandler errorHandler;
 
-  public ReactiveInvocationHandler(
+  ReactiveInvocationHandler(
       Class<?> targetClass,
       WebClient webClient,
       ReactiveContract contract,
@@ -53,14 +52,11 @@ public class ReactiveInvocationHandler implements InvocationHandler {
 
     Assert.notNull(targetClass, "Target class must be present.");
     Assert.notNull(webClient, "Web client must be present.");
+    Assert.notNull(contract, "Contract must be present.");
     this.targetClass = targetClass;
     this.webClient = webClient;
-    this.contract = isNull(contract)
-        ? new ReactiveSpringContract()
-        : contract;
-    this.errorHandler = isNull(errorHandler)
-        ? ReactiveErrorHandler.builder().build()
-        : errorHandler;
+    this.contract = contract;
+    this.errorHandler = errorHandler;
   }
 
   @SuppressWarnings("SuspiciousInvocationHandlerImplementation")
@@ -92,8 +88,12 @@ public class ReactiveInvocationHandler implements InvocationHandler {
           .apply(invocation, (RequestBodyUriSpec) uriSpec);
     }
     ResponseSpec responseSpec = uriSpec.retrieve();
-    responseSpec = responseSpec
-        .onStatus(errorHandler.getErrorPredicate(), errorHandler.getErrorFunction());
+    if (nonNull(errorHandler)
+        && nonNull(errorHandler.getErrorPredicate())
+        && nonNull(errorHandler.getErrorFunction())) {
+      responseSpec = responseSpec
+          .onStatus(errorHandler.getErrorPredicate(), errorHandler.getErrorFunction());
+    }
     return contract
         .getResponseFunction()
         .apply(invocation, responseSpec);
