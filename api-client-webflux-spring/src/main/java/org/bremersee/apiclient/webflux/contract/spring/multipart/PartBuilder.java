@@ -52,7 +52,7 @@ public class PartBuilder {
 
     private final HttpHeaders headers = new HttpHeaders();
 
-    protected AbstractPartBuilder() {
+    AbstractPartBuilder() {
     }
 
     protected DataBufferFactory getDataBufferFactory() {
@@ -109,7 +109,7 @@ public class PartBuilder {
 
     private final String value;
 
-    public FormFieldPartBuilder(String name, String value) {
+    FormFieldPartBuilder(String name, String value) {
       Assert.hasText(name, "Name must be present.");
       getHeaders().setContentDispositionFormData(name, null);
       this.value = value;
@@ -122,6 +122,9 @@ public class PartBuilder {
   }
 
   public static abstract class AbstractFilePartBuilder extends AbstractPartBuilder<Part> {
+
+    AbstractFilePartBuilder() {
+    }
 
     public AbstractFilePartBuilder filename(String filename) {
       if (!isEmpty(filename) && !isEmpty(getHeaders().getContentDisposition())) {
@@ -140,7 +143,7 @@ public class PartBuilder {
 
     private final Path file;
 
-    public FilePartBuilder(String name, Path file) {
+    FilePartBuilder(String name, Path file) {
       Assert.hasText(name, "Name must be present.");
       Assert.notNull(file, "File must be present.");
       this.file = file;
@@ -164,7 +167,7 @@ public class PartBuilder {
 
     private final Resource resource;
 
-    public ResourcePartBuilder(String name, Resource resource) {
+    ResourcePartBuilder(String name, Resource resource) {
       Assert.hasText(name, "Name must be present.");
       Assert.notNull(resource, "Resource must be present.");
       this.resource = resource;
@@ -181,11 +184,11 @@ public class PartBuilder {
 
     private final Flux<DataBuffer> content;
 
-    public DataBufferPartBuilder(String name, Flux<DataBuffer> content) {
+    DataBufferPartBuilder(String name, Flux<DataBuffer> content) {
       this(name, null, content);
     }
 
-    public DataBufferPartBuilder(String name, String filename, Flux<DataBuffer> content) {
+    DataBufferPartBuilder(String name, String filename, Flux<DataBuffer> content) {
       Assert.hasText(name, "Name must be present.");
       Assert.notNull(content, "Content must be present.");
       this.content = content;
