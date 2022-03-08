@@ -1,5 +1,6 @@
 package org.bremersee.apiclient.webflux.contract;
 
+import static java.util.Objects.nonNull;
 import static org.springframework.core.GenericTypeResolver.resolveReturnTypeArgument;
 
 import java.lang.reflect.Method;
@@ -19,14 +20,22 @@ public class ResponseFunction implements BiFunction<Invocation, ResponseSpec, Pu
     Method method = invocation.getMethod();
     Class<?> responseClass = method.getReturnType();
     if (Mono.class.isAssignableFrom(responseClass)) {
-      Class<?> typeClass = resolveReturnTypeArgument(method, Mono.class);
-      //noinspection ConstantConditions
-      return responseSpec.bodyToMono(typeClass);
+      Class<?> typeClass = resolveReturnTypeArgument(method, responseClass);
+      return nonNull(typeClass)
+          ? responseSpec.bodyToMono(typeClass)
+          : responseSpec.bodyToMono(responseClass);
     }
     if (Flux.class.isAssignableFrom(responseClass)) {
-      Class<?> typeClass = resolveReturnTypeArgument(method, Flux.class);
-      //noinspection ConstantConditions
-      return responseSpec.bodyToFlux(typeClass);
+      Class<?> typeClass = resolveReturnTypeArgument(method, responseClass);
+      return nonNull(typeClass)
+          ? responseSpec.bodyToFlux(typeClass)
+          : responseSpec.bodyToFlux(responseClass);
+    }
+    if (Publisher.class.isAssignableFrom(responseClass)) {
+      Class<?> typeClass = resolveReturnTypeArgument(method, responseClass);
+      return nonNull(typeClass)
+          ? responseSpec.bodyToFlux(typeClass)
+          : responseSpec.bodyToFlux(responseClass);
     }
     throw ServiceException.internalServerError(
         "Response class must be Mono or Flux.",

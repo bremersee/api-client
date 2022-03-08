@@ -19,6 +19,7 @@ package org.bremersee.apiclient.webflux.app;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import org.bremersee.exception.ServiceException;
+import org.reactivestreams.Publisher;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
@@ -33,7 +34,7 @@ import reactor.core.publisher.Mono;
 public class ValueControllerImpl implements ValueController {
 
   @Override
-  public Mono<String> getStringValue() {
+  public Publisher<String> getStringValue() {
     return Mono.just(STRING_VALUE);
   }
 

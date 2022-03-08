@@ -18,6 +18,7 @@ package org.bremersee.apiclient.webflux.app;
 
 import java.util.List;
 import java.util.Map;
+import org.reactivestreams.Publisher;
 import org.springframework.http.MediaType;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.CookieValue;
@@ -54,7 +55,7 @@ public interface ValueController {
    * @return the mono
    */
   @GetMapping
-  Mono<String> getStringValue();
+  Publisher<String> getStringValue();
 
   /**
    * Gets oks.
