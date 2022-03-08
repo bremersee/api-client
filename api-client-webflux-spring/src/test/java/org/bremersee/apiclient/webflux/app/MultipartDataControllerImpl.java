@@ -1,9 +1,13 @@
 package org.bremersee.apiclient.webflux.app;
 
+import static java.util.Objects.nonNull;
+
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.Map;
 import java.util.stream.Stream;
 import org.springframework.core.io.buffer.DataBufferUtils;
+import org.springframework.http.MediaType;
 import org.springframework.http.codec.multipart.Part;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,7 +27,13 @@ public class MultipartDataControllerImpl implements MultipartDataController {
           DataBufferUtils.release(dataBuffer);
           return bytes;
         })
-        .map(bytes -> new String(bytes, StandardCharsets.UTF_8));
+        .map(bytes -> {
+          if (nonNull(part.headers().getContentType())
+              && part.headers().getContentType().isCompatibleWith(MediaType.APPLICATION_OCTET_STREAM)) {
+            return Base64.getEncoder().encodeToString(bytes);
+          }
+          return new String(bytes, StandardCharsets.UTF_8).trim();
+        });
   }
 
   @Override

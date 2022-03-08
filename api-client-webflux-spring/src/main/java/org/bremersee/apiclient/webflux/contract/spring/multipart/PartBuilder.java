@@ -29,6 +29,7 @@ public abstract class PartBuilder<T extends Part> {
   protected PartBuilder() {
   }
 
+  // TODO statt static part builder nur mit build methoden, die dann den eigentlichen builder zurück geben
   public static FormFieldPartBuilder part(String name, String value) {
     return new FormFieldPartBuilder(name, value);
   }

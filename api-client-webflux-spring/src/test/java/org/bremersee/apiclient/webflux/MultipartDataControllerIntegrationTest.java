@@ -1,22 +1,35 @@
 package org.bremersee.apiclient.webflux;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.util.ObjectUtils.isEmpty;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.util.Base64;
+import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.stream.Collectors;
+import java.util.Objects;
+import java.util.Random;
 import lombok.extern.slf4j.Slf4j;
 import org.bremersee.apiclient.webflux.app.MultipartDataController;
 import org.bremersee.apiclient.webflux.app.TestConfiguration;
 import org.bremersee.apiclient.webflux.contract.spring.ReactiveSpringContract;
 import org.bremersee.apiclient.webflux.contract.spring.multipart.PartBuilder;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.buffer.DataBuffer;
+import org.springframework.core.io.buffer.DataBufferUtils;
+import org.springframework.core.io.buffer.DefaultDataBufferFactory;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.MediaType;
 import org.springframework.http.client.MultipartBodyBuilder;
@@ -25,6 +38,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
@@ -51,15 +65,43 @@ class MultipartDataControllerIntegrationTest {
 
   private static final String FILE_PART_CONTENT = "Hello world!";
 
-  private static final Map<String, Object> EXPECTED = Map.of(
-      FORM_FIELD_NAME, FORM_FIELD_VALUE,
-      FILE_PART_NAME, FILE_PART_CONTENT
-  );
+  private static final String DATA_BUFFER_PART_NAME = "buf";
 
-  private static Map<String, Object> trim(Map<String, Object> response) {
-    return response.entrySet().stream()
-        .collect(Collectors.toMap(Entry::getKey, e -> String.valueOf(e.getValue()).trim()));
+  private static final String REAL_FILES_PART_NAME = "files";
+
+  private static Map<String, Object> expected() {
+    return expected(null, null);
   }
+
+  private static Map<String, Object> expected(byte[] dataBufferBytes, byte[] fileBytes) {
+    Map<String, Object> map = new LinkedHashMap<>();
+    map.put(FORM_FIELD_NAME, FORM_FIELD_VALUE);
+    map.put(FILE_PART_NAME, FILE_PART_CONTENT);
+    if (!isEmpty(dataBufferBytes)) {
+      map.put(DATA_BUFFER_PART_NAME, toString(dataBufferBytes));
+    }
+    if (!isEmpty(fileBytes)) {
+      map.put(REAL_FILES_PART_NAME, toString(fileBytes));
+    }
+    return map;
+  }
+
+  private static byte[] randomBytes(int len) {
+    Random random = new Random();
+    byte[] bytes = new byte[len];
+    random.nextBytes(bytes);
+    return bytes;
+  }
+
+  private static String toString(byte[] bytes) {
+    return Base64.getEncoder().encodeToString(bytes);
+  }
+
+  private Flux<DataBuffer> toDataBuffer(byte[] bytes, int bufferSize) {
+    return DataBufferUtils.read(new ByteArrayResource(bytes), new DefaultDataBufferFactory(), bufferSize);
+  }
+
+  Path tmpFile;
 
   @LocalServerPort
   int port;
@@ -86,6 +128,28 @@ class MultipartDataControllerIntegrationTest {
         .build();
   }
 
+  @AfterEach
+  void deleteTmpFile() {
+    if (Objects.nonNull(tmpFile)) {
+      try {
+        Files.delete(tmpFile);
+        tmpFile = null;
+      } catch (IOException e) {
+        throw new IllegalStateException("Deleting tmp file failed.", e);
+      }
+    }
+  }
+
+  private void writeToTmpFile(byte[] bytes) {
+    try {
+      tmpFile = Files.createTempFile("apiclient", "java");
+      Files.copy(new ByteArrayInputStream(bytes), tmpFile, StandardCopyOption.REPLACE_EXISTING);
+
+    } catch (IOException e) {
+      throw new IllegalStateException("Creating tmp file failed.", e);
+    }
+  }
+
   @Test
   void postMultipartDataMapWithWebClient() {
     MultipartBodyBuilder builder = new MultipartBodyBuilder();
@@ -100,7 +164,7 @@ class MultipartDataControllerIntegrationTest {
             .retrieve()
             .bodyToMono(new MapRef()))
         .assertNext(response -> assertThat(response)
-            .containsExactlyInAnyOrderEntriesOf(EXPECTED))
+            .containsExactlyInAnyOrderEntriesOf(expected()))
         .expectNextCount(0)
         .verifyComplete();
   }
@@ -115,9 +179,24 @@ class MultipartDataControllerIntegrationTest {
         FILE_PART_NAME,
         PartBuilder.part(FILE_PART_NAME, new ClassPathResource(FILE_PART_RESOURCE)).build());
 
+    byte[] dataBuf = randomBytes(16 * 1024 + 8);
+    partMap.add(
+        DATA_BUFFER_PART_NAME,
+        PartBuilder.part(DATA_BUFFER_PART_NAME, toDataBuffer(dataBuf, 256))
+            .contentType(MediaType.APPLICATION_OCTET_STREAM)
+            .build());
+
+    byte[] fileBytes = randomBytes(3000);
+    writeToTmpFile(fileBytes);
+    partMap.add(
+        REAL_FILES_PART_NAME,
+        PartBuilder.part(REAL_FILES_PART_NAME, tmpFile)
+            .contentType(MediaType.APPLICATION_OCTET_STREAM)
+            .build());
+
     StepVerifier.create(apiClient.postMultipartDataMap(partMap))
         .assertNext(response -> assertThat(response)
-            .containsExactlyInAnyOrderEntriesOf(EXPECTED))
+            .containsExactlyInAnyOrderEntriesOf(expected(dataBuf, fileBytes)))
         .expectNextCount(0)
         .verifyComplete();
   }
@@ -135,8 +214,8 @@ class MultipartDataControllerIntegrationTest {
             .body(BodyInserters.fromMultipartData(builder.build()))
             .retrieve()
             .bodyToMono(new MapRef()))
-        .assertNext(response -> assertThat(trim(response))
-            .containsExactlyInAnyOrderEntriesOf(EXPECTED))
+        .assertNext(response -> assertThat(response)
+            .containsExactlyInAnyOrderEntriesOf(expected()))
         .expectNextCount(0)
         .verifyComplete();
   }
@@ -152,8 +231,8 @@ class MultipartDataControllerIntegrationTest {
         PartBuilder.part(FILE_PART_NAME, new ClassPathResource(FILE_PART_RESOURCE)).build());
 
     StepVerifier.create(apiClient.postMonoMultipartDataMap(Mono.just(partMap)))
-        .assertNext(response -> assertThat(trim(response))
-            .containsExactlyInAnyOrderEntriesOf(EXPECTED))
+        .assertNext(response -> assertThat(response)
+            .containsExactlyInAnyOrderEntriesOf(expected()))
         .expectNextCount(0)
         .verifyComplete();
   }
@@ -171,8 +250,8 @@ class MultipartDataControllerIntegrationTest {
             .body(BodyInserters.fromMultipartData(builder.build()))
             .retrieve()
             .bodyToMono(new MapRef()))
-        .assertNext(response -> assertThat(trim(response))
-            .containsExactlyInAnyOrderEntriesOf(EXPECTED))
+        .assertNext(response -> assertThat(response)
+            .containsExactlyInAnyOrderEntriesOf(expected()))
         .expectNextCount(0)
         .verifyComplete();
   }
@@ -183,8 +262,8 @@ class MultipartDataControllerIntegrationTest {
     Part resourcePart = PartBuilder.part(FILE_PART_NAME, new ClassPathResource(FILE_PART_RESOURCE)).build();
 
     StepVerifier.create(apiClient.postParts(stringPart, resourcePart))
-        .assertNext(response -> assertThat(trim(response))
-            .containsExactlyInAnyOrderEntriesOf(EXPECTED))
+        .assertNext(response -> assertThat(response)
+            .containsExactlyInAnyOrderEntriesOf(expected()))
         .expectNextCount(0)
         .verifyComplete();
   }
@@ -202,8 +281,8 @@ class MultipartDataControllerIntegrationTest {
             .body(BodyInserters.fromMultipartData(builder.build()))
             .retrieve()
             .bodyToMono(new MapRef()))
-        .assertNext(response -> assertThat(trim(response))
-            .containsExactlyInAnyOrderEntriesOf(EXPECTED))
+        .assertNext(response -> assertThat(response)
+            .containsExactlyInAnyOrderEntriesOf(expected()))
         .expectNextCount(0)
         .verifyComplete();
   }
@@ -214,8 +293,8 @@ class MultipartDataControllerIntegrationTest {
     Part resourcePart = PartBuilder.part(FILE_PART_NAME, new ClassPathResource(FILE_PART_RESOURCE)).build();
 
     StepVerifier.create(apiClient.postMonoParts(Mono.just(stringPart), Mono.just(resourcePart)))
-        .assertNext(response -> assertThat(trim(response))
-            .containsExactlyInAnyOrderEntriesOf(EXPECTED))
+        .assertNext(response -> assertThat(response)
+            .containsExactlyInAnyOrderEntriesOf(expected()))
         .expectNextCount(0)
         .verifyComplete();
   }
@@ -233,8 +312,8 @@ class MultipartDataControllerIntegrationTest {
             .body(BodyInserters.fromMultipartData(builder.build()))
             .retrieve()
             .bodyToMono(new MapRef()))
-        .assertNext(response -> assertThat(trim(response))
-            .containsExactlyInAnyOrderEntriesOf(EXPECTED))
+        .assertNext(response -> assertThat(response)
+            .containsExactlyInAnyOrderEntriesOf(expected()))
         .expectNextCount(0)
         .verifyComplete();
   }
@@ -255,8 +334,8 @@ class MultipartDataControllerIntegrationTest {
                 }))
             .retrieve()
             .bodyToMono(new MapRef()))
-        .assertNext(response -> assertThat(trim(response))
-            .containsExactlyInAnyOrderEntriesOf(EXPECTED))
+        .assertNext(response -> assertThat(response)
+            .containsExactlyInAnyOrderEntriesOf(expected()))
         .expectNextCount(0)
         .verifyComplete();
   }
@@ -273,7 +352,7 @@ class MultipartDataControllerIntegrationTest {
             .body(BodyInserters.fromMultipartData(builder.build()))
             .retrieve()
             .bodyToMono(new MapRef()))
-        .assertNext(response -> assertThat(trim(response))
+        .assertNext(response -> assertThat(response)
             .containsExactlyInAnyOrderEntriesOf(Map.of("parts", FILE_PART_CONTENT)))
         .expectNextCount(0)
         .verifyComplete();
