@@ -19,7 +19,6 @@ import org.springframework.http.client.MultipartBodyBuilder;
 import org.springframework.http.codec.multipart.Part;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient.RequestBodyUriSpec;
@@ -43,11 +42,6 @@ public class MultipartDataInserter extends AbstractRequestBodyInserter {
     return isMultipartFormData(invocation) && super.canInsert(invocation);
   }
 
-  @Override
-  protected boolean canInsert(List<InvocationParameter> possibleBodies) {
-    return !possibleBodies.isEmpty();
-  }
-
   protected boolean isMultipartFormData(Invocation invocation) {
     return contentTypeResolver.apply(invocation)
         .filter(contentType -> contentType.isCompatibleWith(MediaType.MULTIPART_FORM_DATA))
@@ -55,13 +49,14 @@ public class MultipartDataInserter extends AbstractRequestBodyInserter {
   }
 
   @Override
-  protected boolean isPossibleBodyValue(InvocationParameter invocationParameter) {
-    return isMultiValueMap(invocationParameter) || isRequestPart(invocationParameter);
-  }
-
   protected boolean hasMappingAnnotation(InvocationParameter invocationParameter) {
     return super.hasMappingAnnotation(invocationParameter)
         || invocationParameter.hasParameterAnnotation(RequestPart.class);
+  }
+
+  @Override
+  protected boolean isPossibleBodyValue(InvocationParameter invocationParameter) {
+    return isMultiValueMap(invocationParameter) || isRequestPart(invocationParameter);
   }
 
   protected boolean isMultiValueMap(InvocationParameter invocationParameter) {
@@ -115,64 +110,80 @@ public class MultipartDataInserter extends AbstractRequestBodyInserter {
 
   @Override
   public RequestHeadersUriSpec<?> apply(Invocation invocation, RequestBodyUriSpec requestBodyUriSpec) {
-    // TODO in beiden fällen ale parts extrahieren und eine map draus machen
     List<InvocationParameter> possibleBodies = findPossibleBodies(invocation);
-    List<Publisher<Part>> parts = possibleBodies.stream()
+    List<Publisher<Part>> partPublishers = possibleBodies.stream()
         .filter(this::isRequestPart)
         .map(invocationParameter -> toPublisher(invocationParameter.getValue()))
         .collect(Collectors.toList());
-    if (!parts.isEmpty()) {
-      Mono<MultiValueMap<String, HttpEntity<?>>> map = Flux.concat(parts)
-          .map(part -> {
-            MultipartBodyBuilder builder = new MultipartBodyBuilder();
-            builder.part(part.name(), part);
-            return builder.build();
-          })
-          .flatMap(m -> Flux.fromStream(m.entrySet().stream()))
-          .collectMap(Entry::getKey, Entry::getValue, LinkedMultiValueMap::new)
-          .map(m -> (MultiValueMap<String, HttpEntity<?>>) m);
-      //noinspection rawtypes
-      return (RequestHeadersUriSpec) requestBodyUriSpec.body(BodyInserters
-          .fromPublisher(map, new MultiValueMapTypeReference()));
+    Mono<MultiValueMap<String, HttpEntity<?>>> httpEntityMap;
+    if (!partPublishers.isEmpty()) {
+      httpEntityMap = toHttpEntityMap(partPublishers);
     } else {
-      Publisher<MultiValueMap<String, Part>> publisher;
-      if (possibleBodies.get(0).getValue() instanceof Publisher) {
-        //noinspection unchecked
-        publisher = (Publisher<MultiValueMap<String, Part>>) possibleBodies.get(0).getValue();
-      } else {
-        //noinspection unchecked
-        publisher = Mono.just((MultiValueMap<String, Part>) possibleBodies.get(0).getValue());
-      }
-      Mono<MultiValueMap<String, HttpEntity<?>>> map = Flux.from(publisher)
-          .map(m -> {
-            MultiValueMap<String, HttpEntity<?>> vm = new LinkedMultiValueMap<>();
-            for (Map.Entry<String, List<Part>> entry : m.entrySet()) {
-              for (Part part : entry.getValue()) {
-                MultipartBodyBuilder builder = new MultipartBodyBuilder();
-                builder.part(entry.getKey(), part);
-                vm.addAll(builder.build());
-              }
-            }
-            return vm;
-          })
-          .flatMap(m -> Flux.fromStream(m.entrySet().stream()))
-          .collectMap(Entry::getKey, Entry::getValue, LinkedMultiValueMap::new)
-          .map(m -> (MultiValueMap<String, HttpEntity<?>>) m);
-      //noinspection rawtypes
-      return (RequestHeadersUriSpec) requestBodyUriSpec.body(BodyInserters
-          .fromPublisher(map, new MultiValueMapTypeReference()));
+      Publisher<MultiValueMap<String, Part>> partMap = findRequestBody(possibleBodies);
+      httpEntityMap = toHttpEntityMap(partMap);
     }
+    //noinspection rawtypes
+    return (RequestHeadersUriSpec) requestBodyUriSpec.body(BodyInserters
+        .fromPublisher(httpEntityMap, new MultiValueMapTypeReference()));
   }
 
   private Publisher<Part> toPublisher(Object value) {
-    Publisher<Part> part;
+    Publisher<Part> partPublisher;
     if (value instanceof Part) {
-      part = Mono.just((Part) value);
+      partPublisher = Mono.just((Part) value);
     } else {
       //noinspection unchecked
-      part = (Publisher<Part>) value;
+      partPublisher = (Publisher<Part>) value;
     }
-    return part;
+    return partPublisher;
+  }
+
+  private Mono<MultiValueMap<String, HttpEntity<?>>> toHttpEntityMap(List<Publisher<Part>> partPublishers) {
+    return Flux.concat(partPublishers)
+        .map(part -> {
+          MultipartBodyBuilder builder = new MultipartBodyBuilder();
+          builder.part(part.name(), part);
+          return builder.build();
+        })
+        .flatMap(httpEntityMap -> Flux.fromStream(httpEntityMap.entrySet().stream()))
+        .collectMap(Entry::getKey, Entry::getValue, LinkedMultiValueMap::new)
+        .map(httpEntityMap -> (MultiValueMap<String, HttpEntity<?>>) httpEntityMap);
+  }
+
+  @SuppressWarnings("unchecked")
+  private Publisher<MultiValueMap<String, Part>> findRequestBody(List<InvocationParameter> possibleBodies) {
+    return possibleBodies.stream()
+        .findFirst()
+        .map(InvocationParameter::getValue)
+        .map(value -> {
+          if (value instanceof Publisher) {
+            return (Publisher<MultiValueMap<String, Part>>) value;
+          } else {
+            MultiValueMap<String, Part> partMap = (MultiValueMap<String, Part>) value;
+            return Mono.just(partMap);
+          }
+        })
+        .orElseGet(Mono::empty);
+  }
+
+  private Mono<MultiValueMap<String, HttpEntity<?>>> toHttpEntityMap(
+      Publisher<MultiValueMap<String, Part>> partMapPublisher) {
+
+    return Flux.from(partMapPublisher)
+        .map(partMap -> {
+          MultiValueMap<String, HttpEntity<?>> httpEntityMap = new LinkedMultiValueMap<>();
+          for (Map.Entry<String, List<Part>> partMapEntry : partMap.entrySet()) {
+            for (Part part : partMapEntry.getValue()) {
+              MultipartBodyBuilder builder = new MultipartBodyBuilder();
+              builder.part(partMapEntry.getKey(), part);
+              httpEntityMap.addAll(builder.build());
+            }
+          }
+          return httpEntityMap;
+        })
+        .flatMap(httpEntityMap -> Flux.fromStream(httpEntityMap.entrySet().stream()))
+        .collectMap(Entry::getKey, Entry::getValue, LinkedMultiValueMap::new)
+        .map(httpEntityMap -> (MultiValueMap<String, HttpEntity<?>>) httpEntityMap);
   }
 
   private static class MultiValueMapTypeReference

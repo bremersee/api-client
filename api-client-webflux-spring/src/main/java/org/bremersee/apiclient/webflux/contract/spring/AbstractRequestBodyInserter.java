@@ -1,5 +1,7 @@
 package org.bremersee.apiclient.webflux.contract.spring;
 
+import static java.util.Objects.nonNull;
+
 import java.util.List;
 import java.util.stream.Collectors;
 import org.bremersee.apiclient.webflux.Invocation;
@@ -13,7 +15,9 @@ public abstract class AbstractRequestBodyInserter implements RequestBodyInserter
     return canInsert(findPossibleBodies(invocation));
   }
 
-  protected abstract boolean canInsert(List<InvocationParameter> possibleBodies);
+  protected boolean canInsert(List<InvocationParameter> possibleBodies) {
+    return !possibleBodies.isEmpty();
+  }
 
   protected List<InvocationParameter> findPossibleBodies(Invocation invocation) {
     return invocation.toMethodParameterStream()
@@ -23,7 +27,8 @@ public abstract class AbstractRequestBodyInserter implements RequestBodyInserter
   }
 
   protected boolean isPossibleBody(InvocationParameter invocationParameter) {
-    return isPossibleBodyValue(invocationParameter)
+    return nonNull(invocationParameter.getValue())
+        && isPossibleBodyValue(invocationParameter)
         && hasMappingAnnotation(invocationParameter);
   }
 
