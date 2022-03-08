@@ -19,6 +19,7 @@ import org.springframework.http.client.MultipartBodyBuilder;
 import org.springframework.http.codec.multipart.Part;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient.RequestBodyUriSpec;
@@ -56,6 +57,11 @@ public class MultipartDataInserter extends AbstractRequestBodyInserter {
   @Override
   protected boolean isPossibleBodyValue(InvocationParameter invocationParameter) {
     return isMultiValueMap(invocationParameter) || isRequestPart(invocationParameter);
+  }
+
+  protected boolean hasMappingAnnotation(InvocationParameter invocationParameter) {
+    return super.hasMappingAnnotation(invocationParameter)
+        || invocationParameter.hasParameterAnnotation(RequestPart.class);
   }
 
   protected boolean isMultiValueMap(InvocationParameter invocationParameter) {

@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.EqualsAndHashCode;
@@ -69,12 +70,11 @@ public class InvocationParameter extends Invocation {
     return parameter.getName();
   }
 
-  @SuppressWarnings("unchecked")
-  public boolean hasNoneParameterAnnotation(Class<? extends Annotation>... annotationTypes) {
+  public boolean hasNoneParameterAnnotation(Set<Class<? extends Annotation>> annotationTypes) {
     if (isEmpty(annotationTypes)) {
       return false;
     }
-    return Arrays.stream(annotationTypes).noneMatch(this::hasParameterAnnotation);
+    return annotationTypes.stream().noneMatch(this::hasParameterAnnotation);
   }
 
   public boolean hasParameterAnnotation(Class<? extends Annotation> annotationType) {

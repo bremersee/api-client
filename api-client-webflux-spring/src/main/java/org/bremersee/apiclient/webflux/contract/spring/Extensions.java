@@ -1,6 +1,7 @@
 package org.bremersee.apiclient.webflux.contract.spring;
 
 import java.lang.annotation.Annotation;
+import java.util.Set;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.MatrixVariable;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -14,8 +15,7 @@ import org.springframework.web.bind.annotation.SessionAttribute;
 
 public abstract class Extensions {
 
-  @SuppressWarnings("unchecked")
-  public static final Class<? extends Annotation>[] ILLEGAL_EXTENSIONS_ANNOTATIONS = new Class[] {
+  public static final Set<Class<? extends Annotation>> ILLEGAL_EXTENSIONS_ANNOTATIONS = Set.of(
       CookieValue.class,
       MatrixVariable.class,
       ModelAttribute.class,
@@ -26,7 +26,7 @@ public abstract class Extensions {
       RequestParam.class,
       RequestPart.class,
       SessionAttribute.class
-  };
+  );
 
   public static final boolean isSortPresent;
 

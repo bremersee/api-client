@@ -5,6 +5,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.Optional;
+import java.util.Set;
 import org.assertj.core.api.SoftAssertions;
 import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
 import org.junit.jupiter.api.Test;
@@ -26,12 +27,10 @@ class InvocationParameterTest {
   @Test
   void hasNoneParameterAnnotation(SoftAssertions softly) throws Exception {
     InvocationParameter target = createTarget("123");
-    //noinspection unchecked
-    boolean actual = target.hasNoneParameterAnnotation(PathVariable.class);
+    boolean actual = target.hasNoneParameterAnnotation(Set.of(PathVariable.class));
     softly.assertThat(actual)
         .isFalse();
-    //noinspection unchecked
-    actual = target.hasNoneParameterAnnotation(RequestParam.class);
+    actual = target.hasNoneParameterAnnotation(Set.of(RequestParam.class));
     softly.assertThat(actual)
         .isTrue();
   }

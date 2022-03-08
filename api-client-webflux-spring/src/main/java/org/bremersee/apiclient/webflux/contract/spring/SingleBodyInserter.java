@@ -6,7 +6,6 @@ import java.util.Optional;
 import org.bremersee.apiclient.webflux.Invocation;
 import org.bremersee.apiclient.webflux.InvocationParameter;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.reactive.function.client.WebClient.RequestBodyUriSpec;
 import org.springframework.web.reactive.function.client.WebClient.RequestHeadersUriSpec;
 
@@ -22,12 +21,6 @@ public abstract class SingleBodyInserter<T> extends AbstractRequestBodyInserter 
   }
 
   protected abstract boolean isPossibleBodyValue(InvocationParameter invocationParameter);
-
-  protected boolean hasNoneMappingAnnotation(InvocationParameter invocationParameter) {
-    //noinspection unchecked
-    return super.hasNoneMappingAnnotation(invocationParameter)
-        && invocationParameter.hasNoneParameterAnnotation(RequestPart.class);
-  }
 
   @Override
   public RequestHeadersUriSpec<?> apply(Invocation invocation, RequestBodyUriSpec requestBodyUriSpec) {
