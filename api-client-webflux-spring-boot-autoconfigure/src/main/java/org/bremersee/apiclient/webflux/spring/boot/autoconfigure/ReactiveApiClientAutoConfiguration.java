@@ -1,5 +1,6 @@
 package org.bremersee.apiclient.webflux.spring.boot.autoconfigure;
 
+import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
@@ -72,6 +73,7 @@ public class ReactiveApiClientAutoConfiguration {
   @Bean
   @Order(-1000)
   public RequestParametersResolver requestParametersResolver() {
+    log.info("Creating {} with order {}", RequestParametersResolver.class.getSimpleName(), -1000);
     return new RequestParametersResolver();
   }
 
@@ -80,6 +82,7 @@ public class ReactiveApiClientAutoConfiguration {
   @Bean
   @Order(-500)
   public SortRequestParameterResolver sortRequestParameterResolver() {
+    log.info("Creating {} with order {}", SortRequestParameterResolver.class.getSimpleName(), -500);
     return new SortRequestParameterResolver();
   }
 
@@ -88,12 +91,14 @@ public class ReactiveApiClientAutoConfiguration {
   @Bean
   @Order(-510)
   public PageableRequestParameterResolver pageableRequestParameterResolver() {
+    log.info("Creating {} with order {}", PageableRequestParameterResolver.class.getSimpleName(), -510);
     return new PageableRequestParameterResolver();
   }
 
   @Bean
   @Order(100)
   public RequestBodyInserter formDataInserter(ContentTypeResolver contentTypeResolver) {
+    log.info("Creating {} with order {}", FormDataInserter.class.getSimpleName(), 100);
     return new FormDataInserter()
         .withContentTypeResolver(contentTypeResolver);
   }
@@ -104,6 +109,7 @@ public class ReactiveApiClientAutoConfiguration {
       ContentTypeResolver contentTypeResolver,
       ObjectProvider<Converter<Part, HttpEntity<?>>> partConverter) {
 
+    log.info("Creating {} with order {}", MultipartDataInserter.class.getSimpleName(), 200);
     return new MultipartDataInserter()
         .withContentTypeResolver(contentTypeResolver)
         .withPartConverter(partConverter.getIfAvailable(PartToHttpEntityConverter::new));
@@ -112,24 +118,28 @@ public class ReactiveApiClientAutoConfiguration {
   @Bean
   @Order(300)
   public RequestBodyInserter resourceInserter() {
+    log.info("Creating {} with order {}", ResourceInserter.class.getSimpleName(), 300);
     return new ResourceInserter();
   }
 
   @Bean
   @Order(400)
   public RequestBodyInserter dataBuffersInserter() {
+    log.info("Creating {} with order {}", DataBuffersInserter.class.getSimpleName(), 400);
     return new DataBuffersInserter();
   }
 
   @Bean
   @Order(500)
   public RequestBodyInserter publisherInserter() {
+    log.info("Creating {} with order {}", PublisherInserter.class.getSimpleName(), 500);
     return new PublisherInserter();
   }
 
   @Bean
   @Order(600)
   public RequestBodyInserter valueInserter() {
+    log.info("Creating {} with order {}", ValueInserter.class.getSimpleName(), 600);
     return new ValueInserter();
   }
 
@@ -138,8 +148,15 @@ public class ReactiveApiClientAutoConfiguration {
   public RequestBodyInserterRegistry requestBodyInserterRegistry(
       ObjectProvider<RequestBodyInserter> requestBodyInserters) {
 
+    List<RequestBodyInserter> requestBodyInserterList = requestBodyInserters
+        .orderedStream()
+        .collect(Collectors.toList());
+    log.info(
+        "Creating {} with inserters {}",
+        RequestBodyInserterRegistry.class.getSimpleName(),
+        requestBodyInserterList);
     return RequestBodyInserterRegistry.builder()
-        .requestBodyInserters(requestBodyInserters.orderedStream().collect(Collectors.toList()))
+        .requestBodyInserters(requestBodyInserterList)
         .build();
   }
 
@@ -150,6 +167,12 @@ public class ReactiveApiClientAutoConfiguration {
       ObjectProvider<Function<Invocation, MultiValueMap<String, Object>>> requestParametersResolvers,
       RequestBodyInserterRegistry requestBodyInserterRegistry) {
 
+    List<Function<Invocation, MultiValueMap<String, Object>>> requestParametersResolverList
+        = requestParametersResolvers.orderedStream().collect(Collectors.toList());
+    log.info(
+        "Creating {} with requestParametersResolvers {}",
+        ReactiveContract.class.getSimpleName(),
+        requestParametersResolverList);
     ReactiveSpringContract reactiveSpringContract = new ReactiveSpringContract();
     return ReactiveContract.builder()
         .from(reactiveSpringContract)
@@ -161,7 +184,7 @@ public class ReactiveApiClientAutoConfiguration {
         .requestUriFunction(RequestUriFunction.builder()
             .requestPathResolver(new RequestPathResolver())
             .pathVariablesResolver(new PathVariablesResolver())
-            .requestParametersResolvers(requestParametersResolvers.orderedStream().collect(Collectors.toList()))
+            .requestParametersResolvers(requestParametersResolverList)
             .build())
         .requestBodyInserterFunction(requestBodyInserterRegistry)
         .build();
