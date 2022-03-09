@@ -2,7 +2,6 @@ package org.bremersee.apiclient.webflux.app;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import org.bremersee.exception.ServiceException;
 import org.springframework.core.io.Resource;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.RestController;
@@ -19,7 +18,7 @@ public class ResourceControllerImpl implements ResourceController {
           StandardCharsets.UTF_8));
 
     } catch (IOException exception) {
-      throw ServiceException.internalServerError("Failed", exception);
+      throw new IoRuntimeException("Creating string from resource failed", exception);
     }
   }
 }

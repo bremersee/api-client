@@ -9,7 +9,6 @@ import static org.mockito.Mockito.when;
 import java.lang.reflect.Method;
 import java.util.function.Function;
 import org.bremersee.apiclient.webflux.Invocation;
-import org.bremersee.exception.ServiceException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -46,7 +45,7 @@ class RequestUriSpecFunctionTest {
     when(httpMethodResolver.apply(any())).thenReturn(null);
     WebClient webClient = mock(WebClient.class);
     Method method = Example.class.getMethod("junit");
-    assertThatExceptionOfType(ServiceException.class)
+    assertThatExceptionOfType(IllegalStateException.class)
         .isThrownBy(() -> {
           Invocation invocation = mock(Invocation.class);
           when(invocation.getMethod()).thenReturn(method);

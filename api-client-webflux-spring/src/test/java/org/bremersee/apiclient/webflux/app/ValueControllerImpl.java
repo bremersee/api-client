@@ -18,7 +18,6 @@ package org.bremersee.apiclient.webflux.app;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
-import org.bremersee.exception.ServiceException;
 import org.reactivestreams.Publisher;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RestController;
@@ -51,7 +50,7 @@ public class ValueControllerImpl implements ValueController {
   @Override
   public Mono<Void> patchStringValue(String name, String suffix, String payload) {
     if ("exception".equalsIgnoreCase(suffix)) {
-      throw ServiceException.badRequest("'exception' is an illegal suffix");
+      throw new IllegalArgumentException("'exception' is an illegal suffix");
     }
     return Mono.empty();
   }

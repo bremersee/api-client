@@ -6,7 +6,6 @@ import static org.springframework.core.GenericTypeResolver.resolveReturnTypeArgu
 import java.lang.reflect.Method;
 import java.util.function.BiFunction;
 import org.bremersee.apiclient.webflux.Invocation;
-import org.bremersee.exception.ServiceException;
 import org.reactivestreams.Publisher;
 import org.springframework.web.reactive.function.client.WebClient.ResponseSpec;
 import reactor.core.publisher.Flux;
@@ -37,8 +36,7 @@ public class ResponseFunction implements BiFunction<Invocation, ResponseSpec, Pu
           ? responseSpec.bodyToFlux(typeClass)
           : responseSpec.bodyToFlux(responseClass);
     }
-    throw ServiceException.internalServerError(
-        "Response class must be Mono or Flux.",
-        "org.bremersee:common-base-webflux:e3716a97-f1c9-4c70-9eac-d966284d528c");
+    throw new IllegalStateException(
+        "Response class must be Mono, Flux or Publisher.");
   }
 }

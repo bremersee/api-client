@@ -7,7 +7,6 @@ import java.util.Optional;
 import java.util.function.Function;
 import org.bremersee.apiclient.webflux.Invocation;
 import org.bremersee.apiclient.webflux.contract.HttpRequestMethod;
-import org.bremersee.exception.ServiceException;
 import org.springframework.util.Assert;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,8 +16,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 public class HttpMethodResolver implements Function<Invocation, HttpRequestMethod> {
-
-  private static final String ERROR_CODE = "org.bremersee:api-client:47c018f1-eeb4-4229-a155-694aef8182a4";
 
   @Override
   public HttpRequestMethod apply(Invocation invocation) {
@@ -33,8 +30,7 @@ public class HttpMethodResolver implements Function<Invocation, HttpRequestMetho
         .or(() -> Optional.ofNullable(findAnnotation(method, PutMapping.class)).map(a -> HttpRequestMethod.PUT))
         .or(() -> Optional.ofNullable(findAnnotation(method, PatchMapping.class)).map(a -> HttpRequestMethod.PATCH))
         .or(() -> Optional.ofNullable(findAnnotation(method, DeleteMapping.class)).map(a -> HttpRequestMethod.DELETE))
-        .orElseThrow(() -> ServiceException.internalServerError(
-            String.format("Cannot find request method on method '%s'.", method.getName()),
-            ERROR_CODE));
+        .orElseThrow(() -> new IllegalStateException(
+            String.format("Cannot find request method on method '%s'.", method.getName())));
   }
 }

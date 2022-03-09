@@ -1,0 +1,4 @@
+org.springframework.boot.autoconfigure.EnableAutoConfiguration=\
+\
+org.bremersee.apiclient.webflux.spring.boot.autoconfigure.ReactiveApiClientAutoConfiguration,\
+org.bremersee.apiclient.webflux.spring.boot.autoconfigure.ReactiveErrorHandlerAutoConfiguration

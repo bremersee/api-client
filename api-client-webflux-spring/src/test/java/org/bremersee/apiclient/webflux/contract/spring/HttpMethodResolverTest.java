@@ -3,9 +3,8 @@ package org.bremersee.apiclient.webflux.contract.spring;
 import java.lang.reflect.Method;
 import org.assertj.core.api.SoftAssertions;
 import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
-import org.bremersee.apiclient.webflux.contract.HttpRequestMethod;
 import org.bremersee.apiclient.webflux.Invocation;
-import org.bremersee.exception.ServiceException;
+import org.bremersee.apiclient.webflux.contract.HttpRequestMethod;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -61,7 +60,7 @@ class HttpMethodResolverTest {
     method = Example.class.getMethod("methodG");
     Invocation illegalInvocation = new Invocation(Example.class, method, null);
     softly.assertThatThrownBy(() -> target.apply(illegalInvocation))
-        .isInstanceOf(ServiceException.class);
+        .isInstanceOf(IllegalStateException.class);
   }
 
   interface Example {
