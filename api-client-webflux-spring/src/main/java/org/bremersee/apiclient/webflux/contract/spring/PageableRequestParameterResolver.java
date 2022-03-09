@@ -37,8 +37,8 @@ public class PageableRequestParameterResolver extends SortRequestParameterResolv
         .map(value -> getRequestParameters((Pageable) value))
         .collect(
             LinkedMultiValueMap::new,
-            LinkedMultiValueMap::addAll,
-            LinkedMultiValueMap::addAll);
+            LinkedMultiValueMap::putAll,
+            LinkedMultiValueMap::putAll);
   }
 
   @Override

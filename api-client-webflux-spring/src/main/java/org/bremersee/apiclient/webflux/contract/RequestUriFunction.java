@@ -40,8 +40,8 @@ public interface RequestUriFunction extends BiFunction<Invocation, UriBuilder, U
         .map(resolver -> resolver.apply(invocation))
         .collect(
             LinkedMultiValueMap::new,
-            LinkedMultiValueMap::addAll,
-            LinkedMultiValueMap::addAll);
+            LinkedMultiValueMap::putAll,
+            LinkedMultiValueMap::putAll);
     for (Map.Entry<String, List<Object>> entry : requestParameters.entrySet()) {
       builder = builder.queryParam(entry.getKey(), entry.getValue());
     }

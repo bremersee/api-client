@@ -51,8 +51,8 @@ public class SortRequestParameterResolver implements
         .map(value -> getRequestParameters((Sort) value))
         .collect(
             LinkedMultiValueMap::new,
-            LinkedMultiValueMap::addAll,
-            LinkedMultiValueMap::addAll);
+            LinkedMultiValueMap::putAll,
+            LinkedMultiValueMap::putAll);
   }
 
   @Override

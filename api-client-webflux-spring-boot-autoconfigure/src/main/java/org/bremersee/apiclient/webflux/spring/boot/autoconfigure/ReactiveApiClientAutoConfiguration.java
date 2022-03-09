@@ -71,7 +71,7 @@ public class ReactiveApiClientAutoConfiguration {
   @ConditionalOnMissingBean
   @Bean
   @Order(10)
-  public Function<Invocation, MultiValueMap<String, Object>> requestParametersResolver() {
+  public RequestParametersResolver requestParametersResolver() {
     return new RequestParametersResolver();
   }
 
@@ -79,7 +79,7 @@ public class ReactiveApiClientAutoConfiguration {
   @ConditionalOnMissingBean
   @Bean
   @Order(20)
-  public Function<Invocation, MultiValueMap<String, Object>> sortRequestParameterResolver() {
+  public SortRequestParameterResolver sortRequestParameterResolver() {
     return new SortRequestParameterResolver();
   }
 
@@ -87,21 +87,19 @@ public class ReactiveApiClientAutoConfiguration {
   @ConditionalOnMissingBean
   @Bean
   @Order(30)
-  public Function<Invocation, MultiValueMap<String, Object>> pageableRequestParameterResolver() {
+  public PageableRequestParameterResolver pageableRequestParameterResolver() {
     return new PageableRequestParameterResolver();
   }
 
-  @ConditionalOnMissingBean
   @Bean
-  @Order(10)
+  @Order(100)
   public RequestBodyInserter formDataInserter(ContentTypeResolver contentTypeResolver) {
     return new FormDataInserter()
         .withContentTypeResolver(contentTypeResolver);
   }
 
-  @ConditionalOnMissingBean
   @Bean
-  @Order(20)
+  @Order(200)
   public RequestBodyInserter multipartDataInserter(
       ContentTypeResolver contentTypeResolver,
       ObjectProvider<Converter<Part, HttpEntity<?>>> partConverter) {
@@ -111,30 +109,26 @@ public class ReactiveApiClientAutoConfiguration {
         .withPartConverter(partConverter.getIfAvailable(PartToHttpEntityConverter::new));
   }
 
-  @ConditionalOnMissingBean
   @Bean
-  @Order(30)
+  @Order(300)
   public RequestBodyInserter resourceInserter() {
     return new ResourceInserter();
   }
 
-  @ConditionalOnMissingBean
   @Bean
-  @Order(40)
+  @Order(400)
   public RequestBodyInserter dataBuffersInserter() {
     return new DataBuffersInserter();
   }
 
-  @ConditionalOnMissingBean
   @Bean
-  @Order(90)
+  @Order(500)
   public RequestBodyInserter publisherInserter() {
     return new PublisherInserter();
   }
 
-  @ConditionalOnMissingBean
   @Bean
-  @Order(100)
+  @Order(600)
   public RequestBodyInserter valueInserter() {
     return new ValueInserter();
   }

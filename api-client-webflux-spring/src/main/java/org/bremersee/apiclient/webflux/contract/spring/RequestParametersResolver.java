@@ -17,7 +17,7 @@ public class RequestParametersResolver implements Function<Invocation, MultiValu
             v -> v))
         .collect(
             LinkedMultiValueMap::new,
-            LinkedMultiValueMap::addAll,
-            LinkedMultiValueMap::addAll);
+            LinkedMultiValueMap::putAll,
+            LinkedMultiValueMap::putAll);
   }
 }

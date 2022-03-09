@@ -66,8 +66,9 @@ class RequestUriFunctionTest {
     UriBuilder uriBuilder = UriComponentsBuilder.fromUriString("");
     URI actual = target.apply(mock(Invocation.class), uriBuilder);
 
+    // last wins
     assertThat(actual)
         .asString()
-        .isEqualTo("http:/localhost:8080/api/books/1234?sort=a&sort=b&sort=c&sort=d&sort=e&size=25&page=10&foo=bar");
+        .isEqualTo("http:/localhost:8080/api/books/1234?sort=e&size=25&page=10&foo=bar");
   }
 }
