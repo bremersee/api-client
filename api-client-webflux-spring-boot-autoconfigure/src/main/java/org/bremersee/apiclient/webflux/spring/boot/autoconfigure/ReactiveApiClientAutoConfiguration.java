@@ -70,7 +70,7 @@ public class ReactiveApiClientAutoConfiguration {
 
   @ConditionalOnMissingBean
   @Bean
-  @Order(10)
+  @Order(-1000)
   public RequestParametersResolver requestParametersResolver() {
     return new RequestParametersResolver();
   }
@@ -78,7 +78,7 @@ public class ReactiveApiClientAutoConfiguration {
   @ConditionalOnClass(name = "org.springframework.data.domain.Sort")
   @ConditionalOnMissingBean
   @Bean
-  @Order(20)
+  @Order(-500)
   public SortRequestParameterResolver sortRequestParameterResolver() {
     return new SortRequestParameterResolver();
   }
@@ -86,7 +86,7 @@ public class ReactiveApiClientAutoConfiguration {
   @ConditionalOnClass(name = "org.springframework.data.domain.Pageable")
   @ConditionalOnMissingBean
   @Bean
-  @Order(30)
+  @Order(-510)
   public PageableRequestParameterResolver pageableRequestParameterResolver() {
     return new PageableRequestParameterResolver();
   }
