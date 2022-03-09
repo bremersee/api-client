@@ -1,5 +1,6 @@
 package org.bremersee.apiclient.webflux;
 
+import static java.util.Objects.nonNull;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.springframework.util.ObjectUtils.isEmpty;
 
@@ -132,7 +133,7 @@ class MultipartDataControllerIntegrationTest {
 
   @AfterEach
   void deleteTmpFile() {
-    if (Objects.nonNull(tmpFile)) {
+    if (nonNull(tmpFile)) {
       try {
         Files.delete(tmpFile);
         tmpFile = null;
