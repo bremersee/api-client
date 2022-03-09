@@ -1,4 +1,4 @@
-package org.bremersee.apiclient.webflux.contract.spring;
+package org.bremersee.apiclient.webflux.contract;
 
 import java.util.function.BiFunction;
 import org.bremersee.apiclient.webflux.Invocation;

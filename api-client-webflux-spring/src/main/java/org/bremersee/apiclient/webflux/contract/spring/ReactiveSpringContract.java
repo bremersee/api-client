@@ -10,6 +10,7 @@ import org.bremersee.apiclient.webflux.Invocation;
 import org.bremersee.apiclient.webflux.ReactiveContract;
 import org.bremersee.apiclient.webflux.contract.CookiesConsumer;
 import org.bremersee.apiclient.webflux.contract.HeadersConsumer;
+import org.bremersee.apiclient.webflux.contract.RequestBodyInserterRegistry;
 import org.bremersee.apiclient.webflux.contract.RequestUriFunction;
 import org.bremersee.apiclient.webflux.contract.RequestUriSpecFunction;
 import org.bremersee.apiclient.webflux.contract.ResponseFunction;

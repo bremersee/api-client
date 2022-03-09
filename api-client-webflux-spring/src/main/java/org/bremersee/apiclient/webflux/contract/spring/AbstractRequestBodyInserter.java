@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.bremersee.apiclient.webflux.Invocation;
 import org.bremersee.apiclient.webflux.InvocationParameter;
+import org.bremersee.apiclient.webflux.contract.RequestBodyInserter;
 import org.springframework.web.bind.annotation.RequestBody;
 
 public abstract class AbstractRequestBodyInserter implements RequestBodyInserter {

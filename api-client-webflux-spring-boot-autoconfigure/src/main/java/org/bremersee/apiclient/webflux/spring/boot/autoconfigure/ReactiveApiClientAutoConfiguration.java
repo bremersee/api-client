@@ -8,6 +8,8 @@ import org.bremersee.apiclient.webflux.ReactiveApiClient;
 import org.bremersee.apiclient.webflux.ReactiveContract;
 import org.bremersee.apiclient.webflux.ReactiveErrorHandler;
 import org.bremersee.apiclient.webflux.contract.HeadersConsumer;
+import org.bremersee.apiclient.webflux.contract.RequestBodyInserter;
+import org.bremersee.apiclient.webflux.contract.RequestBodyInserterRegistry;
 import org.bremersee.apiclient.webflux.contract.RequestUriFunction;
 import org.bremersee.apiclient.webflux.contract.spring.AcceptResolver;
 import org.bremersee.apiclient.webflux.contract.spring.ContentTypeResolver;
@@ -19,8 +21,6 @@ import org.bremersee.apiclient.webflux.contract.spring.PartToHttpEntityConverter
 import org.bremersee.apiclient.webflux.contract.spring.PathVariablesResolver;
 import org.bremersee.apiclient.webflux.contract.spring.PublisherInserter;
 import org.bremersee.apiclient.webflux.contract.spring.ReactiveSpringContract;
-import org.bremersee.apiclient.webflux.contract.spring.RequestBodyInserter;
-import org.bremersee.apiclient.webflux.contract.spring.RequestBodyInserterRegistry;
 import org.bremersee.apiclient.webflux.contract.spring.RequestHeadersResolver;
 import org.bremersee.apiclient.webflux.contract.spring.RequestParametersResolver;
 import org.bremersee.apiclient.webflux.contract.spring.RequestPathResolver;
