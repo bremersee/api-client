@@ -6,10 +6,12 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import org.bremersee.apiclient.webflux.Invocation;
 import org.immutables.value.Value;
+import org.immutables.value.Value.Style.ImplementationVisibility;
 import org.springframework.web.reactive.function.client.WebClient.RequestBodyUriSpec;
 import org.springframework.web.reactive.function.client.WebClient.RequestHeadersUriSpec;
 
 @Value.Immutable
+@Value.Style(visibility = ImplementationVisibility.PACKAGE)
 @Valid
 public interface RequestBodyInserterRegistry extends
     BiFunction<Invocation, RequestBodyUriSpec, RequestHeadersUriSpec<?>> {

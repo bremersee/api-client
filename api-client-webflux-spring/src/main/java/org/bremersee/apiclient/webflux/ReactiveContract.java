@@ -6,6 +6,7 @@ import java.util.function.BiFunction;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import org.immutables.value.Value;
+import org.immutables.value.Value.Style.ImplementationVisibility;
 import org.reactivestreams.Publisher;
 import org.springframework.http.HttpHeaders;
 import org.springframework.util.MultiValueMap;
@@ -16,6 +17,7 @@ import org.springframework.web.reactive.function.client.WebClient.ResponseSpec;
 import org.springframework.web.util.UriBuilder;
 
 @Value.Immutable
+@Value.Style(visibility = ImplementationVisibility.PACKAGE)
 @Valid
 public interface ReactiveContract {
 

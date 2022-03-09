@@ -7,11 +7,13 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import org.bremersee.apiclient.webflux.Invocation;
 import org.immutables.value.Value;
+import org.immutables.value.Value.Style.ImplementationVisibility;
 import org.springframework.util.Assert;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClient.RequestHeadersUriSpec;
 
 @Value.Immutable
+@Value.Style(visibility = ImplementationVisibility.PACKAGE)
 @Valid
 public interface RequestUriSpecFunction
     extends BiFunction<Invocation, WebClient, RequestHeadersUriSpec<?>> {

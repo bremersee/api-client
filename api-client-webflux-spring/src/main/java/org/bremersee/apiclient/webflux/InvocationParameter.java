@@ -72,7 +72,7 @@ public class InvocationParameter extends Invocation {
 
   public boolean hasNoneParameterAnnotation(Set<Class<? extends Annotation>> annotationTypes) {
     if (isEmpty(annotationTypes)) {
-      return false;
+      return true;
     }
     return annotationTypes.stream().noneMatch(this::hasParameterAnnotation);
   }

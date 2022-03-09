@@ -6,9 +6,11 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import org.bremersee.apiclient.webflux.Invocation;
 import org.immutables.value.Value;
+import org.immutables.value.Value.Style.ImplementationVisibility;
 import org.springframework.util.MultiValueMap;
 
 @Value.Immutable
+@Value.Style(visibility = ImplementationVisibility.PACKAGE)
 @Valid
 public interface CookiesConsumer extends BiConsumer<Invocation, MultiValueMap<String, String>> {
 

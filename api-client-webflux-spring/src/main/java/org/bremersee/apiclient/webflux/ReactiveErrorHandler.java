@@ -5,12 +5,14 @@ import java.util.function.Predicate;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import org.immutables.value.Value;
+import org.immutables.value.Value.Style.ImplementationVisibility;
 import org.springframework.http.HttpStatus;
 import org.springframework.lang.Nullable;
 import org.springframework.web.reactive.function.client.ClientResponse;
 import reactor.core.publisher.Mono;
 
 @Value.Immutable
+@Value.Style(visibility = ImplementationVisibility.PACKAGE)
 @Valid
 public interface ReactiveErrorHandler {
 

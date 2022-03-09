@@ -62,6 +62,9 @@ public class ReactiveApiClient extends ApiClient {
 
     private ReactiveErrorHandler errorHandler;
 
+    Builder() {
+    }
+
     /**
      * Sets the web client with the base url.
      *
