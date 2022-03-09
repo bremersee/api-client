@@ -15,6 +15,7 @@ import org.bremersee.apiclient.webflux.contract.spring.DataBuffersInserter;
 import org.bremersee.apiclient.webflux.contract.spring.FormDataInserter;
 import org.bremersee.apiclient.webflux.contract.spring.MultipartDataInserter;
 import org.bremersee.apiclient.webflux.contract.spring.PageableRequestParameterResolver;
+import org.bremersee.apiclient.webflux.contract.spring.PartToHttpEntityConverter;
 import org.bremersee.apiclient.webflux.contract.spring.PathVariablesResolver;
 import org.bremersee.apiclient.webflux.contract.spring.PublisherInserter;
 import org.bremersee.apiclient.webflux.contract.spring.ReactiveSpringContract;
@@ -36,6 +37,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.EventListener;
 import org.springframework.core.annotation.Order;
+import org.springframework.core.convert.converter.Converter;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.codec.multipart.Part;
 import org.springframework.util.ClassUtils;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -98,9 +102,13 @@ public class ReactiveApiClientAutoConfiguration {
   @ConditionalOnMissingBean
   @Bean
   @Order(20)
-  public RequestBodyInserter multipartDataInserter(ContentTypeResolver contentTypeResolver) {
+  public RequestBodyInserter multipartDataInserter(
+      ContentTypeResolver contentTypeResolver,
+      ObjectProvider<Converter<Part, HttpEntity<?>>> partConverter) {
+
     return new MultipartDataInserter()
-        .withContentTypeResolver(contentTypeResolver);
+        .withContentTypeResolver(contentTypeResolver)
+        .withPartConverter(partConverter.getIfAvailable(PartToHttpEntityConverter::new));
   }
 
   @ConditionalOnMissingBean

@@ -4,8 +4,6 @@ import static java.util.Objects.nonNull;
 
 import java.lang.reflect.Method;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import org.bremersee.apiclient.webflux.Invocation;
@@ -13,9 +11,9 @@ import org.bremersee.apiclient.webflux.InvocationParameter;
 import org.reactivestreams.Publisher;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.core.ResolvableType;
+import org.springframework.core.convert.converter.Converter;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.MediaType;
-import org.springframework.http.client.MultipartBodyBuilder;
 import org.springframework.http.codec.multipart.Part;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
@@ -30,9 +28,18 @@ public class MultipartDataInserter extends AbstractRequestBodyInserter {
 
   private ContentTypeResolver contentTypeResolver = new ContentTypeResolver();
 
+  private Converter<Part, HttpEntity<?>> partConverter = new PartToHttpEntityConverter();
+
   public MultipartDataInserter withContentTypeResolver(ContentTypeResolver contentTypeResolver) {
     if (nonNull(contentTypeResolver)) {
       this.contentTypeResolver = contentTypeResolver;
+    }
+    return this;
+  }
+
+  public MultipartDataInserter withPartConverter(Converter<Part, HttpEntity<?>> partConverter) {
+    if (nonNull(partConverter)) {
+      this.partConverter = partConverter;
     }
     return this;
   }
@@ -140,14 +147,9 @@ public class MultipartDataInserter extends AbstractRequestBodyInserter {
 
   private Mono<MultiValueMap<String, HttpEntity<?>>> toHttpEntityMap(List<Publisher<Part>> partPublishers) {
     return Flux.concat(partPublishers)
-        .map(part -> {
-          MultipartBodyBuilder builder = new MultipartBodyBuilder();
-          builder.part(part.name(), part);
-          return builder.build();
-        })
-        .flatMap(httpEntityMap -> Flux.fromStream(httpEntityMap.entrySet().stream()))
-        .collectMap(Entry::getKey, Entry::getValue, LinkedMultiValueMap::new)
-        .map(httpEntityMap -> (MultiValueMap<String, HttpEntity<?>>) httpEntityMap);
+        .collect(
+            LinkedMultiValueMap::new,
+            (map, part) -> map.add(part.name(), partConverter.convert(part)));
   }
 
   @SuppressWarnings("unchecked")
@@ -170,20 +172,11 @@ public class MultipartDataInserter extends AbstractRequestBodyInserter {
       Publisher<MultiValueMap<String, Part>> partMapPublisher) {
 
     return Flux.from(partMapPublisher)
-        .map(partMap -> {
-          MultiValueMap<String, HttpEntity<?>> httpEntityMap = new LinkedMultiValueMap<>();
-          for (Map.Entry<String, List<Part>> partMapEntry : partMap.entrySet()) {
-            for (Part part : partMapEntry.getValue()) {
-              MultipartBodyBuilder builder = new MultipartBodyBuilder();
-              builder.part(partMapEntry.getKey(), part);
-              httpEntityMap.addAll(builder.build());
-            }
-          }
-          return httpEntityMap;
-        })
-        .flatMap(httpEntityMap -> Flux.fromStream(httpEntityMap.entrySet().stream()))
-        .collectMap(Entry::getKey, Entry::getValue, LinkedMultiValueMap::new)
-        .map(httpEntityMap -> (MultiValueMap<String, HttpEntity<?>>) httpEntityMap);
+        .flatMap(partMap -> Flux.fromStream(partMap.values().stream()))
+        .flatMap(parts -> Flux.fromStream(parts.stream()))
+        .collect(
+            LinkedMultiValueMap::new,
+            (map, part) -> map.add(part.name(), partConverter.convert(part)));
   }
 
   private static class MultiValueMapTypeReference
