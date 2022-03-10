@@ -3,7 +3,6 @@ package org.bremersee.apiclient.webflux.contract.spring;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.bremersee.apiclient.webflux.InvocationParameter;
@@ -44,7 +43,5 @@ class ValueInserterTest {
     RequestHeadersUriSpec<?> actual = target.insert("123", requestBodyUriSpec);
     assertThat(actual)
         .isEqualTo(expected);
-
-    verify(requestBodyUriSpec).body(any());
   }
 }

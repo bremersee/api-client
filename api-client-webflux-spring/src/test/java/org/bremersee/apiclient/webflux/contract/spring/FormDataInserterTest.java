@@ -17,6 +17,7 @@ import org.springframework.http.MediaType;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.reactive.function.BodyInserter;
 import org.springframework.web.reactive.function.client.WebClient.RequestBodyUriSpec;
 import org.springframework.web.reactive.function.client.WebClient.RequestHeadersUriSpec;
 
@@ -81,7 +82,7 @@ class FormDataInserterTest {
     //noinspection rawtypes
     RequestHeadersUriSpec expected = mock(RequestHeadersUriSpec.class);
     //noinspection unchecked
-    when(requestBodyUriSpec.body(any())).thenReturn(expected);
+    when(requestBodyUriSpec.body(any(BodyInserter.class))).thenReturn(expected);
 
     MultiValueMap<String, String> value = new LinkedMultiValueMap<>();
     assertThat(target.insert(value, requestBodyUriSpec))

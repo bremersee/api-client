@@ -3,7 +3,6 @@ package org.bremersee.apiclient.webflux.contract.spring;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.lang.reflect.Method;
@@ -12,7 +11,7 @@ import org.bremersee.apiclient.webflux.InvocationParameter;
 import org.junit.jupiter.api.Test;
 import org.reactivestreams.Publisher;
 import org.springframework.core.io.buffer.DataBuffer;
-import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.BodyInserter;
 import org.springframework.web.reactive.function.client.WebClient.RequestBodyUriSpec;
 import org.springframework.web.reactive.function.client.WebClient.RequestHeadersUriSpec;
 import reactor.core.publisher.Flux;
@@ -48,13 +47,14 @@ class DataBuffersInserterTest {
   @Test
   void insert() {
     RequestBodyUriSpec requestBodyUriSpec = mock(RequestBodyUriSpec.class);
+    //noinspection rawtypes
+    RequestHeadersUriSpec expected = mock(RequestHeadersUriSpec.class);
     //noinspection unchecked
-    when(requestBodyUriSpec.body(any())).thenReturn(mock(WebClient.RequestHeadersSpec.class));
+    when(requestBodyUriSpec.body(any(BodyInserter.class))).thenReturn(expected);
     //noinspection unchecked
     RequestHeadersUriSpec<?> actual = target.insert(mock(Flux.class), requestBodyUriSpec);
     assertThat(actual)
-        .isNotNull();
-    verify(requestBodyUriSpec.body(any()));
+        .isEqualTo(expected);
   }
 
   interface Example {
