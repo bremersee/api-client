@@ -4,17 +4,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import lombok.extern.slf4j.Slf4j;
 import org.bremersee.apiclient.webflux.app.PublisherController;
-import org.bremersee.apiclient.webflux.app.ResourceController;
 import org.bremersee.apiclient.webflux.app.TestConfiguration;
 import org.bremersee.apiclient.webflux.contract.spring.ReactiveSpringContract;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.http.MediaType;
-import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
@@ -28,7 +23,6 @@ import reactor.test.StepVerifier;
     classes = {TestConfiguration.class},
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
     properties = {"security.basic.enabled=false"})
-@AutoConfigureWebTestClient
 @Slf4j
 class PublisherControllerIntegrationTest {
 

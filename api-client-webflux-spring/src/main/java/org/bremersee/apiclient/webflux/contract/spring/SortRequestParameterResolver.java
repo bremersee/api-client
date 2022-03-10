@@ -2,7 +2,6 @@ package org.bremersee.apiclient.webflux.contract.spring;
 
 import static org.springframework.util.ObjectUtils.isEmpty;
 
-import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import org.bremersee.apiclient.webflux.Invocation;
@@ -13,7 +12,7 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
 public class SortRequestParameterResolver implements
-    Function<Invocation, MultiValueMap<String, Object>>,
+    QueryParametersResolver,
     Predicate<InvocationParameter> {
 
   private String requestParamName = "sort";

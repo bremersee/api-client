@@ -13,7 +13,6 @@ import org.bremersee.apiclient.webflux.app.ValueController;
 import org.bremersee.apiclient.webflux.contract.spring.ReactiveSpringContract;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.autoconfigure.web.reactive.AutoConfigureWebTestClient;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.util.LinkedMultiValueMap;
@@ -31,7 +30,6 @@ import reactor.test.StepVerifier;
     classes = {TestConfiguration.class},
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
     properties = {"security.basic.enabled=false"})
-@AutoConfigureWebTestClient
 @Slf4j
 class ValueControllerIntegrationTest {
 

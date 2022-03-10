@@ -1,12 +1,11 @@
 package org.bremersee.apiclient.webflux.contract.spring;
 
-import java.util.function.Function;
 import org.bremersee.apiclient.webflux.Invocation;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RequestParam;
 
-public class RequestParametersResolver implements Function<Invocation, MultiValueMap<String, Object>> {
+public class RequestParametersResolver implements QueryParametersResolver {
 
   @Override
   public MultiValueMap<String, Object> apply(Invocation invocation) {

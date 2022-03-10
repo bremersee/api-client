@@ -21,6 +21,7 @@ import org.bremersee.apiclient.webflux.contract.spring.PageableRequestParameterR
 import org.bremersee.apiclient.webflux.contract.spring.PartToHttpEntityConverter;
 import org.bremersee.apiclient.webflux.contract.spring.PathVariablesResolver;
 import org.bremersee.apiclient.webflux.contract.spring.PublisherInserter;
+import org.bremersee.apiclient.webflux.contract.spring.QueryParametersResolver;
 import org.bremersee.apiclient.webflux.contract.spring.ReactiveSpringContract;
 import org.bremersee.apiclient.webflux.contract.spring.RequestHeadersResolver;
 import org.bremersee.apiclient.webflux.contract.spring.RequestParametersResolver;
@@ -164,15 +165,15 @@ public class ReactiveApiClientAutoConfiguration {
   @Bean
   public ReactiveContract reactiveSpringContract(
       ContentTypeResolver contentTypeResolver,
-      ObjectProvider<Function<Invocation, MultiValueMap<String, Object>>> requestParametersResolvers,
+      ObjectProvider<QueryParametersResolver> queryParametersResolvers,
       RequestBodyInserterRegistry requestBodyInserterRegistry) {
 
-    List<Function<Invocation, MultiValueMap<String, Object>>> requestParametersResolverList
-        = requestParametersResolvers.orderedStream().collect(Collectors.toList());
+    List<Function<Invocation, MultiValueMap<String, Object>>> queryParametersResolverList
+        = queryParametersResolvers.orderedStream().collect(Collectors.toList());
     log.info(
-        "Creating {} with requestParametersResolvers {}",
+        "Creating {} with queryParametersResolvers {}",
         ReactiveContract.class.getSimpleName(),
-        requestParametersResolverList);
+        queryParametersResolverList);
     ReactiveSpringContract reactiveSpringContract = new ReactiveSpringContract();
     return ReactiveContract.builder()
         .from(reactiveSpringContract)
@@ -184,7 +185,7 @@ public class ReactiveApiClientAutoConfiguration {
         .requestUriFunction(RequestUriFunction.builder()
             .requestPathResolver(new RequestPathResolver())
             .pathVariablesResolver(new PathVariablesResolver())
-            .requestParametersResolvers(requestParametersResolverList)
+            .requestParametersResolvers(queryParametersResolverList)
             .build())
         .requestBodyInserterFunction(requestBodyInserterRegistry)
         .build();
