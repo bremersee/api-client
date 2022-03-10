@@ -4,6 +4,7 @@ import static java.util.Objects.nonNull;
 
 import java.lang.reflect.Method;
 import java.util.Optional;
+import java.util.function.Function;
 import org.bremersee.apiclient.webflux.Invocation;
 import org.bremersee.apiclient.webflux.InvocationParameter;
 import org.springframework.core.ResolvableType;
@@ -15,9 +16,9 @@ import org.springframework.web.reactive.function.client.WebClient.RequestHeaders
 
 public class FormDataInserter extends SingleBodyInserter<MultiValueMap<String, ?>> {
 
-  private ContentTypeResolver contentTypeResolver = new ContentTypeResolver();
+  private Function<Invocation, Optional<MediaType>> contentTypeResolver = new ContentTypeResolver();
 
-  public FormDataInserter withContentTypeResolver(ContentTypeResolver contentTypeResolver) {
+  public FormDataInserter withContentTypeResolver(Function<Invocation, Optional<MediaType>> contentTypeResolver) {
     if (nonNull(contentTypeResolver)) {
       this.contentTypeResolver = contentTypeResolver;
     }

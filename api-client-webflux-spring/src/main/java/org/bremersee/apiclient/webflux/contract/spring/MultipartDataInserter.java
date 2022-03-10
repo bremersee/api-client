@@ -5,6 +5,7 @@ import static java.util.Objects.nonNull;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Optional;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.bremersee.apiclient.webflux.Invocation;
 import org.bremersee.apiclient.webflux.InvocationParameter;
@@ -26,11 +27,11 @@ import reactor.core.publisher.Mono;
 
 public class MultipartDataInserter extends AbstractRequestBodyInserter {
 
-  private ContentTypeResolver contentTypeResolver = new ContentTypeResolver();
+  private Function<Invocation, Optional<MediaType>> contentTypeResolver = new ContentTypeResolver();
 
   private Converter<Part, HttpEntity<?>> partConverter = new PartToHttpEntityConverter();
 
-  public MultipartDataInserter withContentTypeResolver(ContentTypeResolver contentTypeResolver) {
+  public MultipartDataInserter withContentTypeResolver(Function<Invocation, Optional<MediaType>> contentTypeResolver) {
     if (nonNull(contentTypeResolver)) {
       this.contentTypeResolver = contentTypeResolver;
     }
@@ -63,10 +64,10 @@ public class MultipartDataInserter extends AbstractRequestBodyInserter {
 
   @Override
   protected boolean isPossibleBodyValue(InvocationParameter invocationParameter) {
-    return isMultiValueMap(invocationParameter) || isRequestPart(invocationParameter);
+    return isRequestBody(invocationParameter) || isRequestPart(invocationParameter);
   }
 
-  protected boolean isMultiValueMap(InvocationParameter invocationParameter) {
+  protected boolean isRequestBody(InvocationParameter invocationParameter) {
     Method method = invocationParameter.getMethod();
     int index = invocationParameter.getIndex();
     if (invocationParameter.getValue() instanceof MultiValueMap) {
@@ -80,19 +81,38 @@ public class MultipartDataInserter extends AbstractRequestBodyInserter {
           })
           .isPresent();
     } else if (invocationParameter.getValue() instanceof Publisher) {
-      return Optional.of(ResolvableType.forMethodParameter(method, index))
-          .filter(ResolvableType::hasGenerics)
-          .map(resolvableType -> resolvableType.getGeneric(0))
-          .filter(resolvableType -> resolvableType.getGenerics().length >= 2)
-          .map(resolvableType -> {
-            Class<?> r0 = resolvableType.resolveGeneric(0);
-            Class<?> r1 = resolvableType.resolveGeneric(1);
-            return nonNull(r0) && nonNull(r1)
-                && String.class.isAssignableFrom(r0) && Part.class.isAssignableFrom(r1);
-          })
-          .isPresent();
+      return isMonoWithMultiValueMap(invocationParameter)
+          || isFluxWithPart(invocationParameter);
     }
     return false;
+  }
+
+  private boolean isMonoWithMultiValueMap(InvocationParameter invocationParameter) {
+    Method method = invocationParameter.getMethod();
+    int index = invocationParameter.getIndex();
+    return invocationParameter.getValue() instanceof Mono && Optional
+        .of(ResolvableType.forMethodParameter(method, index))
+        .filter(ResolvableType::hasGenerics)
+        .map(resolvableType -> resolvableType.getGeneric(0))
+        .filter(resolvableType -> resolvableType.getGenerics().length >= 2)
+        .map(resolvableType -> {
+          Class<?> r0 = resolvableType.resolveGeneric(0);
+          Class<?> r1 = resolvableType.resolveGeneric(1);
+          return nonNull(r0) && nonNull(r1)
+              && String.class.isAssignableFrom(r0) && Part.class.isAssignableFrom(r1);
+        })
+        .isPresent();
+  }
+
+  private boolean isFluxWithPart(InvocationParameter invocationParameter) {
+    Method method = invocationParameter.getMethod();
+    int index = invocationParameter.getIndex();
+    return invocationParameter.getValue() instanceof Flux && Optional
+        .of(ResolvableType.forMethodParameter(method, index))
+        .filter(ResolvableType::hasGenerics)
+        .map(resolvableType -> resolvableType.resolveGeneric(0))
+        .filter(Part.class::isAssignableFrom)
+        .isPresent();
   }
 
   protected boolean isRequestPart(InvocationParameter invocationParameter) {
