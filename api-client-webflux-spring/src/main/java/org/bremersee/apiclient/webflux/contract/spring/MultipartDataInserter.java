@@ -139,7 +139,7 @@ public class MultipartDataInserter extends AbstractRequestBodyInserter {
   public RequestHeadersUriSpec<?> apply(Invocation invocation, RequestBodyUriSpec requestBodyUriSpec) {
     List<InvocationParameter> possibleBodies = findPossibleBodies(invocation);
     List<Publisher<Part>> partPublishers = possibleBodies.stream()
-        .filter(this::isRequestPart)
+        .filter(invocationParameter -> isRequestPart(invocationParameter) || isFluxWithPart(invocationParameter))
         .map(invocationParameter -> toPublisher(invocationParameter.getValue()))
         .collect(Collectors.toList());
     Mono<MultiValueMap<String, HttpEntity<?>>> httpEntityMap;

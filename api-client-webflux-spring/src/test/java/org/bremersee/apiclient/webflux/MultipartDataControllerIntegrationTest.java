@@ -9,8 +9,10 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import lombok.extern.slf4j.Slf4j;
@@ -322,6 +324,35 @@ class MultipartDataControllerIntegrationTest {
   }
 
   @Test
+  void postFluxParts() {
+    List<Part> parts = new ArrayList<>();
+    parts.add(
+        partBuilder.part(FORM_FIELD_NAME, FORM_FIELD_VALUE).contentType(MediaType.TEXT_PLAIN).build());
+    parts.add(
+        partBuilder.part(FILE_PART_NAME, new ClassPathResource(FILE_PART_RESOURCE)).build());
+
+    byte[] dataBuf = randomBytes(7 * 1024 + 7);
+    parts.add(
+        partBuilder.part(DATA_BUFFER_PART_NAME, toDataBuffer(dataBuf, 128))
+            .contentType(MediaType.APPLICATION_OCTET_STREAM)
+            .build());
+
+    byte[] fileBytes = randomBytes(1234);
+    writeToTmpFile(fileBytes);
+    parts.add(
+        partBuilder.part(REAL_FILES_PART_NAME, tmpFile)
+            .contentType(MediaType.APPLICATION_OCTET_STREAM)
+            .build());
+
+    StepVerifier.create(apiClient.postFluxParts(Flux.fromStream(parts.stream())))
+        .assertNext(response -> assertThat(response)
+            .containsExactlyInAnyOrderEntriesOf(expected(dataBuf, fileBytes)))
+        .expectNextCount(0)
+        .verifyComplete();
+
+  }
+
+  @Test
   void postFluxPartsAsyncWithWebClient() {
     MultipartBodyBuilder builder = new MultipartBodyBuilder();
     builder.part(FORM_FIELD_NAME, FORM_FIELD_VALUE, MediaType.TEXT_PLAIN);
@@ -355,6 +386,27 @@ class MultipartDataControllerIntegrationTest {
             .body(BodyInserters.fromMultipartData(builder.build()))
             .retrieve()
             .bodyToMono(new MapRef()))
+        .assertNext(response -> assertThat(response)
+            .containsExactlyInAnyOrderEntriesOf(Map.of("parts", FILE_PART_CONTENT)))
+        .expectNextCount(0)
+        .verifyComplete();
+  }
+
+  @Test
+  void postNamedFluxParts() {
+    List<Part> parts = new ArrayList<>();
+    parts.add(
+        partBuilder.part("parts", new ClassPathResource(FILE_PART_RESOURCE)).build());
+
+    // This part will be ignored, because it's name is not 'parts'.
+    parts.add(
+        partBuilder.part(FORM_FIELD_NAME, FORM_FIELD_VALUE).contentType(MediaType.TEXT_PLAIN).build());
+
+    MultipartBodyBuilder builder = new MultipartBodyBuilder();
+    builder.part("parts", new ClassPathResource(FILE_PART_RESOURCE));
+
+    StepVerifier
+        .create(apiClient.postNamedFluxParts(Flux.fromStream(parts.stream())))
         .assertNext(response -> assertThat(response)
             .containsExactlyInAnyOrderEntriesOf(Map.of("parts", FILE_PART_CONTENT)))
         .expectNextCount(0)
