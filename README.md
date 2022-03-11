@@ -1,6 +1,6 @@
 # Api Client
 
-[![codecov](https://codecov.io/gh/bremersee/api-client/branch/develop/graph/badge.svg)](https://codecov.io/gh/bremersee/api-client)
+[![codecov](https://codecov.io/gh/bremersee/api-client/branch/main/graph/badge.svg)](https://codecov.io/gh/bremersee/api-client)
 
 The api client consumes RESTful reactive APIs (like OpenFeign) in a Spring Webflux application. 
 
