@@ -33,6 +33,8 @@ import org.springframework.web.bind.annotation.RequestMethod;
 
 /**
  * The http method resolver test.
+ *
+ * @author Christian Bremer
  */
 @ExtendWith(SoftAssertionsExtension.class)
 class HttpMethodResolverTest {

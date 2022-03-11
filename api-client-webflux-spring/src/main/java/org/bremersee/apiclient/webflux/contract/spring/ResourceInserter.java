@@ -24,6 +24,8 @@ import org.springframework.web.reactive.function.client.WebClient.RequestHeaders
 
 /**
  * The resource inserter.
+ *
+ * @author Christian Bremer
  */
 public class ResourceInserter extends SingleBodyInserter<Resource> {
 

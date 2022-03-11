@@ -33,6 +33,8 @@ import org.springframework.web.util.UriBuilder;
 
 /**
  * The request uri function.
+ *
+ * @author Christian Bremer
  */
 @Value.Immutable
 @Value.Style(visibility = ImplementationVisibility.PACKAGE)

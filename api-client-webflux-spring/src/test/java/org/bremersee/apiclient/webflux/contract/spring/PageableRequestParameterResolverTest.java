@@ -34,6 +34,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 /**
  * The pageable request parameter resolver test.
+ *
+ * @author Christian Bremer
  */
 @ExtendWith(SoftAssertionsExtension.class)
 class PageableRequestParameterResolverTest {

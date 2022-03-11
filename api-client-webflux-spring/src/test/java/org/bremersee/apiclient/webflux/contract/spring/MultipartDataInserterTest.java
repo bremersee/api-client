@@ -45,6 +45,8 @@ import reactor.core.publisher.Mono;
 
 /**
  * The multipart data inserter test.
+ *
+ * @author Christian Bremer
  */
 @ExtendWith(SoftAssertionsExtension.class)
 class MultipartDataInserterTest {

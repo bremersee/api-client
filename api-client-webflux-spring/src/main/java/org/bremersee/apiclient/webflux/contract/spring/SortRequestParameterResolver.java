@@ -29,6 +29,8 @@ import org.springframework.util.MultiValueMap;
 
 /**
  * The sort request parameter resolver.
+ *
+ * @author Christian Bremer
  */
 public class SortRequestParameterResolver implements
     QueryParametersResolver,

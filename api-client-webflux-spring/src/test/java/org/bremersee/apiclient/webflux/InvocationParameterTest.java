@@ -37,6 +37,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * The invocation parameter test.
+ *
+ * @author Christian Bremer
  */
 @ExtendWith(SoftAssertionsExtension.class)
 class InvocationParameterTest {

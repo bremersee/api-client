@@ -28,6 +28,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 /**
  * The http request method test.
+ *
+ * @author Christian Bremer
  */
 @ExtendWith(SoftAssertionsExtension.class)
 class HttpRequestMethodTest {

@@ -35,6 +35,8 @@ import reactor.core.publisher.Mono;
 
 /**
  * The publisher inserter test.
+ *
+ * @author Christian Bremer
  */
 class PublisherInserterTest {
 

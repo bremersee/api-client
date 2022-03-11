@@ -26,6 +26,8 @@ import reactor.core.publisher.Mono;
 
 /**
  * The data buffer controller.
+ *
+ * @author Christian Bremer
  */
 @RequestMapping(path = "/api")
 public interface DataBufferController {

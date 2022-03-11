@@ -25,6 +25,7 @@ import org.springframework.web.reactive.function.client.WebClient.RequestHeaders
  * The single body inserter.
  *
  * @param <T> the type parameter
+ * @author Christian Bremer
  */
 public abstract class SingleBodyInserter<T> extends AbstractRequestBodyInserter {
 

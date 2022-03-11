@@ -33,6 +33,8 @@ import org.springframework.util.MultiValueMap;
 
 /**
  * The headers consumer test.
+ *
+ * @author Christian Bremer
  */
 class HeadersConsumerTest {
 

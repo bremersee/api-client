@@ -31,6 +31,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * The request headers resolver test.
+ *
+ * @author Christian Bremer
  */
 @ExtendWith(SoftAssertionsExtension.class)
 class RequestHeadersResolverTest {

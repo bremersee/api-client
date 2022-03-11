@@ -27,6 +27,8 @@ import org.springframework.util.MultiValueMap;
 
 /**
  * The pageable request parameter resolver.
+ *
+ * @author Christian Bremer
  */
 public class PageableRequestParameterResolver extends SortRequestParameterResolver {
 

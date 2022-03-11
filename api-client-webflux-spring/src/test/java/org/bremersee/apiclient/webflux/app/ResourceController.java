@@ -24,6 +24,8 @@ import reactor.core.publisher.Mono;
 
 /**
  * The resource controller.
+ *
+ * @author Christian Bremer
  */
 @RequestMapping(path = "/api")
 public interface ResourceController {

@@ -23,6 +23,8 @@ import org.springframework.web.reactive.function.client.WebClient.RequestHeaders
 
 /**
  * The request body inserter.
+ *
+ * @author Christian Bremer
  */
 public interface RequestBodyInserter extends
     BiFunction<Invocation, RequestBodyUriSpec, RequestHeadersUriSpec<?>> {

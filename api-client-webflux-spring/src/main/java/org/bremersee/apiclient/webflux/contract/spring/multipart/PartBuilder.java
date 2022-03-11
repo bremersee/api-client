@@ -37,6 +37,8 @@ import reactor.core.scheduler.Schedulers;
 
 /**
  * The part builder.
+ *
+ * @author Christian Bremer
  */
 public class PartBuilder {
 

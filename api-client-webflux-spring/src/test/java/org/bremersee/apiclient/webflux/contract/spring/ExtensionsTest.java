@@ -28,6 +28,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * The extensions test.
+ *
+ * @author Christian Bremer
  */
 class ExtensionsTest {
 

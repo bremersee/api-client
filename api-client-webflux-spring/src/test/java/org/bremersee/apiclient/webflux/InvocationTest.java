@@ -32,6 +32,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
  * The invocation test.
+ *
+ * @author Christian Bremer
  */
 @ExtendWith(SoftAssertionsExtension.class)
 class InvocationTest {

@@ -43,6 +43,8 @@ import org.springframework.util.MultiValueMap;
 
 /**
  * The invocation parameter.
+ *
+ * @author Christian Bremer
  */
 @Getter
 @EqualsAndHashCode(callSuper = true)

@@ -32,6 +32,8 @@ import reactor.core.publisher.Mono;
 
 /**
  * The response function test.
+ *
+ * @author Christian Bremer
  */
 class ResponseFunctionTest {
 

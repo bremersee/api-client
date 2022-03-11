@@ -20,6 +20,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 /**
  * The reactive api client web client builder configurer.
+ *
+ * @author Christian Bremer
  */
 public interface ReactiveApiClientWebClientBuilderConfigurer {
 

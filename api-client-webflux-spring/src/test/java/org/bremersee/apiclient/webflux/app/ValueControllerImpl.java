@@ -26,6 +26,8 @@ import reactor.core.publisher.Mono;
 
 /**
  * The value controller implementation.
+ *
+ * @author Christian Bremer
  */
 @RestController
 public class ValueControllerImpl implements ValueController {

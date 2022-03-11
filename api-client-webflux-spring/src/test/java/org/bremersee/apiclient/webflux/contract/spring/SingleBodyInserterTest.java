@@ -31,6 +31,8 @@ import org.springframework.web.reactive.function.client.WebClient.RequestHeaders
 
 /**
  * The single body inserter test.
+ *
+ * @author Christian Bremer
  */
 class SingleBodyInserterTest {
 

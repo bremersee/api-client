@@ -23,6 +23,8 @@ import org.springframework.http.codec.multipart.Part;
 
 /**
  * The part to http entity converter.
+ *
+ * @author Christian Bremer
  */
 public class PartToHttpEntityConverter implements Converter<Part, HttpEntity<?>> {
 

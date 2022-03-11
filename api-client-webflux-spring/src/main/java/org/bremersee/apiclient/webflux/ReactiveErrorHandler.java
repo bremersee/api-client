@@ -29,6 +29,8 @@ import reactor.core.publisher.Mono;
 
 /**
  * The reactive error handler.
+ *
+ * @author Christian Bremer
  */
 @Value.Immutable
 @Value.Style(visibility = ImplementationVisibility.PACKAGE)

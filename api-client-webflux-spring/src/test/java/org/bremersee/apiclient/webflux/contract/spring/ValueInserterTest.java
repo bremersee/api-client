@@ -29,6 +29,8 @@ import org.springframework.web.reactive.function.client.WebClient.RequestHeaders
 
 /**
  * The value inserter test.
+ *
+ * @author Christian Bremer
  */
 class ValueInserterTest {
 

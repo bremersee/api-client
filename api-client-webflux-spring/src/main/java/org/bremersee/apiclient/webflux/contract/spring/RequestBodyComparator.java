@@ -23,6 +23,8 @@ import org.springframework.web.bind.annotation.RequestPart;
 
 /**
  * The request body comparator.
+ *
+ * @author Christian Bremer
  */
 class RequestBodyComparator implements Comparator<InvocationParameter> {
 

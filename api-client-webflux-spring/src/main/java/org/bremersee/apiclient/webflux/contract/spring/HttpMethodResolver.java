@@ -33,6 +33,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
  * The http method resolver.
+ *
+ * @author Christian Bremer
  */
 public class HttpMethodResolver implements Function<Invocation, HttpRequestMethod> {
 

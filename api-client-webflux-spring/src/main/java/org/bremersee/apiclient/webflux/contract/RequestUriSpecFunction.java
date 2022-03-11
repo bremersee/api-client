@@ -30,6 +30,8 @@ import org.springframework.web.reactive.function.client.WebClient.RequestHeaders
 
 /**
  * The request uri spec function.
+ *
+ * @author Christian Bremer
  */
 @Value.Immutable
 @Value.Style(visibility = ImplementationVisibility.PACKAGE)

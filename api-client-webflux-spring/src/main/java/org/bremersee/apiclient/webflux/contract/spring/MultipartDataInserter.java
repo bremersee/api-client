@@ -43,6 +43,8 @@ import reactor.core.publisher.Mono;
 
 /**
  * The multipart data inserter.
+ *
+ * @author Christian Bremer
  */
 public class MultipartDataInserter extends AbstractRequestBodyInserter {
 

@@ -28,6 +28,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
  * The request path resolver.
+ *
+ * @author Christian Bremer
  */
 public class RequestPathResolver implements Function<Invocation, String> {
 

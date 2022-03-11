@@ -30,7 +30,9 @@ import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.SessionAttribute;
 
 /**
- * The type Extensions.
+ * The extensions.
+ *
+ * @author Christian Bremer
  */
 public abstract class Extensions {
 

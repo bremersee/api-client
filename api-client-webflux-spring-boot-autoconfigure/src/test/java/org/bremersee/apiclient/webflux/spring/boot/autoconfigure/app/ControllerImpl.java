@@ -34,6 +34,8 @@ import reactor.core.publisher.Mono;
 
 /**
  * The controller.
+ *
+ * @author Christian Bremer
  */
 @RestController
 public class ControllerImpl implements ControllerApi {

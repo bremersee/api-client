@@ -32,6 +32,8 @@ import org.springframework.util.MultiValueMap;
 
 /**
  * The headers consumer.
+ *
+ * @author Christian Bremer
  */
 @Value.Immutable
 @Value.Style(visibility = ImplementationVisibility.PACKAGE)

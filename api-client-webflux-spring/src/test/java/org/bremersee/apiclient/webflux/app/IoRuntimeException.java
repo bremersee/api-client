@@ -20,6 +20,8 @@ import java.io.IOException;
 
 /**
  * The io runtime exception.
+ *
+ * @author Christian Bremer
  */
 public class IoRuntimeException extends RuntimeException {
 

@@ -53,6 +53,8 @@ import reactor.test.StepVerifier;
 
 /**
  * The autoconfiguration integration test.
+ *
+ * @author Christian Bremer
  */
 @SpringBootTest(
     classes = {TestConfiguration.class},

@@ -30,6 +30,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
  * The content type resolver.
+ *
+ * @author Christian Bremer
  */
 public class ContentTypeResolver implements Function<Invocation, Optional<MediaType>> {
 

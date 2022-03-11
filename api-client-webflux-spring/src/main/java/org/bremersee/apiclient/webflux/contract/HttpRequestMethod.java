@@ -24,6 +24,8 @@ import org.springframework.web.reactive.function.client.WebClient.RequestHeaders
 
 /**
  * The http request method.
+ *
+ * @author Christian Bremer
  */
 public enum HttpRequestMethod {
 

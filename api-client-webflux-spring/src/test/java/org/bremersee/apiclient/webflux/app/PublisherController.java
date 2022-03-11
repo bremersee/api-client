@@ -25,6 +25,8 @@ import reactor.core.publisher.Mono;
 
 /**
  * The publisher controller.
+ *
+ * @author Christian Bremer
  */
 @RequestMapping(path = "/api")
 public interface PublisherController {

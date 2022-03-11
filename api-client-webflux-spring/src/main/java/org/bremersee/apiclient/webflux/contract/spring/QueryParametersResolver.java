@@ -22,6 +22,8 @@ import org.springframework.util.MultiValueMap;
 
 /**
  * The query parameters resolver.
+ *
+ * @author Christian Bremer
  */
 public interface QueryParametersResolver extends Function<Invocation, MultiValueMap<String, Object>> {
 

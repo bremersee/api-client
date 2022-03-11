@@ -23,6 +23,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * The request parameters resolver.
+ *
+ * @author Christian Bremer
  */
 public class RequestParametersResolver implements QueryParametersResolver {
 

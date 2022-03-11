@@ -24,6 +24,8 @@ import org.springframework.web.bind.annotation.CookieValue;
 
 /**
  * The cookies resolver.
+ *
+ * @author Christian Bremer
  */
 public class CookiesResolver implements
     Function<Invocation, MultiValueMap<String, String>> {

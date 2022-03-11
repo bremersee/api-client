@@ -25,6 +25,8 @@ import reactor.core.publisher.Mono;
 
 /**
  * The data buffer controller implementation.
+ *
+ * @author Christian Bremer
  */
 @RestController
 public class DataBufferControllerImpl implements DataBufferController {

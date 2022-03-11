@@ -44,6 +44,8 @@ import reactor.test.StepVerifier;
 
 /**
  * The part builder test.
+ *
+ * @author Christian Bremer
  */
 @ExtendWith(SoftAssertionsExtension.class)
 class PartBuilderTest {

@@ -34,6 +34,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 /**
  * The request uri function test.
+ *
+ * @author Christian Bremer
  */
 class RequestUriFunctionTest {
 

@@ -27,6 +27,8 @@ import org.springframework.web.reactive.function.client.WebClient.RequestHeaders
 
 /**
  * The publisher inserter.
+ *
+ * @author Christian Bremer
  */
 public class PublisherInserter extends SingleBodyInserter<InvocationParameter> {
 

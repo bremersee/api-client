@@ -25,6 +25,8 @@ import org.springframework.web.reactive.function.client.WebClient.RequestHeaders
 
 /**
  * The value inserter.
+ *
+ * @author Christian Bremer
  */
 public class ValueInserter extends SingleBodyInserter<Object> {
 

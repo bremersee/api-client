@@ -34,6 +34,8 @@ import org.springframework.web.util.UriBuilder;
 
 /**
  * The reactive contract.
+ *
+ * @author Christian Bremer
  */
 @Value.Immutable
 @Value.Style(visibility = ImplementationVisibility.PACKAGE)

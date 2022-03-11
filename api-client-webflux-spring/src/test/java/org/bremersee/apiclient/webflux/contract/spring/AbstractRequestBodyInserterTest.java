@@ -30,6 +30,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 /**
  * The abstract request body inserter test.
+ *
+ * @author Christian Bremer
  */
 class AbstractRequestBodyInserterTest {
 

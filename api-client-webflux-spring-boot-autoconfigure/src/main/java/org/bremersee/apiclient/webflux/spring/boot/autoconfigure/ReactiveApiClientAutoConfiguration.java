@@ -64,6 +64,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 /**
  * The reactive api client autoconfiguration.
+ *
+ * @author Christian Bremer
  */
 @ConditionalOnWebApplication(type = Type.REACTIVE)
 @ConditionalOnClass({ReactiveApiClient.class, ReactiveSpringContract.class})

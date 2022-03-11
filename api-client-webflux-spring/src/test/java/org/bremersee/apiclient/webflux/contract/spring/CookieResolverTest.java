@@ -31,6 +31,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * The cookie resolver test.
+ *
+ * @author Christian Bremer
  */
 @ExtendWith(SoftAssertionsExtension.class)
 class CookieResolverTest {

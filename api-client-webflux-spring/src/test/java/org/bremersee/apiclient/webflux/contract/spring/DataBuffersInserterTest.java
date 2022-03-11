@@ -34,6 +34,8 @@ import reactor.core.publisher.Flux;
 
 /**
  * The data buffers inserter test.
+ *
+ * @author Christian Bremer
  */
 class DataBuffersInserterTest {
 

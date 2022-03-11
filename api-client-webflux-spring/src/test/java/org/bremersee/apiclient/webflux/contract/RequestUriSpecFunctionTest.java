@@ -32,6 +32,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 /**
  * The request uri spec function test.
+ *
+ * @author Christian Bremer
  */
 class RequestUriSpecFunctionTest {
 

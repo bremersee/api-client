@@ -22,6 +22,8 @@ import reactor.core.publisher.Mono;
 
 /**
  * The publisher controller implementation.
+ *
+ * @author Christian Bremer
  */
 @RestController
 public class PublisherControllerImpl implements PublisherController{

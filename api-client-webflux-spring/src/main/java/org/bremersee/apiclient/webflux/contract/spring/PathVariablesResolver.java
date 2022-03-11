@@ -24,6 +24,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 /**
  * The path variables resolver.
+ *
+ * @author Christian Bremer
  */
 public class PathVariablesResolver implements Function<Invocation, Map<String, Object>> {
 

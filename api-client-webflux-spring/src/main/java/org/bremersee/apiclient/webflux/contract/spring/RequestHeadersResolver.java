@@ -24,6 +24,8 @@ import org.springframework.web.bind.annotation.RequestHeader;
 
 /**
  * The request headers resolver.
+ *
+ * @author Christian Bremer
  */
 public class RequestHeadersResolver implements
     Function<Invocation, MultiValueMap<String, String>> {

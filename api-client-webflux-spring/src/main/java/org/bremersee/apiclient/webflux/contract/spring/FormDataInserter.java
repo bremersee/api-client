@@ -16,6 +16,8 @@ import org.springframework.web.reactive.function.client.WebClient.RequestHeaders
 
 /**
  * The form data inserter.
+ *
+ * @author Christian Bremer
  */
 public class FormDataInserter extends SingleBodyInserter<MultiValueMap<String, ?>> {
 

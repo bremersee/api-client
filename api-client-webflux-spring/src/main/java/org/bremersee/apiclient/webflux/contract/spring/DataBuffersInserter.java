@@ -28,6 +28,8 @@ import org.springframework.web.reactive.function.client.WebClient.RequestHeaders
 
 /**
  * The data buffers inserter.
+ *
+ * @author Christian Bremer
  */
 public class DataBuffersInserter extends SingleBodyInserter<Publisher<DataBuffer>> {
 

@@ -35,6 +35,8 @@ import reactor.util.function.Tuples;
 
 /**
  * The multipart data controller implementation.
+ *
+ * @author Christian Bremer
  */
 @RestController
 public class MultipartDataControllerImpl implements MultipartDataController {

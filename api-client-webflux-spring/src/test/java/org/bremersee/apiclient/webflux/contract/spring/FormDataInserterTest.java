@@ -39,6 +39,8 @@ import org.springframework.web.reactive.function.client.WebClient.RequestHeaders
 
 /**
  * The form data inserter test.
+ *
+ * @author Christian Bremer
  */
 class FormDataInserterTest {
 

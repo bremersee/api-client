@@ -31,6 +31,8 @@ import org.springframework.util.ClassUtils;
 
 /**
  * The reactive error handler autoconfiguration.
+ *
+ * @author Christian Bremer
  */
 @ConditionalOnWebApplication(type = Type.REACTIVE)
 @ConditionalOnClass({ReactiveErrorHandler.class, DefaultWebClientErrorDecoder.class})

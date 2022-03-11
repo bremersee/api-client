@@ -29,6 +29,8 @@ import reactor.core.publisher.Mono;
 
 /**
  * The response function.
+ *
+ * @author Christian Bremer
  */
 public class ResponseFunction implements BiFunction<Invocation, ResponseSpec, Publisher<?>> {
 

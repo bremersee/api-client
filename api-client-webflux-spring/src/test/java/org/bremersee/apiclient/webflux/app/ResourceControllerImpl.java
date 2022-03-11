@@ -25,6 +25,8 @@ import reactor.core.publisher.Mono;
 
 /**
  * The resource controller implementation.
+ *
+ * @author Christian Bremer
  */
 @RestController
 public class ResourceControllerImpl implements ResourceController {

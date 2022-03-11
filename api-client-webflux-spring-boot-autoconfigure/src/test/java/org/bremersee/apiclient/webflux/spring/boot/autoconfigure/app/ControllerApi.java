@@ -34,6 +34,8 @@ import reactor.core.publisher.Mono;
 
 /**
  * The controller api.
+ *
+ * @author Christian Bremer
  */
 @RequestMapping(path = "/api")
 public interface ControllerApi {

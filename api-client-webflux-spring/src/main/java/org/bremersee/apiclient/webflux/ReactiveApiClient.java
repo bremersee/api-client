@@ -26,6 +26,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 
 /**
  * The reactive api client.
+ *
+ * @author Christian Bremer
  */
 public class ReactiveApiClient extends ApiClient {
 

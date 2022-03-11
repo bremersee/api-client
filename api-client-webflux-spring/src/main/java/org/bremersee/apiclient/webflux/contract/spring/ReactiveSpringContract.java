@@ -41,6 +41,8 @@ import org.springframework.web.util.UriBuilder;
 
 /**
  * The reactive spring contract.
+ *
+ * @author Christian Bremer
  */
 public class ReactiveSpringContract implements ReactiveContract {
 

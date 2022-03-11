@@ -27,6 +27,8 @@ import org.springframework.util.MultiValueMap;
 
 /**
  * The cookies consumer.
+ *
+ * @author Christian Bremer
  */
 @Value.Immutable
 @Value.Style(visibility = ImplementationVisibility.PACKAGE)

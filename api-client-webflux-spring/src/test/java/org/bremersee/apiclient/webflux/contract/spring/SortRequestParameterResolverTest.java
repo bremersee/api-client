@@ -31,6 +31,8 @@ import org.springframework.web.bind.annotation.RequestHeader;
 
 /**
  * The sort request parameter resolver test.
+ *
+ * @author Christian Bremer
  */
 @ExtendWith(SoftAssertionsExtension.class)
 class SortRequestParameterResolverTest {

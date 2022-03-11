@@ -27,6 +27,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 /**
  * The abstract request body inserter.
+ *
+ * @author Christian Bremer
  */
 public abstract class AbstractRequestBodyInserter implements RequestBodyInserter {
 

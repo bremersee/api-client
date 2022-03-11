@@ -29,6 +29,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 /**
  * The accept resolver.
+ *
+ * @author Christian Bremer
  */
 public class AcceptResolver implements Function<Invocation, MediaType> {
 

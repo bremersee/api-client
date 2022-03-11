@@ -28,6 +28,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 /**
  * The path variables resolver test.
+ *
+ * @author Christian Bremer
  */
 @ExtendWith(SoftAssertionsExtension.class)
 class PathVariablesResolverTest {

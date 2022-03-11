@@ -29,6 +29,8 @@ import org.springframework.util.MultiValueMap;
 
 /**
  * The cookies consumer test.
+ *
+ * @author Christian Bremer
  */
 class CookiesConsumerTest {
 

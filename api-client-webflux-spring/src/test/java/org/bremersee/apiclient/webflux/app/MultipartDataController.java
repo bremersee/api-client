@@ -28,6 +28,8 @@ import reactor.core.publisher.Mono;
 
 /**
  * The multipart data controller.
+ *
+ * @author Christian Bremer
  */
 public interface MultipartDataController {
 
