@@ -7,7 +7,7 @@
   <parent>
     <artifactId>api-client-parent</artifactId>
     <groupId>org.bremersee</groupId>
-    <version>0.0.1</version>
+    <version>0.0.2-SNAPSHOT</version>
   </parent>
 
   <artifactId>api-client-webflux-spring-boot-starter</artifactId>
