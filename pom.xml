@@ -91,11 +91,6 @@
     <dependencies>
       <dependency>
         <groupId>org.bremersee</groupId>
-        <artifactId>common-exception</artifactId>
-        <version>${common-exception.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.bremersee</groupId>
         <artifactId>common-exception-spring-webflux</artifactId>
         <version>${common-exception.version}</version>
       </dependency>
