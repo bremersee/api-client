@@ -180,13 +180,13 @@ class InvocationParameterTest {
     source.put("sort", List.of("lastName", "firstName"));
     source.put("numbers", new int[]{5, 6, 7});
     InvocationParameter target = createTarget("methodE", Map.class, source);
-    MultiValueMap<String, Object> actual = target.toMultiValueMap(
-        RequestParam.class,
-        RequestParam::value, v -> v);
     MultiValueMap<String, Object> expected = new LinkedMultiValueMap<>();
     expected.add("name", "123");
     expected.addAll("sort", List.of("lastName", "firstName"));
     expected.addAll("numbers", List.of(5, 6, 7));
+    MultiValueMap<String, Object> actual = target.toMultiValueMap(
+        RequestParam.class,
+        RequestParam::value, v -> v);
     assertThat(actual)
         .containsExactlyInAnyOrderEntriesOf(expected);
   }

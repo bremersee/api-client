@@ -66,15 +66,15 @@ class PageableRequestParameterResolverTest {
     softly.assertThat(actual)
         .containsExactlyInAnyOrderEntriesOf(expected);
 
-    PageableRequestParameterResolver configuredTarget = target
-        .withPageNumberRequestParamName("p")
-        .withPageSizeRequestParamName("z");
-
     expected = new LinkedMultiValueMap<>();
     expected.add("sort", "a");
     expected.add("sort", "b,desc");
     expected.add("p", 4);
     expected.add("z", 25);
+
+    PageableRequestParameterResolver configuredTarget = target
+        .withPageNumberRequestParamName("p")
+        .withPageSizeRequestParamName("z");
 
     actual = configuredTarget.apply(invocation);
     softly.assertThat(actual)

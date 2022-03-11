@@ -209,6 +209,23 @@ public class MultipartDataInserter extends AbstractRequestBodyInserter {
         .fromPublisher(httpEntityMap, new MultiValueMapTypeReference()));
   }
 
+  @SuppressWarnings("unchecked")
+  private Publisher<MultiValueMap<String, Part>> findRequestBody(
+      List<InvocationParameter> possibleBodies) {
+    return possibleBodies.stream()
+        .findFirst()
+        .map(InvocationParameter::getValue)
+        .map(value -> {
+          if (value instanceof Publisher) {
+            return (Publisher<MultiValueMap<String, Part>>) value;
+          } else {
+            MultiValueMap<String, Part> partMap = (MultiValueMap<String, Part>) value;
+            return Mono.just(partMap);
+          }
+        })
+        .orElseGet(Mono::empty);
+  }
+
   private Publisher<Part> toPublisher(Object value) {
     Publisher<Part> partPublisher;
     if (value instanceof Part) {
@@ -226,23 +243,6 @@ public class MultipartDataInserter extends AbstractRequestBodyInserter {
         .collect(
             LinkedMultiValueMap::new,
             (map, part) -> map.add(part.name(), partConverter.convert(part)));
-  }
-
-  @SuppressWarnings("unchecked")
-  private Publisher<MultiValueMap<String, Part>> findRequestBody(
-      List<InvocationParameter> possibleBodies) {
-    return possibleBodies.stream()
-        .findFirst()
-        .map(InvocationParameter::getValue)
-        .map(value -> {
-          if (value instanceof Publisher) {
-            return (Publisher<MultiValueMap<String, Part>>) value;
-          } else {
-            MultiValueMap<String, Part> partMap = (MultiValueMap<String, Part>) value;
-            return Mono.just(partMap);
-          }
-        })
-        .orElseGet(Mono::empty);
   }
 
   private Mono<MultiValueMap<String, HttpEntity<?>>> toHttpEntityMap(

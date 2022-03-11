@@ -87,7 +87,7 @@ abstract class DefaultParts {
   /**
    * Abstract base class.
    */
-  private static abstract class AbstractPart implements Part {
+  private abstract static class AbstractPart implements Part {
 
     private final HttpHeaders headers;
 
