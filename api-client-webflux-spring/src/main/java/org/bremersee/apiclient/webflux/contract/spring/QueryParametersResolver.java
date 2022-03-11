@@ -20,6 +20,9 @@ import java.util.function.Function;
 import org.bremersee.apiclient.webflux.Invocation;
 import org.springframework.util.MultiValueMap;
 
+/**
+ * The query parameters resolver.
+ */
 public interface QueryParametersResolver extends Function<Invocation, MultiValueMap<String, Object>> {
 
 }

@@ -28,16 +28,29 @@ import org.springframework.util.Assert;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClient.RequestHeadersUriSpec;
 
+/**
+ * The request uri spec function.
+ */
 @Value.Immutable
 @Value.Style(visibility = ImplementationVisibility.PACKAGE)
 @Valid
 public interface RequestUriSpecFunction
     extends BiFunction<Invocation, WebClient, RequestHeadersUriSpec<?>> {
 
+  /**
+   * Builder.
+   *
+   * @return the request uri spec function builder
+   */
   static ImmutableRequestUriSpecFunction.Builder builder() {
     return ImmutableRequestUriSpecFunction.builder();
   }
 
+  /**
+   * Gets http method resolver.
+   *
+   * @return the http method resolver
+   */
   @NotNull
   Function<Invocation, HttpRequestMethod> getHttpMethodResolver();
 

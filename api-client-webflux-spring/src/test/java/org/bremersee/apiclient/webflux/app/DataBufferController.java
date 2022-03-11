@@ -24,9 +24,18 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+/**
+ * The data buffer controller.
+ */
 @RequestMapping(path = "/api")
 public interface DataBufferController {
 
+  /**
+   * Post data mono.
+   *
+   * @param data the data
+   * @return the mono
+   */
   @PostMapping(path = "/data", consumes = MediaType.ALL_VALUE)
   Mono<String> postData(@RequestBody Flux<DataBuffer> data);
 

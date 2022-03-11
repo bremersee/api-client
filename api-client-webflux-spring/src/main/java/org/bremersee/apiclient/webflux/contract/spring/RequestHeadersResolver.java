@@ -22,6 +22,9 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RequestHeader;
 
+/**
+ * The request headers resolver.
+ */
 public class RequestHeadersResolver implements
     Function<Invocation, MultiValueMap<String, String>> {
 

@@ -30,11 +30,20 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+/**
+ * The accept resolver test.
+ */
 @ExtendWith(SoftAssertionsExtension.class)
 class AcceptResolverTest {
 
   private static final AcceptResolver target = new AcceptResolver();
 
+  /**
+   * Apply.
+   *
+   * @param softly the softly
+   * @throws Exception the exception
+   */
   @Test
   void apply(SoftAssertions softly) throws Exception {
     Method method = Example.class.getMethod("methodA");
@@ -68,6 +77,11 @@ class AcceptResolverTest {
         .isEqualTo(MediaType.ALL);
   }
 
+  /**
+   * Parse media type.
+   *
+   * @param softly the softly
+   */
   @Test
   void parseMediaType(SoftAssertions softly) {
     softly.assertThat(target.parseMediaType("application/json"))
@@ -77,23 +91,44 @@ class AcceptResolverTest {
         .isNull();
   }
 
+  /**
+   * The interface Example.
+   */
   interface Example {
 
+    /**
+     * Method a.
+     */
     @RequestMapping(produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     void methodA();
 
+    /**
+     * Method b.
+     */
     @GetMapping(produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     void methodB();
 
+    /**
+     * Method c.
+     */
     @PostMapping(produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     void methodC();
 
+    /**
+     * Method d.
+     */
     @PutMapping(produces = {MediaType.APPLICATION_JSON_VALUE, MediaType.APPLICATION_XML_VALUE})
     void methodD();
 
+    /**
+     * Method e.
+     */
     @PatchMapping(produces = {MediaType.APPLICATION_XML_VALUE, MediaType.APPLICATION_JSON_VALUE})
     void methodE();
 
+    /**
+     * Method f.
+     */
     @DeleteMapping
     void methodF();
 

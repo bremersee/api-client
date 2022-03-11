@@ -27,6 +27,9 @@ import org.springframework.web.reactive.function.client.WebClient.ResponseSpec;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+/**
+ * The response function.
+ */
 public class ResponseFunction implements BiFunction<Invocation, ResponseSpec, Publisher<?>> {
 
   @Override

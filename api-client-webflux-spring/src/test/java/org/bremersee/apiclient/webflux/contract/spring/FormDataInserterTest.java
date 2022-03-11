@@ -37,12 +37,18 @@ import org.springframework.web.reactive.function.BodyInserter;
 import org.springframework.web.reactive.function.client.WebClient.RequestBodyUriSpec;
 import org.springframework.web.reactive.function.client.WebClient.RequestHeadersUriSpec;
 
+/**
+ * The form data inserter test.
+ */
 class FormDataInserterTest {
 
   private FormDataInserter target;
 
   private Function<Invocation, Optional<MediaType>> contentTypeResolver;
 
+  /**
+   * Init.
+   */
   @BeforeEach
   void init() {
     //noinspection unchecked
@@ -51,6 +57,11 @@ class FormDataInserterTest {
         .withContentTypeResolver(contentTypeResolver);
   }
 
+  /**
+   * Can insert.
+   *
+   * @throws Exception the exception
+   */
   @Test
   void canInsert() throws Exception {
     Method method = Example.class.getMethod("methodA", MultiValueMap.class);
@@ -61,6 +72,11 @@ class FormDataInserterTest {
         .isTrue();
   }
 
+  /**
+   * Can insert not other media types.
+   *
+   * @throws Exception the exception
+   */
   @Test
   void canInsertNotOtherMediaTypes() throws Exception {
     Method method = Example.class.getMethod("methodA", MultiValueMap.class);
@@ -71,6 +87,11 @@ class FormDataInserterTest {
         .isFalse();
   }
 
+  /**
+   * Can insert not any multi value map.
+   *
+   * @throws Exception the exception
+   */
   @Test
   void canInsertNotAnyMultiValueMap() throws Exception {
     Method method = Example.class.getMethod("methodB", MultiValueMap.class);
@@ -81,6 +102,11 @@ class FormDataInserterTest {
         .isFalse();
   }
 
+  /**
+   * Map body.
+   *
+   * @throws Exception the exception
+   */
   @Test
   void mapBody() throws Exception {
     Method method = Example.class.getMethod("methodA", MultiValueMap.class);
@@ -92,6 +118,9 @@ class FormDataInserterTest {
         .isEqualTo(value);
   }
 
+  /**
+   * Insert.
+   */
   @Test
   void insert() {
     RequestBodyUriSpec requestBodyUriSpec = mock(RequestBodyUriSpec.class);
@@ -105,10 +134,23 @@ class FormDataInserterTest {
         .isEqualTo(expected);
   }
 
+  /**
+   * The interface Example.
+   */
   interface Example {
 
+    /**
+     * Method a.
+     *
+     * @param formData the form data
+     */
     void methodA(@RequestBody MultiValueMap<String, String> formData);
 
+    /**
+     * Method b.
+     *
+     * @param formData the form data
+     */
     void methodB(@RequestBody MultiValueMap<Object, Object> formData);
   }
 }

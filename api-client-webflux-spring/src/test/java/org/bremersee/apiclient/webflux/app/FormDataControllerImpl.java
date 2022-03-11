@@ -28,7 +28,7 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 /**
- * The form data controller.
+ * The form data controller implementation.
  *
  * <p>In a WebFlux application, form data is accessed via {@code ServerWebExchange.getFormData()}.
  * For this reason the controller can't implement the interface, because it's signature differs from this
@@ -39,6 +39,14 @@ import reactor.core.publisher.Mono;
 @RestController
 public class FormDataControllerImpl { // Can't implement FormDataController
 
+  /**
+   * Post form data mono.
+   *
+   * @param headerValue the header value
+   * @param lastValue the last value
+   * @param exchange the exchange
+   * @return the mono
+   */
   @RequestMapping(path = "/upload",
       method = RequestMethod.POST,
       consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,

@@ -26,6 +26,9 @@ import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient.RequestBodyUriSpec;
 import org.springframework.web.reactive.function.client.WebClient.RequestHeadersUriSpec;
 
+/**
+ * The data buffers inserter.
+ */
 public class DataBuffersInserter extends SingleBodyInserter<Publisher<DataBuffer>> {
 
   @Override

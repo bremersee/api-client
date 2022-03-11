@@ -31,11 +31,20 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 
+/**
+ * The http method resolver test.
+ */
 @ExtendWith(SoftAssertionsExtension.class)
 class HttpMethodResolverTest {
 
   private static final HttpMethodResolver target = new HttpMethodResolver();
 
+  /**
+   * Apply.
+   *
+   * @param softly the softly
+   * @throws Exception the exception
+   */
   @Test
   void apply(SoftAssertions softly) throws Exception {
     Method method = Example.class.getMethod("methodHead");
@@ -79,29 +88,56 @@ class HttpMethodResolverTest {
         .isInstanceOf(IllegalStateException.class);
   }
 
+  /**
+   * The interface Example.
+   */
   interface Example {
 
+    /**
+     * Method head.
+     */
     @RequestMapping(method = RequestMethod.HEAD)
     void methodHead();
 
+    /**
+     * Method options.
+     */
     @RequestMapping(method = RequestMethod.OPTIONS)
     void methodOptions();
 
+    /**
+     * Method b.
+     */
     @GetMapping
     void methodB();
 
+    /**
+     * Method c.
+     */
     @PostMapping
     void methodC();
 
+    /**
+     * Method d.
+     */
     @PutMapping
     void methodD();
 
+    /**
+     * Method e.
+     */
     @PatchMapping
     void methodE();
 
+    /**
+     * Method f.
+     */
     @DeleteMapping
     void methodF();
 
+    /**
+     * Method g.
+     */
     void methodG();
 
   }

@@ -25,9 +25,7 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 /**
- * Test controller one implementation.
- *
- * @author Christian Bremer
+ * The value controller implementation.
  */
 @RestController
 public class ValueControllerImpl implements ValueController {

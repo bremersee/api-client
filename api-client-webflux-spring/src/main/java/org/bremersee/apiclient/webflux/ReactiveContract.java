@@ -32,30 +32,68 @@ import org.springframework.web.reactive.function.client.WebClient.RequestHeaders
 import org.springframework.web.reactive.function.client.WebClient.ResponseSpec;
 import org.springframework.web.util.UriBuilder;
 
+/**
+ * The reactive contract.
+ */
 @Value.Immutable
 @Value.Style(visibility = ImplementationVisibility.PACKAGE)
 @Valid
 public interface ReactiveContract {
 
+  /**
+   * Builder.
+   *
+   * @return the immutable reactive contract . builder
+   */
   static ImmutableReactiveContract.Builder builder() {
     return ImmutableReactiveContract.builder();
   }
 
+  /**
+   * Gets cookies consumer.
+   *
+   * @return the cookies consumer
+   */
   @NotNull
   BiConsumer<Invocation, MultiValueMap<String, String>> getCookiesConsumer();
 
+  /**
+   * Gets headers consumer.
+   *
+   * @return the headers consumer
+   */
   @NotNull
   BiConsumer<Invocation, HttpHeaders> getHeadersConsumer();
 
+  /**
+   * Gets request uri function.
+   *
+   * @return the request uri function
+   */
   @NotNull
   BiFunction<Invocation, UriBuilder, URI> getRequestUriFunction();
 
+  /**
+   * Gets request uri spec function.
+   *
+   * @return the request uri spec function
+   */
   @NotNull
   BiFunction<Invocation, WebClient, RequestHeadersUriSpec<?>> getRequestUriSpecFunction();
 
+  /**
+   * Gets request body inserter function.
+   *
+   * @return the request body inserter function
+   */
   @NotNull
   BiFunction<Invocation, RequestBodyUriSpec, RequestHeadersUriSpec<?>> getRequestBodyInserterFunction();
 
+  /**
+   * Gets response function.
+   *
+   * @return the response function
+   */
   @NotNull
   BiFunction<Invocation, ResponseSpec, Publisher<?>> getResponseFunction();
 

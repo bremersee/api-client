@@ -21,6 +21,9 @@ import org.springframework.http.HttpEntity;
 import org.springframework.http.client.MultipartBodyBuilder;
 import org.springframework.http.codec.multipart.Part;
 
+/**
+ * The part to http entity converter.
+ */
 public class PartToHttpEntityConverter implements Converter<Part, HttpEntity<?>> {
 
   private final MultipartBodyBuilder multipartBodyBuilder = new MultipartBodyBuilder();

@@ -18,8 +18,16 @@ package org.bremersee.apiclient.webflux.spring.boot.autoconfigure;
 
 import org.springframework.web.reactive.function.client.WebClient;
 
+/**
+ * The reactive api client web client builder configurer.
+ */
 public interface ReactiveApiClientWebClientBuilderConfigurer {
 
+  /**
+   * Configure.
+   *
+   * @param webClientBuilder the web client builder
+   */
   void configure(WebClient.Builder webClientBuilder);
 
 }

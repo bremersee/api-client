@@ -60,7 +60,7 @@ import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 /**
- * The value controller integration test.
+ * The multipart data controller integration test.
  *
  * @author Christian Bremer
  */
@@ -85,15 +85,30 @@ class MultipartDataControllerIntegrationTest {
 
   private static final String REAL_FILES_PART_NAME = "files";
 
+  /**
+   * The Part builder.
+   */
   final PartBuilder partBuilder = new PartBuilder();
 
+  /**
+   * The Tmp file.
+   */
   Path tmpFile;
 
+  /**
+   * The Port.
+   */
   @LocalServerPort
   int port;
 
+  /**
+   * The Web client.
+   */
   WebClient webClient;
 
+  /**
+   * The Api client.
+   */
   MultipartDataController apiClient;
 
   private static Map<String, Object> expected() {
@@ -128,10 +143,18 @@ class MultipartDataControllerIntegrationTest {
     return DataBufferUtils.read(new ByteArrayResource(bytes), new DefaultDataBufferFactory(), bufferSize);
   }
 
+  /**
+   * Base url string.
+   *
+   * @return the string
+   */
   String baseUrl() {
     return "http://localhost:" + port;
   }
 
+  /**
+   * Init.
+   */
   @BeforeEach
   void init() {
     apiClient = ReactiveApiClient.builder()
@@ -146,6 +169,9 @@ class MultipartDataControllerIntegrationTest {
         .build();
   }
 
+  /**
+   * Delete tmp file.
+   */
   @AfterEach
   void deleteTmpFile() {
     if (nonNull(tmpFile)) {
@@ -168,6 +194,9 @@ class MultipartDataControllerIntegrationTest {
     }
   }
 
+  /**
+   * Post multipart data map with web client.
+   */
   @Test
   void postMultipartDataMapWithWebClient() {
     MultipartBodyBuilder builder = new MultipartBodyBuilder();
@@ -187,6 +216,9 @@ class MultipartDataControllerIntegrationTest {
         .verifyComplete();
   }
 
+  /**
+   * Post multipart data map.
+   */
   @Test
   void postMultipartDataMap() {
     MultiValueMap<String, Part> partMap = new LinkedMultiValueMap<>();
@@ -219,6 +251,9 @@ class MultipartDataControllerIntegrationTest {
         .verifyComplete();
   }
 
+  /**
+   * Post mono multipart data map with web client.
+   */
   @Test
   void postMonoMultipartDataMapWithWebClient() {
     MultipartBodyBuilder builder = new MultipartBodyBuilder();
@@ -238,6 +273,9 @@ class MultipartDataControllerIntegrationTest {
         .verifyComplete();
   }
 
+  /**
+   * Post mono multipart data map.
+   */
   @Test
   void postMonoMultipartDataMap() {
     MultiValueMap<String, Part> partMap = new LinkedMultiValueMap<>();
@@ -255,6 +293,9 @@ class MultipartDataControllerIntegrationTest {
         .verifyComplete();
   }
 
+  /**
+   * Post parts with web client.
+   */
   @Test
   void postPartsWithWebClient() {
     MultipartBodyBuilder builder = new MultipartBodyBuilder();
@@ -274,6 +315,9 @@ class MultipartDataControllerIntegrationTest {
         .verifyComplete();
   }
 
+  /**
+   * Post parts.
+   */
   @Test
   void postParts() {
     Part stringPart = partBuilder.part(FORM_FIELD_NAME, FORM_FIELD_VALUE).contentType(MediaType.TEXT_PLAIN).build();
@@ -286,6 +330,9 @@ class MultipartDataControllerIntegrationTest {
         .verifyComplete();
   }
 
+  /**
+   * Post mono parts with web client.
+   */
   @Test
   void postMonoPartsWithWebClient() {
     MultipartBodyBuilder builder = new MultipartBodyBuilder();
@@ -305,6 +352,9 @@ class MultipartDataControllerIntegrationTest {
         .verifyComplete();
   }
 
+  /**
+   * Post mono parts.
+   */
   @Test
   void postMonoParts() {
     Part stringPart = partBuilder.part(FORM_FIELD_NAME, FORM_FIELD_VALUE).contentType(MediaType.TEXT_PLAIN).build();
@@ -318,6 +368,9 @@ class MultipartDataControllerIntegrationTest {
         .verifyComplete();
   }
 
+  /**
+   * Post flux parts with web client.
+   */
   @Test
   void postFluxPartsWithWebClient() {
     MultipartBodyBuilder builder = new MultipartBodyBuilder();
@@ -337,6 +390,9 @@ class MultipartDataControllerIntegrationTest {
         .verifyComplete();
   }
 
+  /**
+   * Post flux parts.
+   */
   @Test
   void postFluxParts() {
     List<Part> parts = new ArrayList<>();
@@ -366,6 +422,9 @@ class MultipartDataControllerIntegrationTest {
 
   }
 
+  /**
+   * Post flux parts async with web client.
+   */
   @Test
   void postFluxPartsAsyncWithWebClient() {
     MultipartBodyBuilder builder = new MultipartBodyBuilder();
@@ -388,6 +447,9 @@ class MultipartDataControllerIntegrationTest {
         .verifyComplete();
   }
 
+  /**
+   * Post named flux parts with web client.
+   */
   @Test
   void postNamedFluxPartsWithWebClient() {
     MultipartBodyBuilder builder = new MultipartBodyBuilder();
@@ -406,6 +468,9 @@ class MultipartDataControllerIntegrationTest {
         .verifyComplete();
   }
 
+  /**
+   * Post named flux parts.
+   */
   @Test
   void postNamedFluxParts() {
     List<Part> parts = new ArrayList<>();

@@ -25,6 +25,9 @@ import org.springframework.core.ResolvableType;
 import org.springframework.web.reactive.function.client.WebClient.RequestBodyUriSpec;
 import org.springframework.web.reactive.function.client.WebClient.RequestHeadersUriSpec;
 
+/**
+ * The publisher inserter.
+ */
 public class PublisherInserter extends SingleBodyInserter<InvocationParameter> {
 
   @Override

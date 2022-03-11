@@ -22,18 +22,26 @@ import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-import org.assertj.core.api.Assertions;
 import org.assertj.core.api.SoftAssertions;
 import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
-import org.bremersee.apiclient.webflux.Invocation;
-import org.bremersee.apiclient.webflux.InvocationParameter;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
 
+/**
+ * The invocation test.
+ */
 @ExtendWith(SoftAssertionsExtension.class)
 class InvocationTest {
 
+  /**
+   * Test to string.
+   *
+   * @param softly the softly
+   * @throws Exception the exception
+   */
   @Test
   void testToString(SoftAssertions softly) throws Exception {
     Method method = Example.class.getMethod("methodA", String.class);
@@ -47,6 +55,11 @@ class InvocationTest {
         .contains("abc");
   }
 
+  /**
+   * To method parameter stream.
+   *
+   * @throws Exception the exception
+   */
   @Test
   void toMethodParameterStream() throws Exception {
     Method method = Example.class.getMethod("methodA", String.class);
@@ -59,18 +72,64 @@ class InvocationTest {
         .isEqualTo(expected);
   }
 
+  /**
+   * Find annotation value on target class.
+   *
+   * @throws Exception the exception
+   */
   @Test
-  void findAnnotationValue() throws Exception {
+  void findAnnotationValueOnTargetClass() throws Exception {
     Method method = Example.class.getMethod("methodA", String.class);
-    Optional<String> actual = Invocation.findAnnotationValue(
-        method.getParameters()[0],
+    Invocation invocation = new Invocation(Example.class, method, new Object[]{"123"});
+    Optional<String> actual = invocation.findAnnotationValueOnTargetClass(
+        RequestMapping.class,
+        requestMapping -> requestMapping.path().length > 0,
+        requestMapping -> requestMapping.path()[0]);
+    assertThat(actual)
+        .hasValue("/api");
+  }
+
+  /**
+   * Find annotation value on method.
+   *
+   * @throws Exception the exception
+   */
+  @Test
+  void findAnnotationValueOnMethod() throws Exception {
+    Method method = Example.class.getMethod("methodA", String.class);
+    Invocation invocation = new Invocation(Example.class, method, new Object[]{"123"});
+    Optional<String> actual = invocation.findAnnotationValueOnMethod(
+        GetMapping.class,
+        getMapping -> getMapping.path().length > 0,
+        getMapping -> getMapping.path()[0]);
+    assertThat(actual)
+        .hasValue("/example/{id}");
+  }
+
+  /**
+   * Find annotation value on parameter.
+   *
+   * @throws Exception the exception
+   */
+  @Test
+  void findAnnotationValueOnParameter() throws Exception {
+    Method method = Example.class.getMethod("methodA", String.class);
+    Invocation invocation = new Invocation(Example.class, method, new Object[]{"123"});
+    Optional<String> actual = invocation.findAnnotationValueOnParameter(
+        0,
         PathVariable.class,
         pathVariable -> !pathVariable.name().isEmpty(),
         PathVariable::name);
-    Assertions.assertThat(actual)
+    assertThat(actual)
         .hasValue("id");
   }
 
+  /**
+   * Get.
+   *
+   * @param softly the softly
+   * @throws Exception the exception
+   */
   @Test
   void get(SoftAssertions softly) throws Exception {
     Method method = Example.class.getMethod("methodA", String.class);
@@ -83,8 +142,18 @@ class InvocationTest {
         .isEqualTo(new Object[]{"abc"});
   }
 
+  /**
+   * The interface Example.
+   */
+  @RequestMapping(path = "/api")
   interface Example {
 
+    /**
+     * Method a.
+     *
+     * @param id the id
+     */
+    @GetMapping(path = "/example/{id}")
     void methodA(@PathVariable(name = "id") String id);
   }
 }

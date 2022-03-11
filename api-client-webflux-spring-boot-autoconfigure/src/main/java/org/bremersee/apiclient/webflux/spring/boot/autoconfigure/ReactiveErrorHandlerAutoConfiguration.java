@@ -29,6 +29,9 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.event.EventListener;
 import org.springframework.util.ClassUtils;
 
+/**
+ * The reactive error handler autoconfiguration.
+ */
 @ConditionalOnWebApplication(type = Type.REACTIVE)
 @ConditionalOnClass({ReactiveErrorHandler.class, DefaultWebClientErrorDecoder.class})
 @Configuration
@@ -47,6 +50,11 @@ public class ReactiveErrorHandlerAutoConfiguration {
         ClassUtils.getUserClass(getClass()).getSimpleName());
   }
 
+  /**
+   * Reactive error handler reactive error handler.
+   *
+   * @return the reactive error handler
+   */
   @ConditionalOnMissingBean
   @Bean
   public ReactiveErrorHandler reactiveErrorHandler() {

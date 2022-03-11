@@ -53,15 +53,11 @@ public class Invocation {
 
   private final Object[] args;
 
-  @Override
-  public String toString() {
-    return "Invocation{"
-        + "targetClass=" + targetClass.getName()
-        + ", method=" + method.getName()
-        + ", args=" + Arrays.toString(args)
-        + '}';
-  }
-
+  /**
+   * To method parameter stream.
+   *
+   * @return the stream
+   */
   public Stream<InvocationParameter> toMethodParameterStream() {
     List<InvocationParameter> invocationParameters = new ArrayList<>();
     Parameter[] parameters = method.getParameters();
@@ -71,7 +67,84 @@ public class Invocation {
     return invocationParameters.stream();
   }
 
-  public static <T, A extends Annotation> Optional<T> findAnnotationValue(
+  @Override
+  public String toString() {
+    return "Invocation{"
+        + "targetClass=" + targetClass.getName()
+        + ", method=" + method.getName()
+        + ", args=" + Arrays.toString(args)
+        + '}';
+  }
+
+  /**
+   * Find annotation value on target class.
+   *
+   * @param <T> the type parameter
+   * @param <A> the type parameter
+   * @param annotationType the annotation type
+   * @param condition the condition
+   * @param mapper the mapper
+   * @return the optional
+   */
+  public <T, A extends Annotation> Optional<T> findAnnotationValueOnTargetClass(
+      Class<A> annotationType,
+      Predicate<A> condition,
+      Function<A, T> mapper) {
+    return findAnnotationValue(targetClass, annotationType, condition, mapper);
+  }
+
+  /**
+   * Find annotation value on method.
+   *
+   * @param <T> the type parameter
+   * @param <A> the type parameter
+   * @param annotationType the annotation type
+   * @param condition the condition
+   * @param mapper the mapper
+   * @return the optional
+   */
+  public <T, A extends Annotation> Optional<T> findAnnotationValueOnMethod(
+      Class<A> annotationType,
+      Predicate<A> condition,
+      Function<A, T> mapper) {
+    return findAnnotationValue(method, annotationType, condition, mapper);
+  }
+
+  /**
+   * Find annotation value on parameter.
+   *
+   * @param <T> the type parameter
+   * @param <A> the type parameter
+   * @param parameterIndex the parameter index
+   * @param annotationType the annotation type
+   * @param condition the condition
+   * @param mapper the mapper
+   * @return the optional
+   */
+  public <T, A extends Annotation> Optional<T> findAnnotationValueOnParameter(
+      int parameterIndex,
+      Class<A> annotationType,
+      Predicate<A> condition,
+      Function<A, T> mapper) {
+    Parameter[] parameters = method.getParameters();
+    if (parameterIndex >= 0 && parameterIndex < parameters.length) {
+      return findAnnotationValue(parameters[parameterIndex], annotationType, condition, mapper);
+    }
+    return Optional.empty();
+  }
+
+  /**
+   * Find annotation value.
+   *
+   * @param <T> the type parameter
+   * @param <A> the type parameter
+   * @param annotatedElement the annotated element
+   * @param annotationType the annotation type
+   * @param condition the condition
+   * @param mapper the mapper
+   * @return the optional
+   */
+  private static <T, A extends Annotation> Optional<T> findAnnotationValue(
       AnnotatedElement annotatedElement,
       Class<A> annotationType,
       Predicate<A> condition,

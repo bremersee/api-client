@@ -41,12 +41,21 @@ import org.springframework.web.reactive.function.client.WebClient.RequestHeaders
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+/**
+ * The multipart data inserter.
+ */
 public class MultipartDataInserter extends AbstractRequestBodyInserter {
 
   private Function<Invocation, Optional<MediaType>> contentTypeResolver = new ContentTypeResolver();
 
   private Converter<Part, HttpEntity<?>> partConverter = new PartToHttpEntityConverter();
 
+  /**
+   * With content type resolver.
+   *
+   * @param contentTypeResolver the content type resolver
+   * @return the multipart data inserter
+   */
   public MultipartDataInserter withContentTypeResolver(Function<Invocation, Optional<MediaType>> contentTypeResolver) {
     if (nonNull(contentTypeResolver)) {
       this.contentTypeResolver = contentTypeResolver;
@@ -54,6 +63,12 @@ public class MultipartDataInserter extends AbstractRequestBodyInserter {
     return this;
   }
 
+  /**
+   * With part converter.
+   *
+   * @param partConverter the part converter
+   * @return the multipart data inserter
+   */
   public MultipartDataInserter withPartConverter(Converter<Part, HttpEntity<?>> partConverter) {
     if (nonNull(partConverter)) {
       this.partConverter = partConverter;
@@ -66,6 +81,12 @@ public class MultipartDataInserter extends AbstractRequestBodyInserter {
     return isMultipartFormData(invocation) && super.canInsert(invocation);
   }
 
+  /**
+   * Is multipart form data.
+   *
+   * @param invocation the invocation
+   * @return the boolean
+   */
   protected boolean isMultipartFormData(Invocation invocation) {
     return contentTypeResolver.apply(invocation)
         .filter(contentType -> contentType.isCompatibleWith(MediaType.MULTIPART_FORM_DATA))
@@ -83,6 +104,12 @@ public class MultipartDataInserter extends AbstractRequestBodyInserter {
     return isRequestBody(invocationParameter) || isRequestPart(invocationParameter);
   }
 
+  /**
+   * Is request body.
+   *
+   * @param invocationParameter the invocation parameter
+   * @return the boolean
+   */
   protected boolean isRequestBody(InvocationParameter invocationParameter) {
     Method method = invocationParameter.getMethod();
     int index = invocationParameter.getIndex();
@@ -131,6 +158,12 @@ public class MultipartDataInserter extends AbstractRequestBodyInserter {
         .isPresent();
   }
 
+  /**
+   * Is request part.
+   *
+   * @param invocationParameter the invocation parameter
+   * @return the boolean
+   */
   protected boolean isRequestPart(InvocationParameter invocationParameter) {
     return invocationParameter.hasParameterAnnotation(RequestPart.class)
         && (isPart(invocationParameter));

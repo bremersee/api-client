@@ -62,6 +62,9 @@ import org.springframework.util.ClassUtils;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.reactive.function.client.WebClient;
 
+/**
+ * The reactive api client autoconfiguration.
+ */
 @ConditionalOnWebApplication(type = Type.REACTIVE)
 @ConditionalOnClass({ReactiveApiClient.class, ReactiveSpringContract.class})
 @Configuration
@@ -80,12 +83,22 @@ public class ReactiveApiClientAutoConfiguration {
         ClassUtils.getUserClass(getClass()).getSimpleName());
   }
 
+  /**
+   * Content type resolver.
+   *
+   * @return the content type resolver
+   */
   @ConditionalOnMissingBean
   @Bean
   public ContentTypeResolver contentTypeResolver() {
     return new ContentTypeResolver();
   }
 
+  /**
+   * Request parameters resolver.
+   *
+   * @return the request parameters resolver
+   */
   @ConditionalOnMissingBean
   @Bean
   @Order(-1000)
@@ -94,6 +107,11 @@ public class ReactiveApiClientAutoConfiguration {
     return new RequestParametersResolver();
   }
 
+  /**
+   * Sort request parameter resolver.
+   *
+   * @return the sort request parameter resolver
+   */
   @ConditionalOnClass(name = "org.springframework.data.domain.Sort")
   @ConditionalOnMissingBean
   @Bean
@@ -103,6 +121,11 @@ public class ReactiveApiClientAutoConfiguration {
     return new SortRequestParameterResolver();
   }
 
+  /**
+   * Pageable request parameter resolver.
+   *
+   * @return the pageable request parameter resolver
+   */
   @ConditionalOnClass(name = "org.springframework.data.domain.Pageable")
   @ConditionalOnMissingBean
   @Bean
@@ -112,6 +135,12 @@ public class ReactiveApiClientAutoConfiguration {
     return new PageableRequestParameterResolver();
   }
 
+  /**
+   * Form data inserter.
+   *
+   * @param contentTypeResolver the content type resolver
+   * @return the request body inserter
+   */
   @Bean
   @Order(100)
   public RequestBodyInserter formDataInserter(ContentTypeResolver contentTypeResolver) {
@@ -120,6 +149,13 @@ public class ReactiveApiClientAutoConfiguration {
         .withContentTypeResolver(contentTypeResolver);
   }
 
+  /**
+   * Multipart data inserter.
+   *
+   * @param contentTypeResolver the content type resolver
+   * @param partConverter the part converter
+   * @return the request body inserter
+   */
   @Bean
   @Order(200)
   public RequestBodyInserter multipartDataInserter(
@@ -132,6 +168,11 @@ public class ReactiveApiClientAutoConfiguration {
         .withPartConverter(partConverter.getIfAvailable(PartToHttpEntityConverter::new));
   }
 
+  /**
+   * Resource inserter.
+   *
+   * @return the request body inserter
+   */
   @Bean
   @Order(300)
   public RequestBodyInserter resourceInserter() {
@@ -139,6 +180,11 @@ public class ReactiveApiClientAutoConfiguration {
     return new ResourceInserter();
   }
 
+  /**
+   * Data buffers inserter.
+   *
+   * @return the request body inserter
+   */
   @Bean
   @Order(400)
   public RequestBodyInserter dataBuffersInserter() {
@@ -146,6 +192,11 @@ public class ReactiveApiClientAutoConfiguration {
     return new DataBuffersInserter();
   }
 
+  /**
+   * Publisher inserter.
+   *
+   * @return the request body inserter
+   */
   @Bean
   @Order(500)
   public RequestBodyInserter publisherInserter() {
@@ -153,6 +204,11 @@ public class ReactiveApiClientAutoConfiguration {
     return new PublisherInserter();
   }
 
+  /**
+   * Value inserter.
+   *
+   * @return the request body inserter
+   */
   @Bean
   @Order(600)
   public RequestBodyInserter valueInserter() {
@@ -160,6 +216,12 @@ public class ReactiveApiClientAutoConfiguration {
     return new ValueInserter();
   }
 
+  /**
+   * Request body inserter registry.
+   *
+   * @param requestBodyInserters the request body inserters
+   * @return the request body inserter registry
+   */
   @ConditionalOnMissingBean
   @Bean
   public RequestBodyInserterRegistry requestBodyInserterRegistry(
@@ -177,6 +239,14 @@ public class ReactiveApiClientAutoConfiguration {
         .build();
   }
 
+  /**
+   * Reactive spring contract.
+   *
+   * @param contentTypeResolver the content type resolver
+   * @param queryParametersResolvers the query parameters resolvers
+   * @param requestBodyInserterRegistry the request body inserter registry
+   * @return the reactive contract
+   */
   @ConditionalOnMissingBean
   @Bean
   public ReactiveContract reactiveSpringContract(
@@ -207,6 +277,14 @@ public class ReactiveApiClientAutoConfiguration {
         .build();
   }
 
+  /**
+   * Reactive api client.
+   *
+   * @param configurers the configurers
+   * @param reactiveContract the reactive contract
+   * @param errorHandler the error handler
+   * @return the reactive api client
+   */
   @ConditionalOnMissingBean
   @Bean
   public ReactiveApiClient reactiveApiClient(

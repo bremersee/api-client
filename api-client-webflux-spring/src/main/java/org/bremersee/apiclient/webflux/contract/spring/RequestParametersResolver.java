@@ -21,6 +21,9 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RequestParam;
 
+/**
+ * The request parameters resolver.
+ */
 public class RequestParametersResolver implements QueryParametersResolver {
 
   @Override

@@ -23,6 +23,9 @@ import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
+/**
+ * The resource controller implementation.
+ */
 @RestController
 public class ResourceControllerImpl implements ResourceController {
 

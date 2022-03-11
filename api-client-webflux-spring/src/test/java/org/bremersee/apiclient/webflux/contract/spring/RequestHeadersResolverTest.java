@@ -29,11 +29,19 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 
+/**
+ * The request headers resolver test.
+ */
 @ExtendWith(SoftAssertionsExtension.class)
 class RequestHeadersResolverTest {
 
   private static final RequestHeadersResolver target = new RequestHeadersResolver();
 
+  /**
+   * Apply.
+   *
+   * @throws Exception the exception
+   */
   @Test
   void apply() throws Exception {
     Method method = Example.class.getMethod("methodA", String.class, String.class);
@@ -44,8 +52,17 @@ class RequestHeadersResolverTest {
         .isEqualTo(Map.of("Authorization", List.of(value)));
   }
 
+  /**
+   * The interface Example.
+   */
   interface Example {
 
+    /**
+     * Method a.
+     *
+     * @param id the id
+     * @param name the name
+     */
     void methodA(@RequestHeader(name = "Authorization") String id, @RequestParam(name = "name") String name);
   }
 }

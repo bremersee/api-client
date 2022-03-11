@@ -32,11 +32,20 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RequestBody;
 
+/**
+ * The pageable request parameter resolver test.
+ */
 @ExtendWith(SoftAssertionsExtension.class)
 class PageableRequestParameterResolverTest {
 
   private static final PageableRequestParameterResolver target = new PageableRequestParameterResolver();
 
+  /**
+   * Apply.
+   *
+   * @param softly the softly
+   * @throws Exception the exception
+   */
   @Test
   void apply(SoftAssertions softly) throws Exception {
     Method method = Example.class.getMethod("methodA", Pageable.class);
@@ -68,12 +77,30 @@ class PageableRequestParameterResolverTest {
         .containsExactlyInAnyOrderEntriesOf(expected);
   }
 
+  /**
+   * The interface Example.
+   */
   interface Example {
 
+    /**
+     * Method a.
+     *
+     * @param pageRequest the page request
+     */
     void methodA(Pageable pageRequest);
 
+    /**
+     * Method b.
+     *
+     * @param pageRequest the page request
+     */
     void methodB(@RequestBody Pageable pageRequest);
 
+    /**
+     * Method c.
+     *
+     * @param id the id
+     */
     void methodC(String id);
   }
 }

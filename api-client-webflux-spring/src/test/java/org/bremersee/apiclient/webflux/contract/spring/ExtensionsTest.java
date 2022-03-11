@@ -26,8 +26,14 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RequestParam;
 
+/**
+ * The extensions test.
+ */
 class ExtensionsTest {
 
+  /**
+   * Illegal extensions annotations.
+   */
   @Test
   void illegalExtensionsAnnotations() {
     assertThat(Extensions.ILLEGAL_EXTENSIONS_ANNOTATIONS)
@@ -38,12 +44,18 @@ class ExtensionsTest {
             PathVariable.class);
   }
 
+  /**
+   * Is sort present.
+   */
   @Test
   void isSortPresent() {
     assertThat(Extensions.isSortPresent)
         .isTrue();
   }
 
+  /**
+   * Is pageable present.
+   */
   @Test
   void isPageablePresent() {
     assertThat(Extensions.isPageablePresent)

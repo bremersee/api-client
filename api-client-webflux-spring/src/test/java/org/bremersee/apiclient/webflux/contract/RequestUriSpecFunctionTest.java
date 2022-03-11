@@ -30,6 +30,9 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.web.reactive.function.client.WebClient;
 
+/**
+ * The request uri spec function test.
+ */
 class RequestUriSpecFunctionTest {
 
   private RequestUriSpecFunction target;
@@ -37,6 +40,9 @@ class RequestUriSpecFunctionTest {
   @SuppressWarnings("unchecked")
   private final Function<Invocation, HttpRequestMethod> httpMethodResolver = mock(Function.class);
 
+  /**
+   * Init.
+   */
   @BeforeEach
   void init() {
     target = Mockito.mock(RequestUriSpecFunction.class);
@@ -44,6 +50,9 @@ class RequestUriSpecFunctionTest {
     when(target.getHttpMethodResolver()).thenReturn(httpMethodResolver);
   }
 
+  /**
+   * Apply.
+   */
   @Test
   void apply() {
     when(httpMethodResolver.apply(any())).thenReturn(HttpRequestMethod.GET);
@@ -56,6 +65,11 @@ class RequestUriSpecFunctionTest {
         .isEqualTo(requestHeadersUriSpec);
   }
 
+  /**
+   * Apply with empty.
+   *
+   * @throws Exception the exception
+   */
   @Test
   void applyWithEmpty() throws Exception {
     when(httpMethodResolver.apply(any())).thenReturn(null);
@@ -69,8 +83,14 @@ class RequestUriSpecFunctionTest {
         });
   }
 
+  /**
+   * The interface Example.
+   */
   interface Example {
 
+    /**
+     * Junit.
+     */
     void junit();
   }
 }

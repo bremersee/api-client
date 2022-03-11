@@ -42,6 +42,9 @@ import org.springframework.http.codec.multipart.Part;
 import reactor.core.scheduler.Schedulers;
 import reactor.test.StepVerifier;
 
+/**
+ * The part builder test.
+ */
 @ExtendWith(SoftAssertionsExtension.class)
 class PartBuilderTest {
 
@@ -49,6 +52,9 @@ class PartBuilderTest {
 
   private Path tmpFile;
 
+  /**
+   * Delete tmp file.
+   */
   @AfterEach
   void deleteTmpFile() {
     if (nonNull(tmpFile)) {
@@ -61,6 +67,11 @@ class PartBuilderTest {
     }
   }
 
+  /**
+   * Form field part.
+   *
+   * @param softly the softly
+   */
   @Test
   void formFieldPart(SoftAssertions softly) {
     FormFieldPart actual = target.part("foo", "bar")
@@ -106,6 +117,11 @@ class PartBuilderTest {
         .verifyComplete();
   }
 
+  /**
+   * File part.
+   *
+   * @param softly the softly
+   */
   @Test
   void filePart(SoftAssertions softly) {
     String content = "Hello world!";
@@ -160,6 +176,12 @@ class PartBuilderTest {
         .verifyComplete();
   }
 
+  /**
+   * Resource part.
+   *
+   * @param softly the softly
+   * @throws IOException the io exception
+   */
   @Test
   void resourcePart(SoftAssertions softly) throws IOException {
     Part actual = target.part("file", new ClassPathResource("text.txt"))
@@ -203,6 +225,11 @@ class PartBuilderTest {
         .verifyComplete();
   }
 
+  /**
+   * Data buffer part.
+   *
+   * @param softly the softly
+   */
   @Test
   void dataBufferPart(SoftAssertions softly) {
     Part actual = target.part("foo", target.part("tmp", "bar").build().content())
@@ -233,6 +260,11 @@ class PartBuilderTest {
         .verifyComplete();
   }
 
+  /**
+   * Data buffer part with filename.
+   *
+   * @param softly the softly
+   */
   @Test
   void dataBufferPartWithFilename(SoftAssertions softly) {
     Part actual = target.part(

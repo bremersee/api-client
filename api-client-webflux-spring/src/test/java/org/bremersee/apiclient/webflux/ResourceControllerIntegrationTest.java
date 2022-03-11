@@ -33,7 +33,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.test.StepVerifier;
 
 /**
- * The value controller integration test.
+ * The resource controller integration test.
  *
  * @author Christian Bremer
  */
@@ -44,17 +44,34 @@ import reactor.test.StepVerifier;
 @Slf4j
 class ResourceControllerIntegrationTest {
 
+  /**
+   * The Port.
+   */
   @LocalServerPort
   int port;
 
+  /**
+   * The Web client.
+   */
   WebClient webClient;
 
+  /**
+   * The Api client.
+   */
   ResourceController apiClient;
 
+  /**
+   * Base url string.
+   *
+   * @return the string
+   */
   String baseUrl() {
     return "http://localhost:" + port;
   }
 
+  /**
+   * Init.
+   */
   @BeforeEach
   void init() {
     apiClient = ReactiveApiClient.builder()
@@ -69,6 +86,9 @@ class ResourceControllerIntegrationTest {
         .build();
   }
 
+  /**
+   * Post resource with web client.
+   */
   @Test
   void postResourceWithWebClient() {
     StepVerifier
@@ -84,6 +104,9 @@ class ResourceControllerIntegrationTest {
         .verifyComplete();
   }
 
+  /**
+   * Post resource.
+   */
   @Test
   void postResource() {
     StepVerifier

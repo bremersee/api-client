@@ -30,21 +30,44 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.util.MultiValueMap;
 
+/**
+ * The headers consumer.
+ */
 @Value.Immutable
 @Value.Style(visibility = ImplementationVisibility.PACKAGE)
 @Valid
 public interface HeadersConsumer extends BiConsumer<Invocation, HttpHeaders> {
 
+  /**
+   * Builder.
+   *
+   * @return the headers consumer builder
+   */
   static ImmutableHeadersConsumer.Builder builder() {
     return ImmutableHeadersConsumer.builder();
   }
 
+  /**
+   * Gets content type resolver.
+   *
+   * @return the content type resolver
+   */
   @NotNull
   Function<Invocation, Optional<MediaType>> getContentTypeResolver();
 
+  /**
+   * Gets accept resolver.
+   *
+   * @return the accept resolver
+   */
   @NotNull
   Function<Invocation, MediaType> getAcceptResolver();
 
+  /**
+   * Gets headers resolver.
+   *
+   * @return the headers resolver
+   */
   @NotNull
   Function<Invocation, MultiValueMap<String, String>> getHeadersResolver();
 

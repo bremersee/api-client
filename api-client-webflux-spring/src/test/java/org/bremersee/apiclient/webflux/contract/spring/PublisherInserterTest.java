@@ -33,10 +33,16 @@ import org.springframework.web.reactive.function.client.WebClient.RequestBodyUri
 import org.springframework.web.reactive.function.client.WebClient.RequestHeadersUriSpec;
 import reactor.core.publisher.Mono;
 
+/**
+ * The publisher inserter test.
+ */
 class PublisherInserterTest {
 
   private static final PublisherInserter target = new PublisherInserter();
 
+  /**
+   * Is possible body value.
+   */
   @Test
   void isPossibleBodyValue() {
     InvocationParameter invocationParameter = mock(InvocationParameter.class);
@@ -45,6 +51,9 @@ class PublisherInserterTest {
         .isTrue();
   }
 
+  /**
+   * Map body.
+   */
   @Test
   void mapBody() {
     InvocationParameter expected = mock(InvocationParameter.class);
@@ -52,6 +61,11 @@ class PublisherInserterTest {
         .isEqualTo(expected);
   }
 
+  /**
+   * Insert.
+   *
+   * @throws Exception the exception
+   */
   @Test
   void insert() throws Exception {
     Method method = Example.class.getMethod("methodA", Publisher.class);
@@ -75,8 +89,16 @@ class PublisherInserterTest {
     verify(requestBodyUriSpec).body(any(Object.class), any(ParameterizedTypeReference.class));
   }
 
+  /**
+   * The interface Example.
+   */
   interface Example {
 
+    /**
+     * Method a.
+     *
+     * @param body the body
+     */
     void methodA(@RequestBody Publisher<String> body);
   }
 }

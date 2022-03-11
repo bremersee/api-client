@@ -27,10 +27,16 @@ import org.springframework.web.reactive.function.BodyInserter;
 import org.springframework.web.reactive.function.client.WebClient.RequestBodyUriSpec;
 import org.springframework.web.reactive.function.client.WebClient.RequestHeadersUriSpec;
 
+/**
+ * The value inserter test.
+ */
 class ValueInserterTest {
 
   private static final ValueInserter target = new ValueInserter();
 
+  /**
+   * Is possible body value.
+   */
   @Test
   void isPossibleBodyValue() {
     InvocationParameter invocationParameter = mock(InvocationParameter.class);
@@ -39,6 +45,9 @@ class ValueInserterTest {
         .isTrue();
   }
 
+  /**
+   * Map body.
+   */
   @Test
   void mapBody() {
     InvocationParameter invocationParameter = mock(InvocationParameter.class);
@@ -47,6 +56,11 @@ class ValueInserterTest {
         .isEqualTo("123");
   }
 
+  /**
+   * Insert.
+   *
+   * @throws Exception the exception
+   */
   @Test
   void insert() throws Exception {
     RequestBodyUriSpec requestBodyUriSpec = mock(RequestBodyUriSpec.class);

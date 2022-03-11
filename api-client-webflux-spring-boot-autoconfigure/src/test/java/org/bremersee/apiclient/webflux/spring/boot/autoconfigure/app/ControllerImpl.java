@@ -32,6 +32,9 @@ import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+/**
+ * The controller.
+ */
 @RestController
 public class ControllerImpl implements ControllerApi {
 
@@ -77,6 +80,14 @@ public class ControllerImpl implements ControllerApi {
     ));
   }
 
+  /**
+   * Gets page.
+   *
+   * @param page the page
+   * @param size the size
+   * @param sort the sort
+   * @return the page
+   */
   @GetMapping(path = "/page", produces = MediaType.APPLICATION_JSON_VALUE)
   public Mono<Map<String, Object>> getPage(
       @RequestParam("page") int page,

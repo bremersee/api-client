@@ -43,6 +43,9 @@ import org.springframework.web.reactive.function.client.WebClient.RequestHeaders
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+/**
+ * The multipart data inserter test.
+ */
 @ExtendWith(SoftAssertionsExtension.class)
 class MultipartDataInserterTest {
 
@@ -52,6 +55,9 @@ class MultipartDataInserterTest {
 
   private Converter<Part, HttpEntity<?>> partConverter;
 
+  /**
+   * Init.
+   */
   @BeforeEach
   void init() {
     //noinspection unchecked
@@ -63,6 +69,12 @@ class MultipartDataInserterTest {
         .withPartConverter(partConverter);
   }
 
+  /**
+   * Can insert.
+   *
+   * @param softly the softly
+   * @throws Exception the exception
+   */
   @Test
   void canInsert(SoftAssertions softly) throws Exception {
     when(contentTypeResolver.apply(any())).thenReturn(Optional.of(MediaType.MULTIPART_FORM_DATA));
@@ -108,6 +120,12 @@ class MultipartDataInserterTest {
         .isTrue();
   }
 
+  /**
+   * Apply.
+   *
+   * @param softly the softly
+   * @throws Exception the exception
+   */
   @Test
   void apply(SoftAssertions softly) throws Exception {
     //noinspection unchecked
@@ -166,18 +184,51 @@ class MultipartDataInserterTest {
         .isEqualTo(expected);
   }
 
+  /**
+   * The interface Example.
+   */
   interface Example {
 
+    /**
+     * Good a.
+     *
+     * @param body the body
+     */
     void goodA(@RequestBody MultiValueMap<String, Part> body);
 
+    /**
+     * Good b.
+     *
+     * @param body the body
+     */
     void goodB(@RequestBody Mono<MultiValueMap<String, Part>> body);
 
+    /**
+     * Good c.
+     *
+     * @param body the body
+     */
     void goodC(@RequestBody Flux<Part> body);
 
+    /**
+     * Good d.
+     *
+     * @param part the part
+     */
     void goodD(@RequestPart(name = "part") Part part);
 
+    /**
+     * Good e.
+     *
+     * @param part the part
+     */
     void goodE(@RequestPart(name = "part") Mono<Part> part);
 
+    /**
+     * Good f.
+     *
+     * @param parts the parts
+     */
     void goodF(@RequestPart(name = "part") Flux<Part> parts);
 
   }

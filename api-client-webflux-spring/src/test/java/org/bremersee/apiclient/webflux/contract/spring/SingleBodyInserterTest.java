@@ -29,8 +29,14 @@ import org.junit.jupiter.api.Test;
 import org.springframework.web.reactive.function.client.WebClient.RequestBodyUriSpec;
 import org.springframework.web.reactive.function.client.WebClient.RequestHeadersUriSpec;
 
+/**
+ * The single body inserter test.
+ */
 class SingleBodyInserterTest {
 
+  /**
+   * Apply.
+   */
   @Test
   void apply() {
     //noinspection unchecked

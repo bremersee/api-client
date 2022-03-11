@@ -22,15 +22,45 @@ import java.util.function.Function;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClient.RequestHeadersUriSpec;
 
+/**
+ * The http request method.
+ */
 public enum HttpRequestMethod {
+
+  /**
+   * Get http request method.
+   */
   GET(WebClient::get),
+
+  /**
+   * Head http request method.
+   */
   HEAD(WebClient::head),
+
+  /**
+   * Post http request method.
+   */
   POST(WebClient::post),
+
+  /**
+   * Put http request method.
+   */
   PUT(WebClient::put),
+
+  /**
+   * Patch http request method.
+   */
   PATCH(WebClient::patch),
+
+  /**
+   * Delete http request method.
+   */
   DELETE(WebClient::delete),
+
+  /**
+   * Options http request method.
+   */
   OPTIONS(WebClient::options);
-  //TRACE();
 
   private final Function<WebClient, RequestHeadersUriSpec<?>> uriSpecFunction;
 
@@ -38,10 +68,22 @@ public enum HttpRequestMethod {
     this.uriSpecFunction = uriSpecFunction;
   }
 
+  /**
+   * Invoke request headers uri spec.
+   *
+   * @param webClient the web client
+   * @return the request headers uri spec
+   */
   public RequestHeadersUriSpec<?> invoke(WebClient webClient) {
     return uriSpecFunction.apply(webClient);
   }
 
+  /**
+   * Resolve.
+   *
+   * @param method the method
+   * @return the optional
+   */
   public static Optional<HttpRequestMethod> resolve(String method) {
     return Arrays.stream(HttpRequestMethod.values())
         .filter(httpRequestMethod -> httpRequestMethod.name().equalsIgnoreCase(method))

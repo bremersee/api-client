@@ -26,16 +26,29 @@ import org.immutables.value.Value.Style.ImplementationVisibility;
 import org.springframework.web.reactive.function.client.WebClient.RequestBodyUriSpec;
 import org.springframework.web.reactive.function.client.WebClient.RequestHeadersUriSpec;
 
+/**
+ * The request body inserter registry.
+ */
 @Value.Immutable
 @Value.Style(visibility = ImplementationVisibility.PACKAGE)
 @Valid
 public interface RequestBodyInserterRegistry extends
     BiFunction<Invocation, RequestBodyUriSpec, RequestHeadersUriSpec<?>> {
 
+  /**
+   * Builder.
+   *
+   * @return the request body inserter registry builder
+   */
   static ImmutableRequestBodyInserterRegistry.Builder builder() {
     return ImmutableRequestBodyInserterRegistry.builder();
   }
 
+  /**
+   * Gets request body inserters.
+   *
+   * @return the request body inserters
+   */
   @NotEmpty
   List<RequestBodyInserter> getRequestBodyInserters();
 

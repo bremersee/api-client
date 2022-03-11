@@ -27,6 +27,9 @@ import org.springframework.data.domain.Sort.Order;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
+/**
+ * The sort request parameter resolver.
+ */
 public class SortRequestParameterResolver implements
     QueryParametersResolver,
     Predicate<InvocationParameter> {
@@ -37,6 +40,12 @@ public class SortRequestParameterResolver implements
 
   private String descValue = "desc";
 
+  /**
+   * With request parameter name.
+   *
+   * @param requestParamName the request param name
+   * @return the sort request parameter resolver
+   */
   public SortRequestParameterResolver withRequestParamName(String requestParamName) {
     if (!isEmpty(requestParamName)) {
       this.requestParamName = requestParamName;
@@ -44,6 +53,12 @@ public class SortRequestParameterResolver implements
     return this;
   }
 
+  /**
+   * With separator value.
+   *
+   * @param separatorValue the separator value
+   * @return the sort request parameter resolver
+   */
   public SortRequestParameterResolver withSeparatorValue(String separatorValue) {
     if (!isEmpty(separatorValue)) {
       this.separatorValue = separatorValue;
@@ -51,6 +66,12 @@ public class SortRequestParameterResolver implements
     return this;
   }
 
+  /**
+   * With desc value.
+   *
+   * @param descValue the desc value
+   * @return the sort request parameter resolver
+   */
   public SortRequestParameterResolver withDescValue(String descValue) {
     if (!isEmpty(descValue)) {
       this.descValue = descValue;
@@ -76,6 +97,12 @@ public class SortRequestParameterResolver implements
         && invocationParameter.hasNoneParameterAnnotation(Extensions.ILLEGAL_EXTENSIONS_ANNOTATIONS);
   }
 
+  /**
+   * Gets request parameters.
+   *
+   * @param sort the sort
+   * @return the request parameters
+   */
   protected MultiValueMap<String, Object> getRequestParameters(Sort sort) {
     MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
     if (sort.isSorted()) {
@@ -84,6 +111,12 @@ public class SortRequestParameterResolver implements
     return map;
   }
 
+  /**
+   * Gets request param value.
+   *
+   * @param order the order
+   * @return the request param value
+   */
   protected String getRequestParamValue(Order order) {
     StringBuilder sb = new StringBuilder(order.getProperty());
     if (order.isDescending()) {

@@ -34,6 +34,11 @@ import org.springframework.context.annotation.ComponentScan;
 @Slf4j
 public class TestConfiguration {
 
+  /**
+   * Web client configurer.
+   *
+   * @return the web client builder configurer
+   */
   @Bean
   public ReactiveApiClientWebClientBuilderConfigurer webClientConfigurer() {
     return webClientBuilder -> webClientBuilder.filter((request, next) -> {

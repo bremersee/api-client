@@ -22,6 +22,9 @@ import java.util.function.Function;
 import org.bremersee.apiclient.webflux.Invocation;
 import org.springframework.web.bind.annotation.PathVariable;
 
+/**
+ * The path variables resolver.
+ */
 public class PathVariablesResolver implements Function<Invocation, Map<String, Object>> {
 
   @Override

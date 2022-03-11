@@ -32,10 +32,18 @@ import org.springframework.web.reactive.function.client.WebClient.RequestBodyUri
 import org.springframework.web.reactive.function.client.WebClient.RequestHeadersUriSpec;
 import reactor.core.publisher.Flux;
 
+/**
+ * The data buffers inserter test.
+ */
 class DataBuffersInserterTest {
 
   private static final DataBuffersInserter target = new DataBuffersInserter();
 
+  /**
+   * Is possible body value.
+   *
+   * @throws Exception the exception
+   */
   @Test
   void isPossibleBodyValue() throws Exception {
     Method method = Example.class.getMethod("methodA", Flux.class);
@@ -48,6 +56,11 @@ class DataBuffersInserterTest {
         .isTrue();
   }
 
+  /**
+   * Map body.
+   *
+   * @throws Exception the exception
+   */
   @Test
   void mapBody() throws Exception {
     Method method = Example.class.getMethod("methodA", Flux.class);
@@ -60,6 +73,9 @@ class DataBuffersInserterTest {
         .isEqualTo(value);
   }
 
+  /**
+   * Insert.
+   */
   @Test
   void insert() {
     RequestBodyUriSpec requestBodyUriSpec = mock(RequestBodyUriSpec.class);
@@ -73,8 +89,16 @@ class DataBuffersInserterTest {
         .isEqualTo(expected);
   }
 
+  /**
+   * The interface Example.
+   */
   interface Example {
 
+    /**
+     * Method a.
+     *
+     * @param data the data
+     */
     void methodA(Flux<DataBuffer> data);
   }
 }

@@ -39,6 +39,9 @@ import org.springframework.web.reactive.function.client.WebClient.RequestHeaders
 import org.springframework.web.reactive.function.client.WebClient.ResponseSpec;
 import org.springframework.web.util.UriBuilder;
 
+/**
+ * The reactive spring contract.
+ */
 public class ReactiveSpringContract implements ReactiveContract {
 
   private final ContentTypeResolver contentTypeResolver = new ContentTypeResolver();
@@ -68,6 +71,11 @@ public class ReactiveSpringContract implements ReactiveContract {
         .build();
   }
 
+  /**
+   * Gets request parameters resolvers.
+   *
+   * @return the request parameters resolvers
+   */
   protected List<Function<Invocation, MultiValueMap<String, Object>>> getRequestParametersResolvers() {
     List<Function<Invocation, MultiValueMap<String, Object>>> list = new ArrayList<>();
     list.add(new RequestParametersResolver());

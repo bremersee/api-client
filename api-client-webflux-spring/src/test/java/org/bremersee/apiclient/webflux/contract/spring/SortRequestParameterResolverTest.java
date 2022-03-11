@@ -29,11 +29,20 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.RequestHeader;
 
+/**
+ * The sort request parameter resolver test.
+ */
 @ExtendWith(SoftAssertionsExtension.class)
 class SortRequestParameterResolverTest {
 
   private static final SortRequestParameterResolver target = new SortRequestParameterResolver();
 
+  /**
+   * Apply.
+   *
+   * @param softly the softly
+   * @throws Exception the exception
+   */
   @Test
   void apply(SoftAssertions softly) throws Exception {
     Method method = Example.class.getMethod("methodA", Sort.class);
@@ -61,12 +70,30 @@ class SortRequestParameterResolverTest {
         .containsExactlyInAnyOrderEntriesOf(expected);
   }
 
+  /**
+   * The interface Example.
+   */
   interface Example {
 
+    /**
+     * Method a.
+     *
+     * @param sort the sort
+     */
     void methodA(Sort sort);
 
+    /**
+     * Method b.
+     *
+     * @param sort the sort
+     */
     void methodB(@RequestHeader Sort sort);
 
+    /**
+     * Method c.
+     *
+     * @param id the id
+     */
     void methodC(String id);
   }
 }

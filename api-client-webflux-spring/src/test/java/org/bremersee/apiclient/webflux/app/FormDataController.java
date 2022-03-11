@@ -27,12 +27,20 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import reactor.core.publisher.Mono;
 
 /**
- * The form data controller interface.
+ * The form data controller.
  *
  * @author Christian Bremer
  */
 public interface FormDataController {
 
+  /**
+   * Post form data mono.
+   *
+   * @param headerValue the header value
+   * @param lastValue the last value
+   * @param data the data
+   * @return the mono
+   */
   @RequestMapping(path = "/upload",
       method = RequestMethod.POST,
       consumes = MediaType.APPLICATION_FORM_URLENCODED_VALUE,

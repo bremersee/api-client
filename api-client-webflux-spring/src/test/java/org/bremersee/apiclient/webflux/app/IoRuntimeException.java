@@ -18,8 +18,17 @@ package org.bremersee.apiclient.webflux.app;
 
 import java.io.IOException;
 
+/**
+ * The io runtime exception.
+ */
 public class IoRuntimeException extends RuntimeException {
 
+  /**
+   * Instantiates a new Io runtime exception.
+   *
+   * @param message the message
+   * @param cause the cause
+   */
   public IoRuntimeException(String message, IOException cause) {
     super(message, cause);
   }

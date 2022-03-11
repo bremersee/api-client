@@ -28,8 +28,16 @@ import org.bremersee.apiclient.webflux.InvocationParameter;
 import org.junit.jupiter.api.Test;
 import org.springframework.web.bind.annotation.RequestBody;
 
+/**
+ * The abstract request body inserter test.
+ */
 class AbstractRequestBodyInserterTest {
 
+  /**
+   * Can insert.
+   *
+   * @throws Exception the exception
+   */
   @Test
   void canInsert() throws Exception {
     AbstractRequestBodyInserter target = mock(AbstractRequestBodyInserter.class);
@@ -51,8 +59,16 @@ class AbstractRequestBodyInserterTest {
         .isTrue();
   }
 
+  /**
+   * The interface Example.
+   */
   interface Example {
 
+    /**
+     * Method a.
+     *
+     * @param body the body
+     */
     void methodA(@RequestBody String body);
   }
 }

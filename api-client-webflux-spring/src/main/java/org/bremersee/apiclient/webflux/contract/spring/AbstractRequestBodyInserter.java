@@ -25,6 +25,9 @@ import org.bremersee.apiclient.webflux.InvocationParameter;
 import org.bremersee.apiclient.webflux.contract.RequestBodyInserter;
 import org.springframework.web.bind.annotation.RequestBody;
 
+/**
+ * The abstract request body inserter.
+ */
 public abstract class AbstractRequestBodyInserter implements RequestBodyInserter {
 
   @Override
@@ -32,10 +35,22 @@ public abstract class AbstractRequestBodyInserter implements RequestBodyInserter
     return canInsert(findPossibleBodies(invocation));
   }
 
+  /**
+   * Can insert.
+   *
+   * @param possibleBodies the possible bodies
+   * @return the boolean
+   */
   protected boolean canInsert(List<InvocationParameter> possibleBodies) {
     return !possibleBodies.isEmpty();
   }
 
+  /**
+   * Find possible bodies list.
+   *
+   * @param invocation the invocation
+   * @return the list
+   */
   protected List<InvocationParameter> findPossibleBodies(Invocation invocation) {
     return invocation.toMethodParameterStream()
         .filter(this::isPossibleBody)
@@ -43,14 +58,32 @@ public abstract class AbstractRequestBodyInserter implements RequestBodyInserter
         .collect(Collectors.toList());
   }
 
+  /**
+   * Is possible body boolean.
+   *
+   * @param invocationParameter the invocation parameter
+   * @return the boolean
+   */
   protected boolean isPossibleBody(InvocationParameter invocationParameter) {
     return nonNull(invocationParameter.getValue())
         && isPossibleBodyValue(invocationParameter)
         && hasMappingAnnotation(invocationParameter);
   }
 
+  /**
+   * Is possible body value boolean.
+   *
+   * @param invocationParameter the invocation parameter
+   * @return the boolean
+   */
   protected abstract boolean isPossibleBodyValue(InvocationParameter invocationParameter);
 
+  /**
+   * Has mapping annotation boolean.
+   *
+   * @param invocationParameter the invocation parameter
+   * @return the boolean
+   */
   protected boolean hasMappingAnnotation(InvocationParameter invocationParameter) {
     return invocationParameter.hasParameterAnnotation(RequestBody.class);
   }

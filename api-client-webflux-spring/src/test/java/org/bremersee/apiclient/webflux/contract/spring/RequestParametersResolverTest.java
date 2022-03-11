@@ -29,11 +29,19 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
+/**
+ * The request parameters resolver test.
+ */
 @ExtendWith(SoftAssertionsExtension.class)
 class RequestParametersResolverTest {
 
   private static final RequestParametersResolver target = new RequestParametersResolver();
 
+  /**
+   * Apply.
+   *
+   * @throws Exception the exception
+   */
   @Test
   void apply() throws Exception {
     Method method = Example.class.getMethod("methodA", String.class, String.class);
@@ -44,8 +52,17 @@ class RequestParametersResolverTest {
         .isEqualTo(Map.of("name", List.of(value)));
   }
 
+  /**
+   * The interface Example.
+   */
   interface Example {
 
+    /**
+     * Method a.
+     *
+     * @param name the name
+     * @param id the id
+     */
     void methodA(@RequestParam(name = "name") String name, @PathVariable(name = "id") String id);
   }
 }

@@ -35,7 +35,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.test.StepVerifier;
 
 /**
- * The value controller integration test.
+ * The data buffer controller integration test.
  *
  * @author Christian Bremer
  */
@@ -46,17 +46,34 @@ import reactor.test.StepVerifier;
 @Slf4j
 class DataBufferControllerIntegrationTest {
 
+  /**
+   * The Port.
+   */
   @LocalServerPort
   int port;
 
+  /**
+   * The Web client.
+   */
   WebClient webClient;
 
+  /**
+   * The Api client.
+   */
   DataBufferController apiClient;
 
+  /**
+   * Base url string.
+   *
+   * @return the string
+   */
   String baseUrl() {
     return "http://localhost:" + port;
   }
 
+  /**
+   * Init.
+   */
   @BeforeEach
   void init() {
     apiClient = ReactiveApiClient.builder()
@@ -71,6 +88,9 @@ class DataBufferControllerIntegrationTest {
         .build();
   }
 
+  /**
+   * Post resource with web client.
+   */
   @Test
   void postResourceWithWebClient() {
     StepVerifier
@@ -87,6 +107,9 @@ class DataBufferControllerIntegrationTest {
         .verifyComplete();
   }
 
+  /**
+   * Post data.
+   */
   @Test
   void postData() {
     StepVerifier

@@ -22,6 +22,9 @@ import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient.RequestBodyUriSpec;
 import org.springframework.web.reactive.function.client.WebClient.RequestHeadersUriSpec;
 
+/**
+ * The resource inserter.
+ */
 public class ResourceInserter extends SingleBodyInserter<Resource> {
 
   @Override

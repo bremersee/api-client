@@ -29,8 +29,14 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.SessionAttribute;
 
+/**
+ * The type Extensions.
+ */
 public abstract class Extensions {
 
+  /**
+   * The constant ILLEGAL_EXTENSIONS_ANNOTATIONS.
+   */
   public static final Set<Class<? extends Annotation>> ILLEGAL_EXTENSIONS_ANNOTATIONS = Set.of(
       CookieValue.class,
       MatrixVariable.class,
@@ -44,8 +50,14 @@ public abstract class Extensions {
       SessionAttribute.class
   );
 
+  /**
+   * The constant isSortPresent.
+   */
   public static final boolean isSortPresent;
 
+  /**
+   * The constant isPageablePresent.
+   */
   public static final boolean isPageablePresent;
 
   static {

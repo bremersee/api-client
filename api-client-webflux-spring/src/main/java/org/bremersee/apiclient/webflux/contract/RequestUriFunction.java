@@ -31,21 +31,44 @@ import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.util.UriBuilder;
 
+/**
+ * The request uri function.
+ */
 @Value.Immutable
 @Value.Style(visibility = ImplementationVisibility.PACKAGE)
 @Valid
 public interface RequestUriFunction extends BiFunction<Invocation, UriBuilder, URI> {
 
+  /**
+   * Builder.
+   *
+   * @return the request uri function builder
+   */
   static ImmutableRequestUriFunction.Builder builder() {
     return ImmutableRequestUriFunction.builder();
   }
 
+  /**
+   * Gets request path resolver.
+   *
+   * @return the request path resolver
+   */
   @NotNull
   Function<Invocation, String> getRequestPathResolver();
 
+  /**
+   * Gets path variables resolver.
+   *
+   * @return the path variables resolver
+   */
   @NotNull
   Function<Invocation, Map<String, Object>> getPathVariablesResolver();
 
+  /**
+   * Gets request parameters resolvers.
+   *
+   * @return the request parameters resolvers
+   */
   @NotEmpty
   List<Function<Invocation, MultiValueMap<String, Object>>> getRequestParametersResolvers();
 

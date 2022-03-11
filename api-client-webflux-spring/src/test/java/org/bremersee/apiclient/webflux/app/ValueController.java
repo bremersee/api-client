@@ -41,8 +41,14 @@ import reactor.core.publisher.Mono;
  */
 public interface ValueController {
 
+  /**
+   * The constant STRING_VALUE.
+   */
   String STRING_VALUE = "OK";
 
+  /**
+   * The Json values.
+   */
   List<Map<String, Object>> JSON_VALUES = List.of(
       Map.of("key0", "value0"),
       Map.of("key1", "value1"),
@@ -50,23 +56,23 @@ public interface ValueController {
   );
 
   /**
-   * Simple get mono.
+   * Gets string value.
    *
-   * @return the mono
+   * @return the string value
    */
   @GetMapping
   Publisher<String> getStringValue();
 
   /**
-   * Gets oks.
+   * Gets json values.
    *
-   * @return the oks
+   * @return the json values
    */
   @GetMapping(path = "/api/value", produces = MediaType.APPLICATION_JSON_VALUE)
   Flux<Map<String, Object>> getJsonValues();
 
   /**
-   * Update ok mono.
+   * Put string value mono.
    *
    * @param name the name
    * @param payload the payload
@@ -80,7 +86,7 @@ public interface ValueController {
       @RequestBody String payload);
 
   /**
-   * Patch ok mono.
+   * Patch string value mono.
    *
    * @param name the name
    * @param suffix the suffix
@@ -94,6 +100,16 @@ public interface ValueController {
       @RequestParam(name = "suffix") String suffix,
       @RequestBody String payload);
 
+  /**
+   * Post value mono.
+   *
+   * @param name the name
+   * @param headers the headers
+   * @param cookie the cookie
+   * @param requestParams the request params
+   * @param payload the payload
+   * @return the mono
+   */
   @PostMapping(path = "/api/value/{name}",
       consumes = MediaType.APPLICATION_JSON_VALUE,
       produces = MediaType.APPLICATION_JSON_VALUE)
@@ -105,7 +121,7 @@ public interface ValueController {
       @RequestBody Map<String, Object> payload);
 
   /**
-   * Delete ok mono.
+   * Delete value mono.
    *
    * @param name the name
    * @return the mono

@@ -26,11 +26,20 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestParam;
 
+/**
+ * The path variables resolver test.
+ */
 @ExtendWith(SoftAssertionsExtension.class)
 class PathVariablesResolverTest {
 
   private static final PathVariablesResolver target = new PathVariablesResolver();
 
+  /**
+   * Apply.
+   *
+   * @param softly the softly
+   * @throws Exception the exception
+   */
   @Test
   void apply(SoftAssertions softly) throws Exception {
     Method method = Example.class.getMethod("methodA", String.class, String.class);
@@ -41,8 +50,17 @@ class PathVariablesResolverTest {
         .isEqualTo(Map.of("id", value));
   }
 
+  /**
+   * The interface Example.
+   */
   interface Example {
 
+    /**
+     * Method a.
+     *
+     * @param id the id
+     * @param name the name
+     */
     void methodA(@PathVariable(name = "id") String id, @RequestParam(name = "name") String name);
   }
 }

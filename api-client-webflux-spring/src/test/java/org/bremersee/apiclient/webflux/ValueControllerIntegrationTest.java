@@ -49,17 +49,34 @@ import reactor.test.StepVerifier;
 @Slf4j
 class ValueControllerIntegrationTest {
 
+  /**
+   * The Port.
+   */
   @LocalServerPort
   int port;
 
+  /**
+   * The Web client.
+   */
   WebClient webClient;
 
+  /**
+   * The Api client.
+   */
   ValueController apiClient;
 
+  /**
+   * Base url string.
+   *
+   * @return the string
+   */
   String baseUrl() {
     return "http://localhost:" + port;
   }
 
+  /**
+   * Init.
+   */
   @BeforeEach
   void init() {
     apiClient = new ReactiveApiClient(WebClient.builder(), new ReactiveSpringContract())
@@ -69,6 +86,9 @@ class ValueControllerIntegrationTest {
         .build();
   }
 
+  /**
+   * Gets string value with web client.
+   */
   @Test
   void getStringValueWithWebClient() {
     StepVerifier
@@ -82,6 +102,9 @@ class ValueControllerIntegrationTest {
         .verifyComplete();
   }
 
+  /**
+   * Gets string value.
+   */
   @Test
   void getStringValue() {
     StepVerifier.create(apiClient.getStringValue())
@@ -90,6 +113,9 @@ class ValueControllerIntegrationTest {
         .verifyComplete();
   }
 
+  /**
+   * Gets json values.
+   */
   @Test
   void getJsonValues() {
     StepVerifier.create(apiClient.getJsonValues())
@@ -100,6 +126,9 @@ class ValueControllerIntegrationTest {
         .verifyComplete();
   }
 
+  /**
+   * Put string value.
+   */
   @Test
   void putStringValue() {
     StepVerifier.create(apiClient.putStringValue("value", "ok"))
@@ -108,6 +137,9 @@ class ValueControllerIntegrationTest {
         .verifyComplete();
   }
 
+  /**
+   * Patch string value.
+   */
   @Test
   void patchStringValue() {
     StepVerifier.create(apiClient.patchStringValue("name", "suffix", "payload"))
@@ -119,6 +151,9 @@ class ValueControllerIntegrationTest {
         .verifyThenAssertThat();
   }
 
+  /**
+   * Post value.
+   */
   @Test
   void postValue() {
     MultiValueMap<String, String> headers = new LinkedMultiValueMap<>();
@@ -140,6 +175,9 @@ class ValueControllerIntegrationTest {
         .verifyComplete();
   }
 
+  /**
+   * Delete value.
+   */
   @Test
   void deleteValue() {
     StepVerifier.create(apiClient.deleteValue("value"))

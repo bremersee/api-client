@@ -51,6 +51,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
+/**
+ * The autoconfiguration integration test.
+ */
 @SpringBootTest(
     classes = {TestConfiguration.class},
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
@@ -59,41 +62,76 @@ import reactor.test.StepVerifier;
 @Slf4j
 public class AutoconfigurationIntegrationTest {
 
+  /**
+   * The Port.
+   */
   @LocalServerPort
   int port;
 
+  /**
+   * The Reactive error handler.
+   */
   @Autowired
   ReactiveErrorHandler reactiveErrorHandler;
 
+  /**
+   * The Content type resolver.
+   */
   @Autowired
   ContentTypeResolver contentTypeResolver;
 
+  /**
+   * The Query parameters resolvers.
+   */
   @Autowired
   List<QueryParametersResolver> queryParametersResolvers;
 
+  /**
+   * The Request body inserters.
+   */
   @Autowired
   List<RequestBodyInserter> requestBodyInserters;
 
+  /**
+   * The Request body inserter registry.
+   */
   @Autowired
   RequestBodyInserterRegistry requestBodyInserterRegistry;
 
+  /**
+   * The Reactive spring contract.
+   */
   @Autowired
   ReactiveContract reactiveSpringContract;
 
+  /**
+   * The Reactive api client.
+   */
   @Autowired
   ReactiveApiClient reactiveApiClient;
 
+  /**
+   * The Controller api.
+   */
   ControllerApi controllerApi;
 
   private String baseUrl() {
     return "http://localhost:" + port;
   }
 
+  /**
+   * Init.
+   */
   @BeforeEach
   void init() {
     controllerApi = reactiveApiClient.newInstance(ControllerApi.class, baseUrl());
   }
 
+  /**
+   * Context.
+   *
+   * @param softly the softly
+   */
   @Test
   void context(SoftAssertions softly) {
     softly.assertThat(reactiveErrorHandler).isNotNull();
@@ -104,6 +142,9 @@ public class AutoconfigurationIntegrationTest {
     softly.assertThat(reactiveSpringContract).isNotNull();
   }
 
+  /**
+   * Post data.
+   */
   @Test
   void postData() {
     StepVerifier
@@ -114,6 +155,9 @@ public class AutoconfigurationIntegrationTest {
         .verifyComplete();
   }
 
+  /**
+   * Post parts.
+   */
   @Test
   void postParts() {
     FormFieldPart part = new PartBuilder()
@@ -126,6 +170,9 @@ public class AutoconfigurationIntegrationTest {
         .verifyComplete();
   }
 
+  /**
+   * Post publisher.
+   */
   @Test
   void postPublisher() {
     StepVerifier
@@ -135,6 +182,9 @@ public class AutoconfigurationIntegrationTest {
         .verifyComplete();
   }
 
+  /**
+   * Post resource.
+   */
   @Test
   void postResource() {
     StepVerifier
@@ -144,6 +194,9 @@ public class AutoconfigurationIntegrationTest {
         .verifyComplete();
   }
 
+  /**
+   * Put string value.
+   */
   @Test
   void putStringValue() {
     Map<String, Object> expected = Map.of(
@@ -157,6 +210,9 @@ public class AutoconfigurationIntegrationTest {
         .verifyComplete();
   }
 
+  /**
+   * Gets page.
+   */
   @Test
   void getPage() {
     PageApi api = reactiveApiClient.newInstance(PageApi.class, baseUrl());
@@ -172,8 +228,17 @@ public class AutoconfigurationIntegrationTest {
         .verifyComplete();
   }
 
+  /**
+   * The interface Page api.
+   */
   interface PageApi {
 
+    /**
+     * Gets page.
+     *
+     * @param pageable the pageable
+     * @return the page
+     */
     @GetMapping(path = "/api/page", produces = MediaType.APPLICATION_JSON_VALUE)
     Mono<Map<String, Object>> getPage(Pageable pageable);
   }

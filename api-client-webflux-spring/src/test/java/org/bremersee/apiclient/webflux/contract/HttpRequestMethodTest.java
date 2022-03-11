@@ -26,9 +26,15 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.web.reactive.function.client.WebClient;
 
+/**
+ * The http request method test.
+ */
 @ExtendWith(SoftAssertionsExtension.class)
 class HttpRequestMethodTest {
 
+  /**
+   * Invoke.
+   */
   @Test
   void invoke() {
     WebClient webClient = mock(WebClient.class);
@@ -60,6 +66,11 @@ class HttpRequestMethodTest {
     verify(webClient).put();
   }
 
+  /**
+   * Resolve.
+   *
+   * @param softly the softly
+   */
   @Test
   void resolve(SoftAssertions softly) {
     softly.assertThat(HttpRequestMethod.resolve("HEAD"))

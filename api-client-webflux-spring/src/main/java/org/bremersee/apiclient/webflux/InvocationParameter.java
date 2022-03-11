@@ -41,6 +41,9 @@ import org.springframework.util.Assert;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
+/**
+ * The invocation parameter.
+ */
 @Getter
 @EqualsAndHashCode(callSuper = true)
 public class InvocationParameter extends Invocation {
@@ -51,6 +54,14 @@ public class InvocationParameter extends Invocation {
 
   private final int index;
 
+  /**
+   * Instantiates a new invocation parameter.
+   *
+   * @param invocation the invocation
+   * @param parameter the parameter
+   * @param value the value
+   * @param index the index
+   */
   public InvocationParameter(Invocation invocation, Parameter parameter, Object value, int index) {
     super(invocation.getTargetClass(), invocation.getMethod(), invocation.getArgs());
     Assert.notNull(parameter, "Parameter must be present.");
@@ -62,6 +73,11 @@ public class InvocationParameter extends Invocation {
     this.index = index;
   }
 
+  /**
+   * Gets parameter name.
+   *
+   * @return the parameter name
+   */
   public String getParameterName() {
     try {
       //noinspection ConstantConditions
@@ -86,6 +102,12 @@ public class InvocationParameter extends Invocation {
     return parameter.getName();
   }
 
+  /**
+   * Has none parameter annotation.
+   *
+   * @param annotationTypes the annotation types
+   * @return the boolean
+   */
   public boolean hasNoneParameterAnnotation(Set<Class<? extends Annotation>> annotationTypes) {
     if (isEmpty(annotationTypes)) {
       return true;
@@ -93,10 +115,23 @@ public class InvocationParameter extends Invocation {
     return annotationTypes.stream().noneMatch(this::hasParameterAnnotation);
   }
 
+  /**
+   * Has parameter annotation.
+   *
+   * @param annotationType the annotation type
+   * @return the boolean
+   */
   public boolean hasParameterAnnotation(Class<? extends Annotation> annotationType) {
     return findParameterAnnotation(annotationType).isPresent();
   }
 
+  /**
+   * Find parameter annotation.
+   *
+   * @param <A> the type parameter
+   * @param annotationType the annotation type
+   * @return the optional
+   */
   public <A extends Annotation> Optional<A> findParameterAnnotation(Class<A> annotationType) {
     return Optional.ofNullable(findAnnotation(parameter, annotationType));
   }
@@ -111,6 +146,16 @@ public class InvocationParameter extends Invocation {
         .orElseGet(this::getParameterName);
   }
 
+  /**
+   * To multi value map.
+   *
+   * @param <E> the type parameter
+   * @param <A> the type parameter
+   * @param annotationType the annotation type
+   * @param keyExtractor the key extractor
+   * @param valueMapper the value mapper
+   * @return the multi value map
+   */
   public <E, A extends Annotation> MultiValueMap<String, E> toMultiValueMap(
       Class<A> annotationType,
       Function<A, String> keyExtractor,

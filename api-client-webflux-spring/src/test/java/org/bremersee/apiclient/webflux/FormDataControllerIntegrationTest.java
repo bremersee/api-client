@@ -33,7 +33,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import reactor.test.StepVerifier;
 
 /**
- * The api client integration test.
+ * The form data controller integration test.
  *
  * @author Christian Bremer
  */
@@ -42,7 +42,7 @@ import reactor.test.StepVerifier;
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,
     properties = {"security.basic.enabled=false"})
 @Slf4j
-class FormDataIntegrationTest {
+class FormDataControllerIntegrationTest {
 
   @LocalServerPort
   int port;

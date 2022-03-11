@@ -25,15 +25,28 @@ import org.immutables.value.Value;
 import org.immutables.value.Value.Style.ImplementationVisibility;
 import org.springframework.util.MultiValueMap;
 
+/**
+ * The cookies consumer.
+ */
 @Value.Immutable
 @Value.Style(visibility = ImplementationVisibility.PACKAGE)
 @Valid
 public interface CookiesConsumer extends BiConsumer<Invocation, MultiValueMap<String, String>> {
 
+  /**
+   * Builder.
+   *
+   * @return the cookies consumer builder
+   */
   static ImmutableCookiesConsumer.Builder builder() {
     return ImmutableCookiesConsumer.builder();
   }
 
+  /**
+   * Gets cookies resolver.
+   *
+   * @return the cookies resolver
+   */
   @NotNull
   Function<Invocation, MultiValueMap<String, String>> getCookiesResolver();
 

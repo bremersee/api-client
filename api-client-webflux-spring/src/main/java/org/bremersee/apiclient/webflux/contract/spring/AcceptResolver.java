@@ -16,9 +16,6 @@
 
 package org.bremersee.apiclient.webflux.contract.spring;
 
-import static org.bremersee.apiclient.webflux.Invocation.findAnnotationValue;
-
-import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.function.Function;
 import org.bremersee.apiclient.webflux.Invocation;
@@ -30,29 +27,38 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+/**
+ * The accept resolver.
+ */
 public class AcceptResolver implements Function<Invocation, MediaType> {
 
   @Override
   public MediaType apply(Invocation invocation) {
-    Method method = invocation.getMethod();
     return Arrays.stream(
-            findAnnotationValue(method, RequestMapping.class, a -> a.produces().length > 0, RequestMapping::produces)
-                .or(() -> findAnnotationValue(
-                    method, GetMapping.class, a -> a.produces().length > 0, GetMapping::produces))
-                .or(() -> findAnnotationValue(
-                    method, PostMapping.class, a -> a.produces().length > 0, PostMapping::produces))
-                .or(() -> findAnnotationValue(
-                    method, PutMapping.class, a -> a.produces().length > 0, PutMapping::produces))
-                .or(() -> findAnnotationValue(
-                    method, PatchMapping.class, a -> a.produces().length > 0, PatchMapping::produces))
-                .or(() -> findAnnotationValue(
-                    method, DeleteMapping.class, a -> a.produces().length > 0, DeleteMapping::produces))
+            invocation.findAnnotationValueOnMethod(
+                    RequestMapping.class, a -> a.produces().length > 0, RequestMapping::produces)
+                .or(() -> invocation.findAnnotationValueOnMethod(
+                    GetMapping.class, a -> a.produces().length > 0, GetMapping::produces))
+                .or(() -> invocation.findAnnotationValueOnMethod(
+                    PostMapping.class, a -> a.produces().length > 0, PostMapping::produces))
+                .or(() -> invocation.findAnnotationValueOnMethod(
+                    PutMapping.class, a -> a.produces().length > 0, PutMapping::produces))
+                .or(() -> invocation.findAnnotationValueOnMethod(
+                    PatchMapping.class, a -> a.produces().length > 0, PatchMapping::produces))
+                .or(() -> invocation.findAnnotationValueOnMethod(
+                    DeleteMapping.class, a -> a.produces().length > 0, DeleteMapping::produces))
                 .orElse(new String[0]))
         .map(this::parseMediaType)
         .findFirst()
         .orElse(MediaType.ALL);
   }
 
+  /**
+   * Parse media type.
+   *
+   * @param mediaType the media type
+   * @return the media type (can be {@code null}
+   */
   protected MediaType parseMediaType(String mediaType) {
     try {
       return MediaType.parseMediaType(mediaType);

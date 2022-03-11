@@ -21,6 +21,9 @@ import org.bremersee.apiclient.webflux.InvocationParameter;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestPart;
 
+/**
+ * The request body comparator.
+ */
 class RequestBodyComparator implements Comparator<InvocationParameter> {
 
   @Override

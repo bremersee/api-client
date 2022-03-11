@@ -31,8 +31,14 @@ import org.springframework.http.MediaType;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
+/**
+ * The headers consumer test.
+ */
 class HeadersConsumerTest {
 
+  /**
+   * Accept.
+   */
   @Test
   void accept() {
     //noinspection unchecked

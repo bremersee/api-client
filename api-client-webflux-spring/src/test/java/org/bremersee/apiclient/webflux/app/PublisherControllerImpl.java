@@ -20,6 +20,9 @@ import org.reactivestreams.Publisher;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
 
+/**
+ * The publisher controller implementation.
+ */
 @RestController
 public class PublisherControllerImpl implements PublisherController{
 

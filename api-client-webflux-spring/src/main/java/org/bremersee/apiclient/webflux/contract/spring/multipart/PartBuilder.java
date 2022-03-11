@@ -35,31 +35,78 @@ import reactor.core.publisher.Flux;
 import reactor.core.scheduler.Scheduler;
 import reactor.core.scheduler.Schedulers;
 
+/**
+ * The part builder.
+ */
 public class PartBuilder {
 
+  /**
+   * Instantiates a new part builder.
+   */
   public PartBuilder() {
   }
 
+  /**
+   * Form field part builder.
+   *
+   * @param name the name
+   * @param value the value
+   * @return the form field part builder
+   */
   public FormFieldPartBuilder part(String name, String value) {
     return new FormFieldPartBuilder(name, value);
   }
 
+  /**
+   * File part builder.
+   *
+   * @param name the name
+   * @param file the file
+   * @return the file part builder
+   */
   public FilePartBuilder part(String name, Path file) {
     return new FilePartBuilder(name, file);
   }
 
+  /**
+   * Resource part builder.
+   *
+   * @param name the name
+   * @param resource the resource
+   * @return the resource part builder
+   */
   public ResourcePartBuilder part(String name, Resource resource) {
     return new ResourcePartBuilder(name, resource);
   }
 
+  /**
+   * Data buffer part builder.
+   *
+   * @param name the name
+   * @param content the content
+   * @return the data buffer part builder
+   */
   public DataBufferPartBuilder part(String name, Flux<DataBuffer> content) {
     return new DataBufferPartBuilder(name, content);
   }
 
+  /**
+   * Data buffer part builder.
+   *
+   * @param name the name
+   * @param filename the filename
+   * @param content the content
+   * @return the data buffer part builder
+   */
   public DataBufferPartBuilder part(String name, String filename, Flux<DataBuffer> content) {
     return new DataBufferPartBuilder(name, filename, content);
   }
 
+  /**
+   * The abstract part builder.
+   *
+   * @param <T> the type parameter
+   */
   public static abstract class AbstractPartBuilder<T extends Part> {
 
     private DataBufferFactory dataBufferFactory = new DefaultDataBufferFactory();
@@ -68,21 +115,45 @@ public class PartBuilder {
 
     private final HttpHeaders headers = new HttpHeaders();
 
+    /**
+     * Instantiates a new abstract part builder.
+     */
     AbstractPartBuilder() {
     }
 
+    /**
+     * Gets data buffer factory.
+     *
+     * @return the data buffer factory
+     */
     protected DataBufferFactory getDataBufferFactory() {
       return dataBufferFactory;
     }
 
+    /**
+     * Gets buffer size.
+     *
+     * @return the buffer size
+     */
     protected int getBufferSize() {
       return bufferSize;
     }
 
+    /**
+     * Gets headers.
+     *
+     * @return the headers
+     */
     protected HttpHeaders getHeaders() {
       return headers;
     }
 
+    /**
+     * With data buffer factory.
+     *
+     * @param dataBufferFactory the data buffer factory
+     * @return the abstract part builder
+     */
     public AbstractPartBuilder<T> withDataBufferFactory(DataBufferFactory dataBufferFactory) {
       if (!isEmpty(dataBufferFactory)) {
         this.dataBufferFactory = dataBufferFactory;
@@ -90,6 +161,12 @@ public class PartBuilder {
       return this;
     }
 
+    /**
+     * With buffer size.
+     *
+     * @param bufferSize the buffer size
+     * @return the abstract part builder
+     */
     public AbstractPartBuilder<T> withBufferSize(int bufferSize) {
       if (bufferSize > 0) {
         this.bufferSize = bufferSize;
@@ -97,6 +174,12 @@ public class PartBuilder {
       return this;
     }
 
+    /**
+     * Content type.
+     *
+     * @param contentType the content type
+     * @return the abstract part builder
+     */
     public AbstractPartBuilder<T> contentType(MediaType contentType) {
       if (!isEmpty(contentType)) {
         headers.setContentType(contentType);
@@ -104,6 +187,13 @@ public class PartBuilder {
       return this;
     }
 
+    /**
+     * Header.
+     *
+     * @param headerName the header name
+     * @param headerValues the header values
+     * @return the abstract part builder
+     */
     public AbstractPartBuilder<T> header(String headerName, String... headerValues) {
       if (!isEmpty(headerName) && !isEmpty(headerValues)) {
         headers.addAll(headerName, Arrays.asList(headerValues));
@@ -111,6 +201,12 @@ public class PartBuilder {
       return this;
     }
 
+    /**
+     * Headers.
+     *
+     * @param headersConsumer the headers consumer
+     * @return the abstract part builder
+     */
     public AbstractPartBuilder<T> headers(Consumer<HttpHeaders> headersConsumer) {
       if (!isEmpty(headersConsumer)) {
         headersConsumer.accept(headers);
@@ -118,13 +214,27 @@ public class PartBuilder {
       return this;
     }
 
+    /**
+     * Build part.
+     *
+     * @return the part
+     */
     public abstract T build();
   }
 
+  /**
+   * The form field part builder.
+   */
   public static class FormFieldPartBuilder extends AbstractPartBuilder<FormFieldPart> {
 
     private final String value;
 
+    /**
+     * Instantiates a new form field part builder.
+     *
+     * @param name the name
+     * @param value the value
+     */
     FormFieldPartBuilder(String name, String value) {
       Assert.hasText(name, "Name must be present.");
       getHeaders().setContentDispositionFormData(name, null);
@@ -137,11 +247,23 @@ public class PartBuilder {
     }
   }
 
+  /**
+   * The abstract file part builder.
+   */
   public static abstract class AbstractFilePartBuilder extends AbstractPartBuilder<Part> {
 
+    /**
+     * Instantiates a new abstract file part builder.
+     */
     AbstractFilePartBuilder() {
     }
 
+    /**
+     * Filename abstract file part builder.
+     *
+     * @param filename the filename
+     * @return the abstract file part builder
+     */
     public AbstractFilePartBuilder filename(String filename) {
       if (!isEmpty(filename) && !isEmpty(getHeaders().getContentDisposition())) {
         String name = getHeaders().getContentDisposition().getName();
@@ -153,12 +275,21 @@ public class PartBuilder {
     }
   }
 
+  /**
+   * The file part builder.
+   */
   public static class FilePartBuilder extends AbstractFilePartBuilder {
 
     private Scheduler blockingOperationScheduler = Schedulers.boundedElastic();
 
     private final Path file;
 
+    /**
+     * Instantiates a new file part builder.
+     *
+     * @param name the name
+     * @param file the file
+     */
     FilePartBuilder(String name, Path file) {
       Assert.hasText(name, "Name must be present.");
       Assert.notNull(file, "File must be present.");
@@ -166,6 +297,12 @@ public class PartBuilder {
       getHeaders().setContentDispositionFormData(name, String.valueOf(file.getFileName()));
     }
 
+    /**
+     * With scheduler.
+     *
+     * @param scheduler the scheduler
+     * @return the file part builder
+     */
     public FilePartBuilder withScheduler(Scheduler scheduler) {
       if (!isEmpty(scheduler)) {
         this.blockingOperationScheduler = scheduler;
@@ -179,10 +316,19 @@ public class PartBuilder {
     }
   }
 
+  /**
+   * The resource part builder.
+   */
   public static class ResourcePartBuilder extends AbstractFilePartBuilder {
 
     private final Resource resource;
 
+    /**
+     * Instantiates a new resource part builder.
+     *
+     * @param name the name
+     * @param resource the resource
+     */
     ResourcePartBuilder(String name, Resource resource) {
       Assert.hasText(name, "Name must be present.");
       Assert.notNull(resource, "Resource must be present.");
@@ -196,14 +342,30 @@ public class PartBuilder {
     }
   }
 
+  /**
+   * The data buffer part builder.
+   */
   public static class DataBufferPartBuilder extends AbstractFilePartBuilder {
 
     private final Flux<DataBuffer> content;
 
+    /**
+     * Instantiates a new data buffer part builder.
+     *
+     * @param name the name
+     * @param content the content
+     */
     DataBufferPartBuilder(String name, Flux<DataBuffer> content) {
       this(name, null, content);
     }
 
+    /**
+     * Instantiates a new data buffer part builder.
+     *
+     * @param name the name
+     * @param filename the filename
+     * @param content the content
+     */
     DataBufferPartBuilder(String name, String filename, Flux<DataBuffer> content) {
       Assert.hasText(name, "Name must be present.");
       Assert.notNull(content, "Content must be present.");

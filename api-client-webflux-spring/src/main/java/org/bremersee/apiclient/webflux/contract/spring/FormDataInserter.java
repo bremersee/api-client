@@ -14,10 +14,19 @@ import org.springframework.web.reactive.function.BodyInserters;
 import org.springframework.web.reactive.function.client.WebClient.RequestBodyUriSpec;
 import org.springframework.web.reactive.function.client.WebClient.RequestHeadersUriSpec;
 
+/**
+ * The form data inserter.
+ */
 public class FormDataInserter extends SingleBodyInserter<MultiValueMap<String, ?>> {
 
   private Function<Invocation, Optional<MediaType>> contentTypeResolver = new ContentTypeResolver();
 
+  /**
+   * With content type resolver.
+   *
+   * @param contentTypeResolver the content type resolver
+   * @return the form data inserter
+   */
   public FormDataInserter withContentTypeResolver(Function<Invocation, Optional<MediaType>> contentTypeResolver) {
     if (nonNull(contentTypeResolver)) {
       this.contentTypeResolver = contentTypeResolver;
@@ -30,6 +39,12 @@ public class FormDataInserter extends SingleBodyInserter<MultiValueMap<String, ?
     return isFormData(invocation) && super.canInsert(invocation);
   }
 
+  /**
+   * Is form data.
+   *
+   * @param invocation the invocation
+   * @return the boolean
+   */
   protected boolean isFormData(Invocation invocation) {
     return contentTypeResolver.apply(invocation)
         .filter(contentType -> contentType.isCompatibleWith(MediaType.APPLICATION_FORM_URLENCODED))

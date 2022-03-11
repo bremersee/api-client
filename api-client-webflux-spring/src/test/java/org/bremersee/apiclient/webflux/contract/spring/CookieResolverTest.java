@@ -29,11 +29,19 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.RequestParam;
 
+/**
+ * The cookie resolver test.
+ */
 @ExtendWith(SoftAssertionsExtension.class)
 class CookieResolverTest {
 
   private static final CookiesResolver target = new CookiesResolver();
 
+  /**
+   * Resolve.
+   *
+   * @throws Exception the exception
+   */
   @Test
   void resolve() throws Exception {
     Method method = Example.class.getMethod("methodA", String.class, String.class);
@@ -44,8 +52,17 @@ class CookieResolverTest {
         .isEqualTo(Map.of("id", List.of(value)));
   }
 
+  /**
+   * The interface Example.
+   */
   interface Example {
 
+    /**
+     * Method a.
+     *
+     * @param id the id
+     * @param name the name
+     */
     void methodA(@CookieValue(name = "id") String id, @RequestParam(name = "name") String name);
   }
 

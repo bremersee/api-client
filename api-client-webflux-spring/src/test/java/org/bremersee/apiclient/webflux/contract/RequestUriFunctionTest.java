@@ -32,8 +32,14 @@ import org.springframework.util.MultiValueMap;
 import org.springframework.web.util.UriBuilder;
 import org.springframework.web.util.UriComponentsBuilder;
 
+/**
+ * The request uri function test.
+ */
 class RequestUriFunctionTest {
 
+  /**
+   * Apply.
+   */
   @Test
   void apply() {
     RequestUriFunction target = mock(RequestUriFunction.class);

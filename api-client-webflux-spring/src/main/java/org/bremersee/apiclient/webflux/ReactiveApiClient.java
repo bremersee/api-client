@@ -24,6 +24,9 @@ import org.bremersee.apiclient.ApiClient;
 import org.springframework.util.Assert;
 import org.springframework.web.reactive.function.client.WebClient;
 
+/**
+ * The reactive api client.
+ */
 public class ReactiveApiClient extends ApiClient {
 
   private final WebClient.Builder webClientBuilder;
@@ -32,6 +35,12 @@ public class ReactiveApiClient extends ApiClient {
 
   private final ReactiveErrorHandler errorHandler;
 
+  /**
+   * Instantiates a new reactive api client.
+   *
+   * @param webClientBuilder the web client builder
+   * @param contract the contract
+   */
   public ReactiveApiClient(
       WebClient.Builder webClientBuilder,
       ReactiveContract contract) {
@@ -39,6 +48,13 @@ public class ReactiveApiClient extends ApiClient {
     this(webClientBuilder, contract, null);
   }
 
+  /**
+   * Instantiates a new reactive api client.
+   *
+   * @param webClientBuilder the web client builder
+   * @param contract the contract
+   * @param errorHandler the error handler
+   */
   public ReactiveApiClient(
       WebClient.Builder webClientBuilder,
       ReactiveContract contract,
@@ -78,6 +94,9 @@ public class ReactiveApiClient extends ApiClient {
 
     private ReactiveErrorHandler errorHandler;
 
+    /**
+     * Instantiates a new builder.
+     */
     Builder() {
     }
 
@@ -92,11 +111,23 @@ public class ReactiveApiClient extends ApiClient {
       return this;
     }
 
+    /**
+     * Contract builder.
+     *
+     * @param functionBundle the function bundle
+     * @return the builder
+     */
     public Builder contract(ReactiveContract functionBundle) {
       this.contract = functionBundle;
       return this;
     }
 
+    /**
+     * Error handler builder.
+     *
+     * @param errorFunctionBundle the error function bundle
+     * @return the builder
+     */
     public Builder errorHandler(ReactiveErrorHandler errorFunctionBundle) {
       this.errorHandler = errorFunctionBundle;
       return this;

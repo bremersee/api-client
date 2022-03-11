@@ -26,20 +26,44 @@ import org.springframework.web.bind.annotation.RequestPart;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+/**
+ * The multipart data controller.
+ */
 public interface MultipartDataController {
 
+  /**
+   * Post multipart data map mono.
+   *
+   * @param data the data
+   * @return the mono
+   */
   @PostMapping(
       path = "/api/multipart/map",
       consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
       produces = MediaType.APPLICATION_JSON_VALUE)
   Mono<Map<String, Object>> postMultipartDataMap(@RequestBody MultiValueMap<String, Part> data);
 
+  /**
+   * Post mono multipart data map mono.
+   *
+   * @param monoData the mono data
+   * @return the mono
+   */
   @PostMapping(
       path = "/api/multipart/mono-map",
       consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
       produces = MediaType.APPLICATION_JSON_VALUE)
   Mono<Map<String, Object>> postMonoMultipartDataMap(@RequestBody Mono<MultiValueMap<String, Part>> monoData);
 
+  /**
+   * Post parts mono.
+   *
+   * @param stringPart the string part
+   * @param resourcePart the resource part
+   * @param dataBufferPart the data buffer part
+   * @param filePart the file part
+   * @return the mono
+   */
   @PostMapping(
       path = "/api/multipart/parts",
       consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
@@ -50,6 +74,15 @@ public interface MultipartDataController {
       @RequestPart(name = "buf", required = false) Part dataBufferPart,
       @RequestPart(name = "files", required = false) Part filePart);
 
+  /**
+   * Post mono parts mono.
+   *
+   * @param stringPart the string part
+   * @param resourcePart the resource part
+   * @param dataBufferPart the data buffer part
+   * @param filePart the file part
+   * @return the mono
+   */
   @PostMapping(
       path = "/api/multipart/mono-parts",
       consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
@@ -60,6 +93,12 @@ public interface MultipartDataController {
       @RequestPart(name = "buf", required = false) Mono<Part> dataBufferPart,
       @RequestPart(name = "files", required = false) Mono<Part> filePart);
 
+  /**
+   * Post flux parts mono.
+   *
+   * @param parts the parts
+   * @return the mono
+   */
   @PostMapping(
       path = "/api/multipart/flux-parts",
       consumes = MediaType.MULTIPART_FORM_DATA_VALUE,
@@ -67,6 +106,12 @@ public interface MultipartDataController {
   Mono<Map<String, Object>> postFluxParts(
       @RequestBody Flux<Part> parts);
 
+  /**
+   * Post named flux parts mono.
+   *
+   * @param parts the parts
+   * @return the mono
+   */
   @PostMapping(
       path = "/api/multipart/named-flux-parts",
       consumes = MediaType.MULTIPART_FORM_DATA_VALUE,

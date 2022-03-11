@@ -30,11 +30,20 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+/**
+ * The request path resolver test.
+ */
 @ExtendWith(SoftAssertionsExtension.class)
 class RequestPathResolverTest {
 
   private static final RequestPathResolver target = new RequestPathResolver();
 
+  /**
+   * Apply.
+   *
+   * @param softly the softly
+   * @throws Exception the exception
+   */
   @Test
   void apply(SoftAssertions softly) throws Exception {
     for (Class<?> clazz : List.of(ExampleA.class, ExampleB.class)) {
@@ -76,46 +85,88 @@ class RequestPathResolverTest {
     }
   }
 
+  /**
+   * The interface Example a.
+   */
   @RequestMapping(value = "/api")
   interface ExampleA {
 
+    /**
+     * Method a.
+     */
     @RequestMapping(value = "/a")
     void methodA();
 
+    /**
+     * Method b.
+     */
     @GetMapping(value = "/b")
     void methodB();
 
+    /**
+     * Method c.
+     */
     @PostMapping(value = "/c")
     void methodC();
 
+    /**
+     * Method d.
+     */
     @PutMapping(value = "/d")
     void methodD();
 
+    /**
+     * Method e.
+     */
     @PatchMapping(value = "/e")
     void methodE();
 
+    /**
+     * Method f.
+     */
     @DeleteMapping(value = "/f")
     void methodF();
   }
 
+  /**
+   * The interface Example b.
+   */
   @RequestMapping(path = "/api")
   interface ExampleB {
 
+    /**
+     * Method a.
+     */
     @RequestMapping(path = "/a")
     void methodA();
 
+    /**
+     * Method b.
+     */
     @GetMapping(path = "/b")
     void methodB();
 
+    /**
+     * Method c.
+     */
     @PostMapping(path = "/c")
     void methodC();
 
+    /**
+     * Method d.
+     */
     @PutMapping(path = "/d")
     void methodD();
 
+    /**
+     * Method e.
+     */
     @PatchMapping(path = "/e")
     void methodE();
 
+    /**
+     * Method f.
+     */
     @DeleteMapping(path = "/f")
     void methodF();
   }

@@ -21,9 +21,18 @@ import org.bremersee.apiclient.webflux.Invocation;
 import org.springframework.web.reactive.function.client.WebClient.RequestBodyUriSpec;
 import org.springframework.web.reactive.function.client.WebClient.RequestHeadersUriSpec;
 
+/**
+ * The request body inserter.
+ */
 public interface RequestBodyInserter extends
     BiFunction<Invocation, RequestBodyUriSpec, RequestHeadersUriSpec<?>> {
 
+  /**
+   * Can insert boolean.
+   *
+   * @param invocation the invocation
+   * @return the boolean
+   */
   boolean canInsert(Invocation invocation);
 
 }

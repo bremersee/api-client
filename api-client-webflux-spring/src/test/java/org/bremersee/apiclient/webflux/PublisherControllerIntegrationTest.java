@@ -31,7 +31,7 @@ import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
 /**
- * The value controller integration test.
+ * The publisher controller integration test.
  *
  * @author Christian Bremer
  */
@@ -42,15 +42,29 @@ import reactor.test.StepVerifier;
 @Slf4j
 class PublisherControllerIntegrationTest {
 
+  /**
+   * The Port.
+   */
   @LocalServerPort
   int port;
 
+  /**
+   * The Api client.
+   */
   PublisherController apiClient;
 
+  /**
+   * Base url string.
+   *
+   * @return the string
+   */
   String baseUrl() {
     return "http://localhost:" + port;
   }
 
+  /**
+   * Init.
+   */
   @BeforeEach
   void init() {
     apiClient = ReactiveApiClient.builder()
@@ -62,6 +76,9 @@ class PublisherControllerIntegrationTest {
         .build(PublisherController.class);
   }
 
+  /**
+   * Post publisher.
+   */
   @Test
   void postPublisher() {
     StepVerifier

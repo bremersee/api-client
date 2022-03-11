@@ -21,6 +21,11 @@ import org.bremersee.apiclient.webflux.InvocationParameter;
 import org.springframework.web.reactive.function.client.WebClient.RequestBodyUriSpec;
 import org.springframework.web.reactive.function.client.WebClient.RequestHeadersUriSpec;
 
+/**
+ * The single body inserter.
+ *
+ * @param <T> the type parameter
+ */
 public abstract class SingleBodyInserter<T> extends AbstractRequestBodyInserter {
 
   protected abstract boolean isPossibleBodyValue(InvocationParameter invocationParameter);
@@ -36,8 +41,21 @@ public abstract class SingleBodyInserter<T> extends AbstractRequestBodyInserter 
         .orElse((RequestHeadersUriSpec) requestBodyUriSpec);
   }
 
+  /**
+   * Insert request headers uri spec.
+   *
+   * @param body the body
+   * @param requestBodyUriSpec the request body uri spec
+   * @return the request headers uri spec
+   */
   protected abstract RequestHeadersUriSpec<?> insert(T body, RequestBodyUriSpec requestBodyUriSpec);
 
+  /**
+   * Map body.
+   *
+   * @param invocationParameter the invocation parameter
+   * @return the t
+   */
   protected abstract T mapBody(InvocationParameter invocationParameter);
 
 }

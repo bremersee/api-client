@@ -30,10 +30,18 @@ import org.springframework.web.reactive.function.client.WebClient.ResponseSpec;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+/**
+ * The response function test.
+ */
 class ResponseFunctionTest {
 
   private static final ResponseFunction target = new ResponseFunction();
 
+  /**
+   * Apply mono.
+   *
+   * @throws Exception the exception
+   */
   @Test
   void applyMono() throws Exception {
     ResponseSpec responseSpec = mock(ResponseSpec.class);
@@ -49,6 +57,11 @@ class ResponseFunctionTest {
         .isEqualTo(expected);
   }
 
+  /**
+   * Apply integer mono.
+   *
+   * @throws Exception the exception
+   */
   @Test
   void applyIntegerMono() throws Exception {
     ResponseSpec responseSpec = mock(ResponseSpec.class);
@@ -63,6 +76,11 @@ class ResponseFunctionTest {
         .isEqualTo(expected);
   }
 
+  /**
+   * Apply flux.
+   *
+   * @throws Exception the exception
+   */
   @Test
   void applyFlux() throws Exception {
     ResponseSpec responseSpec = mock(ResponseSpec.class);
@@ -78,6 +96,11 @@ class ResponseFunctionTest {
         .isEqualTo(expected);
   }
 
+  /**
+   * Apply integer flux.
+   *
+   * @throws Exception the exception
+   */
   @Test
   void applyIntegerFlux() throws Exception {
     ResponseSpec responseSpec = mock(ResponseSpec.class);
@@ -92,6 +115,11 @@ class ResponseFunctionTest {
         .isEqualTo(expected);
   }
 
+  /**
+   * Apply publisher.
+   *
+   * @throws Exception the exception
+   */
   @Test
   void applyPublisher() throws Exception {
     ResponseSpec responseSpec = mock(ResponseSpec.class);
@@ -106,6 +134,11 @@ class ResponseFunctionTest {
         .isEqualTo(expected);
   }
 
+  /**
+   * Apply integer publisher.
+   *
+   * @throws Exception the exception
+   */
   @Test
   void applyIntegerPublisher() throws Exception {
     ResponseSpec responseSpec = mock(ResponseSpec.class);
@@ -120,6 +153,11 @@ class ResponseFunctionTest {
         .isEqualTo(expected);
   }
 
+  /**
+   * Illegal.
+   *
+   * @throws Exception the exception
+   */
   @Test
   void illegal() throws Exception {
     Method method = Example.class.getMethod("illegal");
@@ -129,33 +167,80 @@ class ResponseFunctionTest {
         .isThrownBy(() -> target.apply(invocation, mock(ResponseSpec.class)));
   }
 
+  /**
+   * The type Integer mono.
+   */
   abstract static class IntegerMono extends Mono<Integer> {
 
   }
 
+  /**
+   * The type Integer flux.
+   */
   abstract static class IntegerFlux extends Flux<Integer> {
 
   }
 
+  /**
+   * The type Integer publisher.
+   */
   @SuppressWarnings("ReactiveStreamsPublisherImplementation")
   abstract static class IntegerPublisher implements Publisher<Integer> {
 
   }
 
+  /**
+   * The interface Example.
+   */
   interface Example {
 
+    /**
+     * Gets mono.
+     *
+     * @return the mono
+     */
     Mono<String> getMono();
 
+    /**
+     * Gets integer mono.
+     *
+     * @return the integer mono
+     */
     IntegerMono getIntegerMono();
 
+    /**
+     * Gets flux.
+     *
+     * @return the flux
+     */
     Flux<String> getFlux();
 
+    /**
+     * Gets integer flux.
+     *
+     * @return the integer flux
+     */
     IntegerFlux getIntegerFlux();
 
+    /**
+     * Gets publisher.
+     *
+     * @return the publisher
+     */
     Publisher<String> getPublisher();
 
+    /**
+     * Gets integer publisher.
+     *
+     * @return the integer publisher
+     */
     IntegerPublisher getIntegerPublisher();
 
+    /**
+     * Illegal string.
+     *
+     * @return the string
+     */
     String illegal();
   }
 }

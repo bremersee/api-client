@@ -25,12 +25,21 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 
+/**
+ * The pageable request parameter resolver.
+ */
 public class PageableRequestParameterResolver extends SortRequestParameterResolver {
 
   private String pageNumberRequestParamName = "page";
 
   private String pageSizeRequestParamName = "size";
 
+  /**
+   * With page number request param name.
+   *
+   * @param pageNumberRequestParamName the page number request param name
+   * @return the pageable request parameter resolver
+   */
   public PageableRequestParameterResolver withPageNumberRequestParamName(String pageNumberRequestParamName) {
     if (!isEmpty(pageNumberRequestParamName)) {
       this.pageNumberRequestParamName = pageNumberRequestParamName;
@@ -38,6 +47,12 @@ public class PageableRequestParameterResolver extends SortRequestParameterResolv
     return this;
   }
 
+  /**
+   * With page size request param name.
+   *
+   * @param pageSizeRequestParamName the page size request param name
+   * @return the pageable request parameter resolver
+   */
   public PageableRequestParameterResolver withPageSizeRequestParamName(String pageSizeRequestParamName) {
     if (!isEmpty(pageSizeRequestParamName)) {
       this.pageSizeRequestParamName = pageSizeRequestParamName;
@@ -63,6 +78,12 @@ public class PageableRequestParameterResolver extends SortRequestParameterResolv
         && invocationParameter.hasNoneParameterAnnotation(Extensions.ILLEGAL_EXTENSIONS_ANNOTATIONS);
   }
 
+  /**
+   * Gets request parameters.
+   *
+   * @param pageable the pageable
+   * @return the request parameters
+   */
   protected MultiValueMap<String, Object> getRequestParameters(Pageable pageable) {
     MultiValueMap<String, Object> map = super.getRequestParameters(pageable.getSort());
     if (pageable.isPaged()) {
