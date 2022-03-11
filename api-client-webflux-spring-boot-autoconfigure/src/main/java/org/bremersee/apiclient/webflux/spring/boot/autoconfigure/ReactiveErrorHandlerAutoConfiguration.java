@@ -33,6 +33,7 @@ import org.springframework.util.ClassUtils;
  *
  * @author Christian Bremer
  */
+@SuppressWarnings("SameNameButDifferent")
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.REACTIVE)
 @ConditionalOnClass({ReactiveErrorHandler.class, DefaultWebClientErrorDecoder.class})
 @Configuration

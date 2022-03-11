@@ -66,6 +66,7 @@ import org.springframework.web.reactive.function.client.WebClient;
  *
  * @author Christian Bremer
  */
+@SuppressWarnings("SameNameButDifferent")
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.REACTIVE)
 @ConditionalOnClass({ReactiveApiClient.class, ReactiveSpringContract.class})
 @Configuration

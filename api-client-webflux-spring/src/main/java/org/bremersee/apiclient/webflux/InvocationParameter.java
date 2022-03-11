@@ -16,6 +16,7 @@
 
 package org.bremersee.apiclient.webflux;
 
+import static java.util.Objects.nonNull;
 import static org.springframework.core.annotation.AnnotationUtils.findAnnotation;
 import static org.springframework.util.ObjectUtils.isArray;
 import static org.springframework.util.ObjectUtils.isEmpty;
@@ -84,7 +85,7 @@ public class InvocationParameter extends Invocation {
   public String getParameterName() {
     try {
       String[] names = new DefaultParameterNameDiscoverer().getParameterNames(getMethod());
-      if (!isEmpty(names) && index >= 0 && index < names.length && !isEmpty(names[index])) {
+      if (nonNull(names) && index >= 0 && index < names.length && !isEmpty(names[index])) {
         return names[index];
       }
     } catch (Exception ignored) {
@@ -93,7 +94,7 @@ public class InvocationParameter extends Invocation {
     try {
       String[] names = new LocalVariableTableParameterNameDiscoverer()
           .getParameterNames(getMethod());
-      if (!isEmpty(names) && index >= 0 && index < names.length && !isEmpty(names[index])) {
+      if (nonNull(names) && index >= 0 && index < names.length && !isEmpty(names[index])) {
         return names[index];
       }
     } catch (Exception ignored) {
