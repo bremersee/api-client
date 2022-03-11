@@ -4,8 +4,8 @@ pipeline {
   }
   environment {
     CODECOV_TOKEN = credentials('api-client-codecov-token')
-    DEPLOY = false
-    SNAPSHOT_SITE = false
+    DEPLOY = true
+    SNAPSHOT_SITE = true
     RELEASE_SITE = true
     DEPLOY_FEATURE = false
   }

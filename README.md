@@ -8,4 +8,4 @@ The api client consumes RESTful reactive APIs (like OpenFeign) in a Spring Webfl
 
 - [Release](https://bremersee.github.io/api-client/index.html)
 
-- [Snapshot](https://nexus.bremersee.org/repository/maven-sites/api-client/0.0.1-SNAPSHOT/index.html)
+- [Snapshot](https://nexus.bremersee.org/repository/maven-sites/api-client/0.0.2-SNAPSHOT/index.html)
