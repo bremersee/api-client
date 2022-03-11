@@ -20,7 +20,6 @@ import static java.util.Objects.nonNull;
 
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.util.Assert;
 import org.springframework.util.ReflectionUtils;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -33,8 +32,6 @@ import org.springframework.web.reactive.function.client.WebClient.ResponseSpec;
  *
  * @author Christian Bremer
  */
-@SuppressWarnings("SameNameButDifferent")
-@Slf4j
 class ReactiveInvocationHandler implements InvocationHandler {
 
   private final Class<?> targetClass;

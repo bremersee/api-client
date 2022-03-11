@@ -22,7 +22,6 @@ import org.bremersee.exception.webclient.DefaultWebClientErrorDecoder;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication.Type;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -34,8 +33,7 @@ import org.springframework.util.ClassUtils;
  *
  * @author Christian Bremer
  */
-@SuppressWarnings("SameNameButDifferent")
-@ConditionalOnWebApplication(type = Type.REACTIVE)
+@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.REACTIVE)
 @ConditionalOnClass({ReactiveErrorHandler.class, DefaultWebClientErrorDecoder.class})
 @Configuration
 @Slf4j

@@ -18,7 +18,6 @@ package org.bremersee.apiclient.webflux.contract;
 
 import java.util.Arrays;
 import java.util.Optional;
-import java.util.function.Function;
 import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClient.RequestHeadersUriSpec;
 
@@ -32,43 +31,37 @@ public enum HttpRequestMethod {
   /**
    * Get http request method.
    */
-  GET(WebClient::get),
+  GET,
 
   /**
    * Head http request method.
    */
-  HEAD(WebClient::head),
+  HEAD,
 
   /**
    * Post http request method.
    */
-  POST(WebClient::post),
+  POST,
 
   /**
    * Put http request method.
    */
-  PUT(WebClient::put),
+  PUT,
 
   /**
    * Patch http request method.
    */
-  PATCH(WebClient::patch),
+  PATCH,
 
   /**
    * Delete http request method.
    */
-  DELETE(WebClient::delete),
+  DELETE,
 
   /**
    * Options http request method.
    */
-  OPTIONS(WebClient::options);
-
-  private final Function<WebClient, RequestHeadersUriSpec<?>> uriSpecFunction;
-
-  HttpRequestMethod(Function<WebClient, RequestHeadersUriSpec<?>> uriSpecFunction) {
-    this.uriSpecFunction = uriSpecFunction;
-  }
+  OPTIONS;
 
   /**
    * Invoke request headers uri spec.
@@ -77,7 +70,26 @@ public enum HttpRequestMethod {
    * @return the request headers uri spec
    */
   public RequestHeadersUriSpec<?> invoke(WebClient webClient) {
-    return uriSpecFunction.apply(webClient);
+    switch (this) {
+      case GET:
+        return webClient.get();
+      case HEAD:
+        return webClient.head();
+      case POST:
+        return webClient.post();
+      case PUT:
+        return webClient.put();
+      case PATCH:
+        return webClient.patch();
+      case DELETE:
+        return webClient.delete();
+      case OPTIONS:
+        return webClient.options();
+      default:
+        throw new IllegalStateException(String.format(
+            "There is no action defined for http method  %s",
+            this.name()));
+    }
   }
 
   /**

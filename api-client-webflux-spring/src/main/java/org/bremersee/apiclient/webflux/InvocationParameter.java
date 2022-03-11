@@ -83,26 +83,24 @@ public class InvocationParameter extends Invocation {
    */
   public String getParameterName() {
     try {
-      //noinspection ConstantConditions
-      String name = new DefaultParameterNameDiscoverer()
-          .getParameterNames(getMethod())[index];
-      if (!isEmpty(name)) {
-        return name;
+      String[] names = new DefaultParameterNameDiscoverer().getParameterNames(getMethod());
+      if (!isEmpty(names) && index >= 0 && index < names.length && !isEmpty(names[index])) {
+        return names[index];
       }
     } catch (Exception ignored) {
       // ignored
     }
     try {
-      //noinspection ConstantConditions
-      String name = new LocalVariableTableParameterNameDiscoverer()
-          .getParameterNames(getMethod())[index];
-      if (!isEmpty(name)) {
-        return name;
+      String[] names = new LocalVariableTableParameterNameDiscoverer()
+          .getParameterNames(getMethod());
+      if (!isEmpty(names) && index >= 0 && index < names.length && !isEmpty(names[index])) {
+        return names[index];
       }
     } catch (Exception ignored) {
       // ignored
     }
-    return parameter.getName();
+    String name = parameter.getName();
+    return isEmpty(name) ? "arg" + index : name;
   }
 
   /**
