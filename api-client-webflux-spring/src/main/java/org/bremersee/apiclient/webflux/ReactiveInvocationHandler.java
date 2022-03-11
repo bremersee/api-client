@@ -1,5 +1,5 @@
 /*
- * Copyright 2019 the original author or authors.
+ * Copyright 2022 the original author or authors.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -44,6 +44,14 @@ class ReactiveInvocationHandler implements InvocationHandler {
 
   private final ReactiveErrorHandler errorHandler;
 
+  /**
+   * Instantiates a new reactive invocation handler.
+   *
+   * @param targetClass the target class
+   * @param webClient the web client
+   * @param contract the contract
+   * @param errorHandler the error handler
+   */
   ReactiveInvocationHandler(
       Class<?> targetClass,
       WebClient webClient,
