@@ -1,0 +1,386 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PartBuilder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Api Client WebFlux Spring</a> &gt; <a href="index.source.html" class="el_package">org.bremersee.apiclient.webflux.contract.spring.multipart</a> &gt; <span class="el_source">PartBuilder.java</span></div><h1>PartBuilder.java</h1><pre class="source lang-java linenums">/*
+ * Copyright 2022 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.bremersee.apiclient.webflux.contract.spring.multipart;
+
+import static org.springframework.util.ObjectUtils.isEmpty;
+
+import java.nio.file.Path;
+import java.util.Arrays;
+import java.util.function.Consumer;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.buffer.DataBuffer;
+import org.springframework.core.io.buffer.DataBufferFactory;
+import org.springframework.core.io.buffer.DataBufferUtils;
+import org.springframework.core.io.buffer.DefaultDataBufferFactory;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+import org.springframework.http.codec.multipart.FormFieldPart;
+import org.springframework.http.codec.multipart.Part;
+import org.springframework.util.Assert;
+import reactor.core.publisher.Flux;
+import reactor.core.scheduler.Scheduler;
+import reactor.core.scheduler.Schedulers;
+
+/**
+ * The part builder.
+ *
+ * @author Christian Bremer
+ */
+public class PartBuilder {
+
+  /**
+   * Instantiates a new part builder.
+   */
+<span class="fc" id="L48">  public PartBuilder() {</span>
+<span class="fc" id="L49">  }</span>
+
+  /**
+   * Form field part builder.
+   *
+   * @param name the name
+   * @param value the value
+   * @return the form field part builder
+   */
+  public FormFieldPartBuilder part(String name, String value) {
+<span class="fc" id="L59">    return new FormFieldPartBuilder(name, value);</span>
+  }
+
+  /**
+   * File part builder.
+   *
+   * @param name the name
+   * @param file the file
+   * @return the file part builder
+   */
+  public FilePartBuilder part(String name, Path file) {
+<span class="fc" id="L70">    return new FilePartBuilder(name, file);</span>
+  }
+
+  /**
+   * Resource part builder.
+   *
+   * @param name the name
+   * @param resource the resource
+   * @return the resource part builder
+   */
+  public ResourcePartBuilder part(String name, Resource resource) {
+<span class="fc" id="L81">    return new ResourcePartBuilder(name, resource);</span>
+  }
+
+  /**
+   * Data buffer part builder.
+   *
+   * @param name the name
+   * @param content the content
+   * @return the data buffer part builder
+   */
+  public DataBufferPartBuilder part(String name, Flux&lt;DataBuffer&gt; content) {
+<span class="fc" id="L92">    return new DataBufferPartBuilder(name, content);</span>
+  }
+
+  /**
+   * Data buffer part builder.
+   *
+   * @param name the name
+   * @param filename the filename
+   * @param content the content
+   * @return the data buffer part builder
+   */
+  public DataBufferPartBuilder part(String name, String filename, Flux&lt;DataBuffer&gt; content) {
+<span class="fc" id="L104">    return new DataBufferPartBuilder(name, filename, content);</span>
+  }
+
+  /**
+   * The abstract part builder.
+   *
+   * @param &lt;T&gt; the type parameter
+   */
+  public abstract static class AbstractPartBuilder&lt;T extends Part&gt; {
+
+<span class="fc" id="L114">    private DataBufferFactory dataBufferFactory = new DefaultDataBufferFactory();</span>
+
+<span class="fc" id="L116">    private int bufferSize = 1024;</span>
+
+<span class="fc" id="L118">    private final HttpHeaders headers = new HttpHeaders();</span>
+
+    /**
+     * Instantiates a new abstract part builder.
+     */
+<span class="fc" id="L123">    AbstractPartBuilder() {</span>
+<span class="fc" id="L124">    }</span>
+
+    /**
+     * Gets data buffer factory.
+     *
+     * @return the data buffer factory
+     */
+    protected DataBufferFactory getDataBufferFactory() {
+<span class="fc" id="L132">      return dataBufferFactory;</span>
+    }
+
+    /**
+     * Gets buffer size.
+     *
+     * @return the buffer size
+     */
+    protected int getBufferSize() {
+<span class="fc" id="L141">      return bufferSize;</span>
+    }
+
+    /**
+     * Gets headers.
+     *
+     * @return the headers
+     */
+    protected HttpHeaders getHeaders() {
+<span class="fc" id="L150">      return headers;</span>
+    }
+
+    /**
+     * With data buffer factory.
+     *
+     * @param dataBufferFactory the data buffer factory
+     * @return the abstract part builder
+     */
+    public AbstractPartBuilder&lt;T&gt; withDataBufferFactory(DataBufferFactory dataBufferFactory) {
+<span class="pc bpc" id="L160" title="1 of 2 branches missed.">      if (!isEmpty(dataBufferFactory)) {</span>
+<span class="fc" id="L161">        this.dataBufferFactory = dataBufferFactory;</span>
+      }
+<span class="fc" id="L163">      return this;</span>
+    }
+
+    /**
+     * With buffer size.
+     *
+     * @param bufferSize the buffer size
+     * @return the abstract part builder
+     */
+    public AbstractPartBuilder&lt;T&gt; withBufferSize(int bufferSize) {
+<span class="pc bpc" id="L173" title="1 of 2 branches missed.">      if (bufferSize &gt; 0) {</span>
+<span class="fc" id="L174">        this.bufferSize = bufferSize;</span>
+      }
+<span class="fc" id="L176">      return this;</span>
+    }
+
+    /**
+     * Content type.
+     *
+     * @param contentType the content type
+     * @return the abstract part builder
+     */
+    public AbstractPartBuilder&lt;T&gt; contentType(MediaType contentType) {
+<span class="pc bpc" id="L186" title="1 of 2 branches missed.">      if (!isEmpty(contentType)) {</span>
+<span class="fc" id="L187">        headers.setContentType(contentType);</span>
+      }
+<span class="fc" id="L189">      return this;</span>
+    }
+
+    /**
+     * Header.
+     *
+     * @param headerName the header name
+     * @param headerValues the header values
+     * @return the abstract part builder
+     */
+    public AbstractPartBuilder&lt;T&gt; header(String headerName, String... headerValues) {
+<span class="pc bpc" id="L200" title="2 of 4 branches missed.">      if (!isEmpty(headerName) &amp;&amp; !isEmpty(headerValues)) {</span>
+<span class="fc" id="L201">        headers.addAll(headerName, Arrays.asList(headerValues));</span>
+      }
+<span class="fc" id="L203">      return this;</span>
+    }
+
+    /**
+     * Headers.
+     *
+     * @param headersConsumer the headers consumer
+     * @return the abstract part builder
+     */
+    public AbstractPartBuilder&lt;T&gt; headers(Consumer&lt;HttpHeaders&gt; headersConsumer) {
+<span class="pc bpc" id="L213" title="1 of 2 branches missed.">      if (!isEmpty(headersConsumer)) {</span>
+<span class="fc" id="L214">        headersConsumer.accept(headers);</span>
+      }
+<span class="fc" id="L216">      return this;</span>
+    }
+
+    /**
+     * Build part.
+     *
+     * @return the part
+     */
+    public abstract T build();
+  }
+
+  /**
+   * The form field part builder.
+   */
+  public static class FormFieldPartBuilder extends AbstractPartBuilder&lt;FormFieldPart&gt; {
+
+    private final String value;
+
+    /**
+     * Instantiates a new form field part builder.
+     *
+     * @param name the name
+     * @param value the value
+     */
+<span class="fc" id="L240">    FormFieldPartBuilder(String name, String value) {</span>
+<span class="fc" id="L241">      Assert.hasText(name, &quot;Name must be present.&quot;);</span>
+<span class="fc" id="L242">      getHeaders().setContentDispositionFormData(name, null);</span>
+<span class="fc" id="L243">      this.value = value;</span>
+<span class="fc" id="L244">    }</span>
+
+    @Override
+    public FormFieldPart build() {
+<span class="fc" id="L248">      return DefaultParts.formFieldPart(getHeaders(), value);</span>
+    }
+  }
+
+  /**
+   * The abstract file part builder.
+   */
+  public abstract static class AbstractFilePartBuilder extends AbstractPartBuilder&lt;Part&gt; {
+
+    /**
+     * Instantiates a new abstract file part builder.
+     */
+<span class="fc" id="L260">    AbstractFilePartBuilder() {</span>
+<span class="fc" id="L261">    }</span>
+
+    /**
+     * Filename abstract file part builder.
+     *
+     * @param filename the filename
+     * @return the abstract file part builder
+     */
+    public AbstractFilePartBuilder filename(String filename) {
+<span class="pc bpc" id="L270" title="2 of 4 branches missed.">      if (!isEmpty(filename) &amp;&amp; !isEmpty(getHeaders().getContentDisposition())) {</span>
+<span class="fc" id="L271">        String name = getHeaders().getContentDisposition().getName();</span>
+<span class="pc bpc" id="L272" title="1 of 2 branches missed.">        if (!isEmpty(name)) {</span>
+<span class="fc" id="L273">          getHeaders().setContentDispositionFormData(name, filename);</span>
+        }
+      }
+<span class="fc" id="L276">      return this;</span>
+    }
+  }
+
+  /**
+   * The file part builder.
+   */
+  public static class FilePartBuilder extends AbstractFilePartBuilder {
+
+<span class="fc" id="L285">    private Scheduler blockingOperationScheduler = Schedulers.boundedElastic();</span>
+
+    private final Path file;
+
+    /**
+     * Instantiates a new file part builder.
+     *
+     * @param name the name
+     * @param file the file
+     */
+<span class="fc" id="L295">    FilePartBuilder(String name, Path file) {</span>
+<span class="fc" id="L296">      Assert.hasText(name, &quot;Name must be present.&quot;);</span>
+<span class="fc" id="L297">      Assert.notNull(file, &quot;File must be present.&quot;);</span>
+<span class="fc" id="L298">      this.file = file;</span>
+<span class="fc" id="L299">      getHeaders().setContentDispositionFormData(name, String.valueOf(file.getFileName()));</span>
+<span class="fc" id="L300">    }</span>
+
+    /**
+     * With scheduler.
+     *
+     * @param scheduler the scheduler
+     * @return the file part builder
+     */
+    public FilePartBuilder withScheduler(Scheduler scheduler) {
+<span class="pc bpc" id="L309" title="1 of 2 branches missed.">      if (!isEmpty(scheduler)) {</span>
+<span class="fc" id="L310">        this.blockingOperationScheduler = scheduler;</span>
+      }
+<span class="fc" id="L312">      return this;</span>
+    }
+
+    @Override
+    public Part build() {
+<span class="fc" id="L317">      return DefaultParts.part(getHeaders(), file, blockingOperationScheduler);</span>
+    }
+  }
+
+  /**
+   * The resource part builder.
+   */
+  public static class ResourcePartBuilder extends AbstractFilePartBuilder {
+
+    private final Resource resource;
+
+    /**
+     * Instantiates a new resource part builder.
+     *
+     * @param name the name
+     * @param resource the resource
+     */
+<span class="fc" id="L334">    ResourcePartBuilder(String name, Resource resource) {</span>
+<span class="fc" id="L335">      Assert.hasText(name, &quot;Name must be present.&quot;);</span>
+<span class="fc" id="L336">      Assert.notNull(resource, &quot;Resource must be present.&quot;);</span>
+<span class="fc" id="L337">      this.resource = resource;</span>
+<span class="fc" id="L338">      getHeaders().setContentDispositionFormData(name, resource.getFilename());</span>
+<span class="fc" id="L339">    }</span>
+
+    @Override
+    public Part build() {
+<span class="fc" id="L343">      return DefaultParts.part(getHeaders(),</span>
+<span class="fc" id="L344">          DataBufferUtils.read(resource, getDataBufferFactory(), getBufferSize()));</span>
+    }
+  }
+
+  /**
+   * The data buffer part builder.
+   */
+  public static class DataBufferPartBuilder extends AbstractFilePartBuilder {
+
+    private final Flux&lt;DataBuffer&gt; content;
+
+    /**
+     * Instantiates a new data buffer part builder.
+     *
+     * @param name the name
+     * @param content the content
+     */
+    DataBufferPartBuilder(String name, Flux&lt;DataBuffer&gt; content) {
+<span class="fc" id="L362">      this(name, null, content);</span>
+<span class="fc" id="L363">    }</span>
+
+    /**
+     * Instantiates a new data buffer part builder.
+     *
+     * @param name the name
+     * @param filename the filename
+     * @param content the content
+     */
+<span class="fc" id="L372">    DataBufferPartBuilder(String name, String filename, Flux&lt;DataBuffer&gt; content) {</span>
+<span class="fc" id="L373">      Assert.hasText(name, &quot;Name must be present.&quot;);</span>
+<span class="fc" id="L374">      Assert.notNull(content, &quot;Content must be present.&quot;);</span>
+<span class="fc" id="L375">      this.content = content;</span>
+<span class="fc" id="L376">      getHeaders().setContentDispositionFormData(name, filename);</span>
+<span class="fc" id="L377">    }</span>
+
+    @Override
+    public Part build() {
+<span class="fc" id="L381">      return DefaultParts.part(getHeaders(), content);</span>
+    }
+  }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

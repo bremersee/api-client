@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MultipartDataInserter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Api Client WebFlux Spring</a> &gt; <a href="index.source.html" class="el_package">org.bremersee.apiclient.webflux.contract.spring</a> &gt; <span class="el_source">MultipartDataInserter.java</span></div><h1>MultipartDataInserter.java</h1><pre class="source lang-java linenums">/*
+ * Copyright 2022 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.bremersee.apiclient.webflux.contract.spring;
+
+import static java.util.Objects.nonNull;
+
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.Optional;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import org.bremersee.apiclient.webflux.Invocation;
+import org.bremersee.apiclient.webflux.InvocationParameter;
+import org.reactivestreams.Publisher;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.core.ResolvableType;
+import org.springframework.core.convert.converter.Converter;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.MediaType;
+import org.springframework.http.codec.multipart.Part;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.bind.annotation.RequestPart;
+import org.springframework.web.reactive.function.BodyInserters;
+import org.springframework.web.reactive.function.client.WebClient.RequestBodyUriSpec;
+import org.springframework.web.reactive.function.client.WebClient.RequestHeadersUriSpec;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+
+/**
+ * The multipart data inserter.
+ *
+ * @author Christian Bremer
+ */
+<span class="fc" id="L49">public class MultipartDataInserter extends AbstractRequestBodyInserter {</span>
+
+<span class="fc" id="L51">  private Function&lt;Invocation, Optional&lt;MediaType&gt;&gt; contentTypeResolver = new ContentTypeResolver();</span>
+
+<span class="fc" id="L53">  private Converter&lt;Part, HttpEntity&lt;?&gt;&gt; partConverter = new PartToHttpEntityConverter();</span>
+
+  /**
+   * With content type resolver.
+   *
+   * @param contentTypeResolver the content type resolver
+   * @return the multipart data inserter
+   */
+  public MultipartDataInserter withContentTypeResolver(
+      Function&lt;Invocation, Optional&lt;MediaType&gt;&gt; contentTypeResolver) {
+
+<span class="pc bpc" id="L64" title="1 of 2 branches missed.">    if (nonNull(contentTypeResolver)) {</span>
+<span class="fc" id="L65">      this.contentTypeResolver = contentTypeResolver;</span>
+    }
+<span class="fc" id="L67">    return this;</span>
+  }
+
+  /**
+   * With part converter.
+   *
+   * @param partConverter the part converter
+   * @return the multipart data inserter
+   */
+  public MultipartDataInserter withPartConverter(Converter&lt;Part, HttpEntity&lt;?&gt;&gt; partConverter) {
+<span class="pc bpc" id="L77" title="1 of 2 branches missed.">    if (nonNull(partConverter)) {</span>
+<span class="fc" id="L78">      this.partConverter = partConverter;</span>
+    }
+<span class="fc" id="L80">    return this;</span>
+  }
+
+  @Override
+  public boolean canInsert(Invocation invocation) {
+<span class="pc bpc" id="L85" title="1 of 4 branches missed.">    return isMultipartFormData(invocation) &amp;&amp; super.canInsert(invocation);</span>
+  }
+
+  /**
+   * Is multipart form data.
+   *
+   * @param invocation the invocation
+   * @return the boolean
+   */
+  protected boolean isMultipartFormData(Invocation invocation) {
+<span class="fc" id="L95">    return contentTypeResolver.apply(invocation)</span>
+<span class="fc" id="L96">        .filter(contentType -&gt; contentType.isCompatibleWith(MediaType.MULTIPART_FORM_DATA))</span>
+<span class="fc" id="L97">        .isPresent();</span>
+  }
+
+  @Override
+  protected boolean hasMappingAnnotation(InvocationParameter invocationParameter) {
+<span class="fc bfc" id="L102" title="All 2 branches covered.">    return super.hasMappingAnnotation(invocationParameter)</span>
+<span class="pc bpc" id="L103" title="1 of 2 branches missed.">        || invocationParameter.hasParameterAnnotation(RequestPart.class);</span>
+  }
+
+  @Override
+  protected boolean isPossibleBodyValue(InvocationParameter invocationParameter) {
+<span class="pc bpc" id="L108" title="1 of 4 branches missed.">    return isRequestBody(invocationParameter) || isRequestPart(invocationParameter);</span>
+  }
+
+  /**
+   * Is request body.
+   *
+   * @param invocationParameter the invocation parameter
+   * @return the boolean
+   */
+  protected boolean isRequestBody(InvocationParameter invocationParameter) {
+<span class="fc" id="L118">    Method method = invocationParameter.getMethod();</span>
+<span class="fc" id="L119">    int index = invocationParameter.getIndex();</span>
+<span class="fc bfc" id="L120" title="All 2 branches covered.">    if (invocationParameter.getValue() instanceof MultiValueMap) {</span>
+<span class="fc" id="L121">      return Optional.of(ResolvableType.forMethodParameter(method, index))</span>
+<span class="pc bpc" id="L122" title="1 of 2 branches missed.">          .filter(resolvableType -&gt; resolvableType.getGenerics().length &gt;= 2)</span>
+<span class="fc" id="L123">          .map(resolvableType -&gt; {</span>
+<span class="fc" id="L124">            Class&lt;?&gt; r0 = resolvableType.resolveGeneric(0);</span>
+<span class="fc" id="L125">            Class&lt;?&gt; r1 = resolvableType.resolveGeneric(1);</span>
+<span class="pc bpc" id="L126" title="2 of 4 branches missed.">            return nonNull(r0) &amp;&amp; nonNull(r1)</span>
+<span class="pc bpc" id="L127" title="2 of 4 branches missed.">                &amp;&amp; String.class.isAssignableFrom(r0) &amp;&amp; Part.class.isAssignableFrom(r1);</span>
+          })
+<span class="fc" id="L129">          .isPresent();</span>
+<span class="fc bfc" id="L130" title="All 2 branches covered.">    } else if (invocationParameter.getValue() instanceof Publisher) {</span>
+<span class="fc bfc" id="L131" title="All 2 branches covered.">      return isMonoWithMultiValueMap(invocationParameter)</span>
+<span class="fc bfc" id="L132" title="All 2 branches covered.">          || isFluxWithPart(invocationParameter);</span>
+    }
+<span class="fc" id="L134">    return false;</span>
+  }
+
+  private boolean isMonoWithMultiValueMap(InvocationParameter invocationParameter) {
+<span class="fc" id="L138">    Method method = invocationParameter.getMethod();</span>
+<span class="fc" id="L139">    int index = invocationParameter.getIndex();</span>
+<span class="fc bfc" id="L140" title="All 2 branches covered.">    return invocationParameter.getValue() instanceof Mono &amp;&amp; Optional</span>
+<span class="fc" id="L141">        .of(ResolvableType.forMethodParameter(method, index))</span>
+<span class="fc" id="L142">        .filter(ResolvableType::hasGenerics)</span>
+<span class="fc" id="L143">        .map(resolvableType -&gt; resolvableType.getGeneric(0))</span>
+<span class="fc bfc" id="L144" title="All 2 branches covered.">        .filter(resolvableType -&gt; resolvableType.getGenerics().length &gt;= 2)</span>
+<span class="fc" id="L145">        .map(resolvableType -&gt; {</span>
+<span class="fc" id="L146">          Class&lt;?&gt; r0 = resolvableType.resolveGeneric(0);</span>
+<span class="fc" id="L147">          Class&lt;?&gt; r1 = resolvableType.resolveGeneric(1);</span>
+<span class="pc bpc" id="L148" title="2 of 4 branches missed.">          return nonNull(r0) &amp;&amp; nonNull(r1)</span>
+<span class="pc bpc" id="L149" title="2 of 4 branches missed.">              &amp;&amp; String.class.isAssignableFrom(r0) &amp;&amp; Part.class.isAssignableFrom(r1);</span>
+        })
+<span class="fc bfc" id="L151" title="All 2 branches covered.">        .isPresent();</span>
+  }
+
+  private boolean isFluxWithPart(InvocationParameter invocationParameter) {
+<span class="fc" id="L155">    Method method = invocationParameter.getMethod();</span>
+<span class="fc" id="L156">    int index = invocationParameter.getIndex();</span>
+<span class="fc bfc" id="L157" title="All 2 branches covered.">    return invocationParameter.getValue() instanceof Flux &amp;&amp; Optional</span>
+<span class="fc" id="L158">        .of(ResolvableType.forMethodParameter(method, index))</span>
+<span class="fc" id="L159">        .filter(ResolvableType::hasGenerics)</span>
+<span class="fc" id="L160">        .map(resolvableType -&gt; resolvableType.resolveGeneric(0))</span>
+<span class="fc" id="L161">        .filter(Part.class::isAssignableFrom)</span>
+<span class="pc bpc" id="L162" title="1 of 2 branches missed.">        .isPresent();</span>
+  }
+
+  /**
+   * Is request part.
+   *
+   * @param invocationParameter the invocation parameter
+   * @return the boolean
+   */
+  protected boolean isRequestPart(InvocationParameter invocationParameter) {
+<span class="fc bfc" id="L172" title="All 2 branches covered.">    return invocationParameter.hasParameterAnnotation(RequestPart.class)</span>
+<span class="pc bpc" id="L173" title="1 of 2 branches missed.">        &amp;&amp; isPart(invocationParameter);</span>
+  }
+
+  private boolean isPart(InvocationParameter invocationParameter) {
+<span class="fc bfc" id="L177" title="All 2 branches covered.">    if (invocationParameter.getValue() instanceof Part) {</span>
+<span class="fc" id="L178">      return true;</span>
+<span class="pc bpc" id="L179" title="1 of 2 branches missed.">    } else if (invocationParameter.getValue() instanceof Publisher) {</span>
+<span class="fc" id="L180">      Method method = invocationParameter.getMethod();</span>
+<span class="fc" id="L181">      int index = invocationParameter.getIndex();</span>
+<span class="fc" id="L182">      return Optional.of(ResolvableType.forMethodParameter(method, index))</span>
+<span class="fc" id="L183">          .filter(ResolvableType::hasGenerics)</span>
+<span class="fc" id="L184">          .map(resolvableType -&gt; resolvableType.resolveGeneric(0))</span>
+<span class="fc" id="L185">          .filter(Part.class::isAssignableFrom)</span>
+<span class="fc" id="L186">          .isPresent();</span>
+    }
+<span class="nc" id="L188">    return false;</span>
+  }
+
+  @Override
+  public RequestHeadersUriSpec&lt;?&gt; apply(Invocation invocation,
+      RequestBodyUriSpec requestBodyUriSpec) {
+<span class="fc" id="L194">    List&lt;InvocationParameter&gt; possibleBodies = findPossibleBodies(invocation);</span>
+<span class="fc" id="L195">    List&lt;Publisher&lt;Part&gt;&gt; partPublishers = possibleBodies.stream()</span>
+<span class="fc bfc" id="L196" title="All 2 branches covered.">        .filter(invocationParameter -&gt; isRequestPart(invocationParameter)</span>
+<span class="fc bfc" id="L197" title="All 2 branches covered.">            || isFluxWithPart(invocationParameter))</span>
+<span class="fc" id="L198">        .map(invocationParameter -&gt; toPublisher(invocationParameter.getValue()))</span>
+<span class="fc" id="L199">        .collect(Collectors.toList());</span>
+    Mono&lt;MultiValueMap&lt;String, HttpEntity&lt;?&gt;&gt;&gt; httpEntityMap;
+<span class="fc bfc" id="L201" title="All 2 branches covered.">    if (!partPublishers.isEmpty()) {</span>
+<span class="fc" id="L202">      httpEntityMap = toHttpEntityMap(partPublishers);</span>
+    } else {
+<span class="fc" id="L204">      Publisher&lt;MultiValueMap&lt;String, Part&gt;&gt; partMap = findRequestBody(possibleBodies);</span>
+<span class="fc" id="L205">      httpEntityMap = toHttpEntityMap(partMap);</span>
+    }
+    //noinspection rawtypes
+<span class="fc" id="L208">    return (RequestHeadersUriSpec) requestBodyUriSpec.body(BodyInserters</span>
+<span class="fc" id="L209">        .fromPublisher(httpEntityMap, new MultiValueMapTypeReference()));</span>
+  }
+
+  @SuppressWarnings(&quot;unchecked&quot;)
+  private Publisher&lt;MultiValueMap&lt;String, Part&gt;&gt; findRequestBody(
+      List&lt;InvocationParameter&gt; possibleBodies) {
+<span class="fc" id="L215">    return possibleBodies.stream()</span>
+<span class="fc" id="L216">        .findFirst()</span>
+<span class="fc" id="L217">        .map(InvocationParameter::getValue)</span>
+<span class="fc" id="L218">        .map(value -&gt; {</span>
+<span class="fc bfc" id="L219" title="All 2 branches covered.">          if (value instanceof Publisher) {</span>
+<span class="fc" id="L220">            return (Publisher&lt;MultiValueMap&lt;String, Part&gt;&gt;) value;</span>
+          } else {
+<span class="fc" id="L222">            MultiValueMap&lt;String, Part&gt; partMap = (MultiValueMap&lt;String, Part&gt;) value;</span>
+<span class="fc" id="L223">            return Mono.just(partMap);</span>
+          }
+        })
+<span class="fc" id="L226">        .orElseGet(Mono::empty);</span>
+  }
+
+  private Publisher&lt;Part&gt; toPublisher(Object value) {
+    Publisher&lt;Part&gt; partPublisher;
+<span class="fc bfc" id="L231" title="All 2 branches covered.">    if (value instanceof Part) {</span>
+<span class="fc" id="L232">      partPublisher = Mono.just((Part) value);</span>
+    } else {
+      //noinspection unchecked
+<span class="fc" id="L235">      partPublisher = (Publisher&lt;Part&gt;) value;</span>
+    }
+<span class="fc" id="L237">    return partPublisher;</span>
+  }
+
+  private Mono&lt;MultiValueMap&lt;String, HttpEntity&lt;?&gt;&gt;&gt; toHttpEntityMap(
+      List&lt;Publisher&lt;Part&gt;&gt; partPublishers) {
+<span class="fc" id="L242">    return Flux.concat(partPublishers)</span>
+<span class="fc" id="L243">        .collect(</span>
+            LinkedMultiValueMap::new,
+<span class="fc" id="L245">            (map, part) -&gt; map.add(part.name(), partConverter.convert(part)));</span>
+  }
+
+  private Mono&lt;MultiValueMap&lt;String, HttpEntity&lt;?&gt;&gt;&gt; toHttpEntityMap(
+      Publisher&lt;MultiValueMap&lt;String, Part&gt;&gt; partMapPublisher) {
+
+<span class="fc" id="L251">    return Flux.from(partMapPublisher)</span>
+<span class="fc" id="L252">        .flatMap(partMap -&gt; Flux.fromStream(partMap.values().stream()))</span>
+<span class="fc" id="L253">        .flatMap(parts -&gt; Flux.fromStream(parts.stream()))</span>
+<span class="fc" id="L254">        .collect(</span>
+            LinkedMultiValueMap::new,
+<span class="fc" id="L256">            (map, part) -&gt; map.add(part.name(), partConverter.convert(part)));</span>
+  }
+
+  private static class MultiValueMapTypeReference
+      extends ParameterizedTypeReference&lt;MultiValueMap&lt;String, HttpEntity&lt;?&gt;&gt;&gt; {
+
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

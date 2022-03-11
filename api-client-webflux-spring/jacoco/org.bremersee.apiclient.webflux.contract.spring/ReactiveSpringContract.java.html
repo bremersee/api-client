@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ReactiveSpringContract.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Api Client WebFlux Spring</a> &gt; <a href="index.source.html" class="el_package">org.bremersee.apiclient.webflux.contract.spring</a> &gt; <span class="el_source">ReactiveSpringContract.java</span></div><h1>ReactiveSpringContract.java</h1><pre class="source lang-java linenums">/*
+ * Copyright 2022 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.bremersee.apiclient.webflux.contract.spring;
+
+import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
+import java.util.function.Function;
+import org.bremersee.apiclient.webflux.Invocation;
+import org.bremersee.apiclient.webflux.ReactiveContract;
+import org.bremersee.apiclient.webflux.contract.CookiesConsumer;
+import org.bremersee.apiclient.webflux.contract.HeadersConsumer;
+import org.bremersee.apiclient.webflux.contract.RequestBodyInserterRegistry;
+import org.bremersee.apiclient.webflux.contract.RequestUriFunction;
+import org.bremersee.apiclient.webflux.contract.RequestUriSpecFunction;
+import org.bremersee.apiclient.webflux.contract.ResponseFunction;
+import org.reactivestreams.Publisher;
+import org.springframework.http.HttpHeaders;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClient.RequestBodyUriSpec;
+import org.springframework.web.reactive.function.client.WebClient.RequestHeadersUriSpec;
+import org.springframework.web.reactive.function.client.WebClient.ResponseSpec;
+import org.springframework.web.util.UriBuilder;
+
+/**
+ * The reactive spring contract.
+ *
+ * @author Christian Bremer
+ */
+<span class="fc" id="L47">public class ReactiveSpringContract implements ReactiveContract {</span>
+
+<span class="fc" id="L49">  private final ContentTypeResolver contentTypeResolver = new ContentTypeResolver();</span>
+
+  @Override
+  public BiConsumer&lt;Invocation, MultiValueMap&lt;String, String&gt;&gt; getCookiesConsumer() {
+<span class="fc" id="L53">    return CookiesConsumer.builder()</span>
+<span class="fc" id="L54">        .cookiesResolver(new CookiesResolver())</span>
+<span class="fc" id="L55">        .build();</span>
+  }
+
+  @Override
+  public BiConsumer&lt;Invocation, HttpHeaders&gt; getHeadersConsumer() {
+<span class="fc" id="L60">    return HeadersConsumer.builder()</span>
+<span class="fc" id="L61">        .contentTypeResolver(contentTypeResolver)</span>
+<span class="fc" id="L62">        .acceptResolver(new AcceptResolver())</span>
+<span class="fc" id="L63">        .headersResolver(new RequestHeadersResolver())</span>
+<span class="fc" id="L64">        .build();</span>
+  }
+
+  @Override
+  public BiFunction&lt;Invocation, UriBuilder, URI&gt; getRequestUriFunction() {
+<span class="fc" id="L69">    return RequestUriFunction.builder()</span>
+<span class="fc" id="L70">        .requestPathResolver(new RequestPathResolver())</span>
+<span class="fc" id="L71">        .pathVariablesResolver(new PathVariablesResolver())</span>
+<span class="fc" id="L72">        .requestParametersResolvers(getRequestParametersResolvers())</span>
+<span class="fc" id="L73">        .build();</span>
+  }
+
+  /**
+   * Gets request parameters resolvers.
+   *
+   * @return the request parameters resolvers
+   */
+  protected List&lt;Function&lt;Invocation, MultiValueMap&lt;String, Object&gt;&gt;&gt;
+  getRequestParametersResolvers() {
+
+<span class="fc" id="L84">    List&lt;Function&lt;Invocation, MultiValueMap&lt;String, Object&gt;&gt;&gt; list = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L85">    list.add(new RequestParametersResolver());</span>
+<span class="pc bpc" id="L86" title="1 of 2 branches missed.">    if (Extensions.isSortPresent) {</span>
+<span class="fc" id="L87">      list.add(new SortRequestParameterResolver());</span>
+    }
+<span class="pc bpc" id="L89" title="1 of 2 branches missed.">    if (Extensions.isPageablePresent) {</span>
+<span class="fc" id="L90">      list.add(new PageableRequestParameterResolver());</span>
+    }
+<span class="fc" id="L92">    return list;</span>
+  }
+
+  @Override
+  public BiFunction&lt;Invocation, WebClient, RequestHeadersUriSpec&lt;?&gt;&gt; getRequestUriSpecFunction() {
+<span class="fc" id="L97">    return RequestUriSpecFunction.builder()</span>
+<span class="fc" id="L98">        .httpMethodResolver(new HttpMethodResolver())</span>
+<span class="fc" id="L99">        .build();</span>
+  }
+
+  @Override
+  public BiFunction&lt;Invocation, RequestBodyUriSpec, RequestHeadersUriSpec&lt;?&gt;&gt;
+  getRequestBodyInserterFunction() {
+
+<span class="fc" id="L106">    return RequestBodyInserterRegistry.builder()</span>
+<span class="fc" id="L107">        .addRequestBodyInserters(new FormDataInserter()</span>
+<span class="fc" id="L108">            .withContentTypeResolver(contentTypeResolver))</span>
+<span class="fc" id="L109">        .addRequestBodyInserters(new MultipartDataInserter()</span>
+<span class="fc" id="L110">            .withContentTypeResolver(contentTypeResolver))</span>
+<span class="fc" id="L111">        .addRequestBodyInserters(new ResourceInserter())</span>
+<span class="fc" id="L112">        .addRequestBodyInserters(new DataBuffersInserter())</span>
+<span class="fc" id="L113">        .addRequestBodyInserters(new PublisherInserter())</span>
+<span class="fc" id="L114">        .addRequestBodyInserters(new ValueInserter())</span>
+<span class="fc" id="L115">        .build();</span>
+  }
+
+  @Override
+  public BiFunction&lt;Invocation, ResponseSpec, Publisher&lt;?&gt;&gt; getResponseFunction() {
+<span class="fc" id="L120">    return new ResponseFunction();</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

@@ -1,0 +1,159 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ReactiveApiClient.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Api Client WebFlux Spring</a> &gt; <a href="index.source.html" class="el_package">org.bremersee.apiclient.webflux</a> &gt; <span class="el_source">ReactiveApiClient.java</span></div><h1>ReactiveApiClient.java</h1><pre class="source lang-java linenums">/*
+ * Copyright 2022 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.bremersee.apiclient.webflux;
+
+import static java.util.Objects.isNull;
+
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Proxy;
+import org.bremersee.apiclient.ApiClient;
+import org.springframework.util.Assert;
+import org.springframework.web.reactive.function.client.WebClient;
+
+/**
+ * The reactive api client.
+ *
+ * @author Christian Bremer
+ */
+public class ReactiveApiClient extends ApiClient {
+
+  private final WebClient.Builder webClientBuilder;
+
+  private final ReactiveContract contract;
+
+  private final ReactiveErrorHandler errorHandler;
+
+  /**
+   * Instantiates a new reactive api client.
+   *
+   * @param webClientBuilder the web client builder
+   * @param contract the contract
+   */
+  public ReactiveApiClient(
+      WebClient.Builder webClientBuilder,
+      ReactiveContract contract) {
+
+<span class="fc" id="L50">    this(webClientBuilder, contract, null);</span>
+<span class="fc" id="L51">  }</span>
+
+  /**
+   * Instantiates a new reactive api client.
+   *
+   * @param webClientBuilder the web client builder
+   * @param contract the contract
+   * @param errorHandler the error handler
+   */
+  public ReactiveApiClient(
+      WebClient.Builder webClientBuilder,
+      ReactiveContract contract,
+<span class="fc" id="L63">      ReactiveErrorHandler errorHandler) {</span>
+
+<span class="pc bpc" id="L65" title="1 of 2 branches missed.">    this.webClientBuilder = isNull(webClientBuilder) ? WebClient.builder() : webClientBuilder;</span>
+<span class="fc" id="L66">    this.contract = contract;</span>
+<span class="fc" id="L67">    this.errorHandler = errorHandler;</span>
+<span class="fc" id="L68">  }</span>
+
+  @Override
+  public &lt;T&gt; T newInstance(Class&lt;T&gt; target, String baseUrl) {
+<span class="fc" id="L72">    return new Builder()</span>
+<span class="fc" id="L73">        .webClient(webClientBuilder.baseUrl(baseUrl).build())</span>
+<span class="fc" id="L74">        .contract(contract)</span>
+<span class="fc" id="L75">        .errorHandler(errorHandler)</span>
+<span class="fc" id="L76">        .build(target);</span>
+  }
+
+  /**
+   * Default api client builder.
+   *
+   * @return the web client proxy builder
+   */
+  public static Builder builder() {
+<span class="fc" id="L85">    return new Builder();</span>
+  }
+
+  /**
+   * The builder.
+   */
+  public static class Builder {
+
+    private WebClient webClient;
+
+    private ReactiveContract contract;
+
+    private ReactiveErrorHandler errorHandler;
+
+    /**
+     * Instantiates a new builder.
+     */
+<span class="fc" id="L102">    Builder() {</span>
+<span class="fc" id="L103">    }</span>
+
+    /**
+     * Sets the web client with the base url.
+     *
+     * @param webClient the web client
+     * @return the builder
+     */
+    public Builder webClient(WebClient webClient) {
+<span class="fc" id="L112">      this.webClient = webClient;</span>
+<span class="fc" id="L113">      return this;</span>
+    }
+
+    /**
+     * Contract builder.
+     *
+     * @param functionBundle the function bundle
+     * @return the builder
+     */
+    public Builder contract(ReactiveContract functionBundle) {
+<span class="fc" id="L123">      this.contract = functionBundle;</span>
+<span class="fc" id="L124">      return this;</span>
+    }
+
+    /**
+     * Error handler builder.
+     *
+     * @param errorFunctionBundle the error function bundle
+     * @return the builder
+     */
+    public Builder errorHandler(ReactiveErrorHandler errorFunctionBundle) {
+<span class="fc" id="L134">      this.errorHandler = errorFunctionBundle;</span>
+<span class="fc" id="L135">      return this;</span>
+    }
+
+    /**
+     * Builds proxy.
+     *
+     * @param &lt;T&gt; the type parameter
+     * @param target the target
+     * @return the t
+     */
+    public &lt;T&gt; T build(Class&lt;T&gt; target) {
+<span class="fc" id="L146">      Assert.notNull(target, &quot;Target must be present.&quot;);</span>
+<span class="fc" id="L147">      InvocationHandler handler = new ReactiveInvocationHandler(</span>
+          target,
+          webClient,
+          contract,
+          errorHandler);
+      //noinspection unchecked
+<span class="fc" id="L153">      return (T) Proxy.newProxyInstance(target.getClassLoader(), new Class&lt;?&gt;[]{target}, handler);</span>
+    }
+
+  }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

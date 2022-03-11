@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SortRequestParameterResolver.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Api Client WebFlux Spring</a> &gt; <a href="index.source.html" class="el_package">org.bremersee.apiclient.webflux.contract.spring</a> &gt; <span class="el_source">SortRequestParameterResolver.java</span></div><h1>SortRequestParameterResolver.java</h1><pre class="source lang-java linenums">/*
+ * Copyright 2022 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.bremersee.apiclient.webflux.contract.spring;
+
+import static org.springframework.util.ObjectUtils.isEmpty;
+
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
+import org.bremersee.apiclient.webflux.Invocation;
+import org.bremersee.apiclient.webflux.InvocationParameter;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Order;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+
+/**
+ * The sort request parameter resolver.
+ *
+ * @author Christian Bremer
+ */
+<span class="fc" id="L35">public class SortRequestParameterResolver implements</span>
+    QueryParametersResolver,
+    Predicate&lt;InvocationParameter&gt; {
+
+<span class="fc" id="L39">  private String requestParamName = &quot;sort&quot;;</span>
+
+<span class="fc" id="L41">  private String separatorValue = &quot;,&quot;;</span>
+
+<span class="fc" id="L43">  private String descValue = &quot;desc&quot;;</span>
+
+  /**
+   * With request parameter name.
+   *
+   * @param requestParamName the request param name
+   * @return the sort request parameter resolver
+   */
+  public SortRequestParameterResolver withRequestParamName(String requestParamName) {
+<span class="pc bpc" id="L52" title="1 of 2 branches missed.">    if (!isEmpty(requestParamName)) {</span>
+<span class="fc" id="L53">      this.requestParamName = requestParamName;</span>
+    }
+<span class="fc" id="L55">    return this;</span>
+  }
+
+  /**
+   * With separator value.
+   *
+   * @param separatorValue the separator value
+   * @return the sort request parameter resolver
+   */
+  public SortRequestParameterResolver withSeparatorValue(String separatorValue) {
+<span class="pc bpc" id="L65" title="1 of 2 branches missed.">    if (!isEmpty(separatorValue)) {</span>
+<span class="fc" id="L66">      this.separatorValue = separatorValue;</span>
+    }
+<span class="fc" id="L68">    return this;</span>
+  }
+
+  /**
+   * With desc value.
+   *
+   * @param descValue the desc value
+   * @return the sort request parameter resolver
+   */
+  public SortRequestParameterResolver withDescValue(String descValue) {
+<span class="pc bpc" id="L78" title="1 of 2 branches missed.">    if (!isEmpty(descValue)) {</span>
+<span class="fc" id="L79">      this.descValue = descValue;</span>
+    }
+<span class="fc" id="L81">    return this;</span>
+  }
+
+  @Override
+  public MultiValueMap&lt;String, Object&gt; apply(Invocation invocation) {
+<span class="fc" id="L86">    return invocation.toMethodParameterStream()</span>
+<span class="fc" id="L87">        .filter(this)</span>
+<span class="fc" id="L88">        .map(InvocationParameter::getValue)</span>
+<span class="fc" id="L89">        .map(value -&gt; getRequestParameters((Sort) value))</span>
+<span class="fc" id="L90">        .collect(</span>
+            LinkedMultiValueMap::new,
+            LinkedMultiValueMap::putAll,
+            LinkedMultiValueMap::putAll);
+  }
+
+  @Override
+  public boolean test(InvocationParameter invocationParameter) {
+<span class="fc bfc" id="L98" title="All 2 branches covered.">    return invocationParameter.getValue() instanceof Sort &amp;&amp; invocationParameter</span>
+<span class="pc bpc" id="L99" title="1 of 2 branches missed.">        .hasNoneParameterAnnotation(Extensions.ILLEGAL_EXTENSIONS_ANNOTATIONS);</span>
+  }
+
+  /**
+   * Gets request parameters.
+   *
+   * @param sort the sort
+   * @return the request parameters
+   */
+  protected MultiValueMap&lt;String, Object&gt; getRequestParameters(Sort sort) {
+<span class="fc" id="L109">    MultiValueMap&lt;String, Object&gt; map = new LinkedMultiValueMap&lt;&gt;();</span>
+<span class="pc bpc" id="L110" title="1 of 2 branches missed.">    if (sort.isSorted()) {</span>
+<span class="fc" id="L111">      map.put(</span>
+          requestParamName,
+<span class="fc" id="L113">          sort.stream().map(this::getRequestParamValue).collect(Collectors.toList()));</span>
+    }
+<span class="fc" id="L115">    return map;</span>
+  }
+
+  /**
+   * Gets request param value.
+   *
+   * @param order the order
+   * @return the request param value
+   */
+  protected String getRequestParamValue(Order order) {
+<span class="fc" id="L125">    StringBuilder sb = new StringBuilder(order.getProperty());</span>
+<span class="fc bfc" id="L126" title="All 2 branches covered.">    if (order.isDescending()) {</span>
+<span class="fc" id="L127">      sb.append(separatorValue).append(descValue);</span>
+    }
+<span class="fc" id="L129">    return sb.toString();</span>
+  }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

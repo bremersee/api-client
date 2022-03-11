@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>InvocationParameter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Api Client WebFlux Spring</a> &gt; <a href="index.source.html" class="el_package">org.bremersee.apiclient.webflux</a> &gt; <span class="el_source">InvocationParameter.java</span></div><h1>InvocationParameter.java</h1><pre class="source lang-java linenums">/*
+ * Copyright 2022 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.bremersee.apiclient.webflux;
+
+import static java.util.Objects.nonNull;
+import static org.springframework.core.annotation.AnnotationUtils.findAnnotation;
+import static org.springframework.util.ObjectUtils.isArray;
+import static org.springframework.util.ObjectUtils.isEmpty;
+import static org.springframework.util.ObjectUtils.toObjectArray;
+
+import java.lang.annotation.Annotation;
+import java.lang.reflect.Parameter;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import org.springframework.core.DefaultParameterNameDiscoverer;
+import org.springframework.core.LocalVariableTableParameterNameDiscoverer;
+import org.springframework.util.Assert;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
+
+/**
+ * The invocation parameter.
+ *
+ * @author Christian Bremer
+ */
+@SuppressWarnings(&quot;SameNameButDifferent&quot;)
+@Getter
+@EqualsAndHashCode(callSuper = true)
+public class InvocationParameter extends Invocation {
+
+  private final Parameter parameter;
+
+  private final Object value;
+
+  private final int index;
+
+  /**
+   * Instantiates a new invocation parameter.
+   *
+   * @param invocation the invocation
+   * @param parameter the parameter
+   * @param value the value
+   * @param index the index
+   */
+  public InvocationParameter(Invocation invocation, Parameter parameter, Object value, int index) {
+<span class="fc" id="L70">    super(invocation.getTargetClass(), invocation.getMethod(), invocation.getArgs());</span>
+<span class="fc" id="L71">    Assert.notNull(parameter, &quot;Parameter must be present.&quot;);</span>
+<span class="pc bpc" id="L72" title="1 of 2 branches missed.">    Assert.isTrue(</span>
+<span class="pc bpc" id="L73" title="1 of 2 branches missed.">        index &gt;= 0 &amp;&amp; index &lt; invocation.getMethod().getParameters().length,</span>
+<span class="fc" id="L74">        String.format(&quot;Illegal index [%s].&quot;, index));</span>
+<span class="fc" id="L75">    this.parameter = parameter;</span>
+<span class="fc" id="L76">    this.value = value;</span>
+<span class="fc" id="L77">    this.index = index;</span>
+<span class="fc" id="L78">  }</span>
+
+  /**
+   * Gets parameter name.
+   *
+   * @return the parameter name
+   */
+  public String getParameterName() {
+    try {
+<span class="fc" id="L87">      String[] names = new DefaultParameterNameDiscoverer().getParameterNames(getMethod());</span>
+<span class="pc bpc" id="L88" title="7 of 8 branches missed.">      if (nonNull(names) &amp;&amp; index &gt;= 0 &amp;&amp; index &lt; names.length &amp;&amp; !isEmpty(names[index])) {</span>
+<span class="nc" id="L89">        return names[index];</span>
+      }
+<span class="nc" id="L91">    } catch (Exception ignored) {</span>
+      // ignored
+<span class="fc" id="L93">    }</span>
+    try {
+<span class="fc" id="L95">      String[] names = new LocalVariableTableParameterNameDiscoverer()</span>
+<span class="fc" id="L96">          .getParameterNames(getMethod());</span>
+<span class="pc bpc" id="L97" title="7 of 8 branches missed.">      if (nonNull(names) &amp;&amp; index &gt;= 0 &amp;&amp; index &lt; names.length &amp;&amp; !isEmpty(names[index])) {</span>
+<span class="nc" id="L98">        return names[index];</span>
+      }
+<span class="nc" id="L100">    } catch (Exception ignored) {</span>
+      // ignored
+<span class="fc" id="L102">    }</span>
+<span class="fc" id="L103">    String name = parameter.getName();</span>
+<span class="pc bpc" id="L104" title="1 of 2 branches missed.">    return isEmpty(name) ? &quot;arg&quot; + index : name;</span>
+  }
+
+  /**
+   * Has none parameter annotation.
+   *
+   * @param annotationTypes the annotation types
+   * @return the boolean
+   */
+  public boolean hasNoneParameterAnnotation(Set&lt;Class&lt;? extends Annotation&gt;&gt; annotationTypes) {
+<span class="fc bfc" id="L114" title="All 2 branches covered.">    if (isEmpty(annotationTypes)) {</span>
+<span class="fc" id="L115">      return true;</span>
+    }
+<span class="fc" id="L117">    return annotationTypes.stream().noneMatch(this::hasParameterAnnotation);</span>
+  }
+
+  /**
+   * Has parameter annotation.
+   *
+   * @param annotationType the annotation type
+   * @return the boolean
+   */
+  public boolean hasParameterAnnotation(Class&lt;? extends Annotation&gt; annotationType) {
+<span class="fc" id="L127">    return findParameterAnnotation(annotationType).isPresent();</span>
+  }
+
+  /**
+   * Find parameter annotation.
+   *
+   * @param &lt;A&gt; the type parameter
+   * @param annotationType the annotation type
+   * @return the optional
+   */
+  public &lt;A extends Annotation&gt; Optional&lt;A&gt; findParameterAnnotation(Class&lt;A&gt; annotationType) {
+<span class="fc" id="L138">    return Optional.ofNullable(findAnnotation(parameter, annotationType));</span>
+  }
+
+  private &lt;A extends Annotation&gt; String getKey(
+      A annotation,
+      Function&lt;A, String&gt; keyExtractor) {
+
+<span class="fc" id="L145">    return Optional.ofNullable(annotation)</span>
+<span class="fc" id="L146">        .map(keyExtractor)</span>
+<span class="pc bpc" id="L147" title="1 of 2 branches missed.">        .filter(name -&gt; !name.isBlank())</span>
+<span class="fc" id="L148">        .orElseGet(this::getParameterName);</span>
+  }
+
+  /**
+   * To multi value map.
+   *
+   * @param &lt;E&gt; the type parameter
+   * @param &lt;A&gt; the type parameter
+   * @param annotationType the annotation type
+   * @param keyExtractor the key extractor
+   * @param valueMapper the value mapper
+   * @return the multi value map
+   */
+  public &lt;E, A extends Annotation&gt; MultiValueMap&lt;String, E&gt; toMultiValueMap(
+      Class&lt;A&gt; annotationType,
+      Function&lt;A, String&gt; keyExtractor,
+      Function&lt;Object, E&gt; valueMapper) {
+
+<span class="fc" id="L166">    return findParameterAnnotation(annotationType)</span>
+<span class="fc" id="L167">        .map(annotation -&gt; {</span>
+<span class="fc" id="L168">          MultiValueMap&lt;String, E&gt; map = new LinkedMultiValueMap&lt;&gt;();</span>
+<span class="fc" id="L169">          Object value = getValue();</span>
+<span class="fc bfc" id="L170" title="All 2 branches covered.">          if (value instanceof Map&lt;?, ?&gt;) {</span>
+<span class="fc" id="L171">            map.putAll(toMultiValueMap((Map&lt;?, ?&gt;) value, valueMapper));</span>
+          } else {
+<span class="fc" id="L173">            String key = getKey(</span>
+                annotation,
+                keyExtractor);
+<span class="fc" id="L176">            map.put(key, toList(value, valueMapper));</span>
+          }
+<span class="fc" id="L178">          return map;</span>
+        })
+<span class="fc" id="L180">        .orElseGet(LinkedMultiValueMap::new);</span>
+  }
+
+  private &lt;E&gt; MultiValueMap&lt;String, E&gt; toMultiValueMap(
+      Map&lt;?, ?&gt; map, Function&lt;Object, E&gt; valueMapper) {
+<span class="fc" id="L185">    MultiValueMap&lt;String, E&gt; multiValueMap = new LinkedMultiValueMap&lt;&gt;();</span>
+<span class="pc bpc" id="L186" title="1 of 2 branches missed.">    if (!isEmpty(map)) {</span>
+<span class="fc bfc" id="L187" title="All 2 branches covered.">      for (Map.Entry&lt;?, ?&gt; entry : map.entrySet()) {</span>
+<span class="fc" id="L188">        String key = String.valueOf(entry.getKey());</span>
+<span class="fc" id="L189">        List&lt;E&gt; value = toList(entry.getValue(), valueMapper);</span>
+<span class="pc bpc" id="L190" title="1 of 2 branches missed.">        if (!isEmpty(value)) {</span>
+<span class="fc" id="L191">          multiValueMap.addAll(key, value);</span>
+        }
+<span class="fc" id="L193">      }</span>
+    }
+<span class="fc" id="L195">    return multiValueMap;</span>
+  }
+
+  private &lt;E&gt; List&lt;E&gt; toList(Object value, Function&lt;Object, E&gt; valueMapper) {
+<span class="fc" id="L199">    List&lt;E&gt; list = new ArrayList&lt;&gt;();</span>
+<span class="fc bfc" id="L200" title="All 2 branches covered.">    if (isEmpty(value)) {</span>
+<span class="fc" id="L201">      return list;</span>
+    }
+<span class="fc bfc" id="L203" title="All 2 branches covered.">    if (isArray(value)) {</span>
+<span class="fc" id="L204">      return Arrays.stream(toObjectArray(value))</span>
+<span class="fc" id="L205">          .filter(Objects::nonNull)</span>
+<span class="fc" id="L206">          .map(valueMapper)</span>
+<span class="fc" id="L207">          .collect(Collectors.toList());</span>
+    }
+<span class="fc bfc" id="L209" title="All 2 branches covered.">    if (value instanceof Collection&lt;?&gt;) {</span>
+<span class="fc" id="L210">      return ((Collection&lt;?&gt;) value).stream()</span>
+<span class="fc" id="L211">          .filter(Objects::nonNull)</span>
+<span class="fc" id="L212">          .map(valueMapper)</span>
+<span class="fc" id="L213">          .collect(Collectors.toList());</span>
+    }
+<span class="fc" id="L215">    list.add(valueMapper.apply(value));</span>
+<span class="fc" id="L216">    return list;</span>
+  }
+
+  @Override
+  public String toString() {
+<span class="fc" id="L221">    return &quot;InvocationParameter{&quot;</span>
+<span class="fc" id="L222">        + &quot;targetClass=&quot; + getTargetClass().getName()</span>
+<span class="fc" id="L223">        + &quot;, method=&quot; + getMethod().getName()</span>
+<span class="fc" id="L224">        + &quot;, parameter=&quot; + getParameterName()</span>
+        + &quot;, value=&quot; + value
+        + &quot;, index=&quot; + index
+        + '}';
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

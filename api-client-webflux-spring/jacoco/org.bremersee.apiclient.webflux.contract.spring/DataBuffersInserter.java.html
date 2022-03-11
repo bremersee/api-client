@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DataBuffersInserter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Api Client WebFlux Spring</a> &gt; <a href="index.source.html" class="el_package">org.bremersee.apiclient.webflux.contract.spring</a> &gt; <span class="el_source">DataBuffersInserter.java</span></div><h1>DataBuffersInserter.java</h1><pre class="source lang-java linenums">/*
+ * Copyright 2022 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.bremersee.apiclient.webflux.contract.spring;
+
+import java.lang.reflect.Method;
+import java.util.Optional;
+import org.bremersee.apiclient.webflux.InvocationParameter;
+import org.reactivestreams.Publisher;
+import org.springframework.core.ResolvableType;
+import org.springframework.core.io.buffer.DataBuffer;
+import org.springframework.web.reactive.function.BodyInserters;
+import org.springframework.web.reactive.function.client.WebClient.RequestBodyUriSpec;
+import org.springframework.web.reactive.function.client.WebClient.RequestHeadersUriSpec;
+
+/**
+ * The data buffers inserter.
+ *
+ * @author Christian Bremer
+ */
+<span class="fc" id="L34">public class DataBuffersInserter extends SingleBodyInserter&lt;Publisher&lt;DataBuffer&gt;&gt; {</span>
+
+  @Override
+  protected boolean isPossibleBodyValue(InvocationParameter invocationParameter) {
+<span class="fc bfc" id="L38" title="All 2 branches covered.">    return invocationParameter.getValue() instanceof Publisher</span>
+<span class="fc bfc" id="L39" title="All 2 branches covered.">        &amp;&amp; isDataBuffer(invocationParameter);</span>
+  }
+
+  private boolean isDataBuffer(InvocationParameter invocationParameter) {
+<span class="fc" id="L43">    Method method = invocationParameter.getMethod();</span>
+<span class="fc" id="L44">    int index = invocationParameter.getIndex();</span>
+<span class="fc" id="L45">    return Optional.of(ResolvableType.forMethodParameter(method, index))</span>
+<span class="fc" id="L46">        .filter(ResolvableType::hasGenerics)</span>
+<span class="fc" id="L47">        .map(resolvableType -&gt; resolvableType.resolveGeneric(0))</span>
+<span class="fc" id="L48">        .filter(DataBuffer.class::isAssignableFrom)</span>
+<span class="fc" id="L49">        .isPresent();</span>
+  }
+
+  @Override
+  protected Publisher&lt;DataBuffer&gt; mapBody(InvocationParameter invocationParameter) {
+    //noinspection unchecked
+<span class="fc" id="L55">    return (Publisher&lt;DataBuffer&gt;) invocationParameter.getValue();</span>
+  }
+
+  @Override
+  protected RequestHeadersUriSpec&lt;?&gt; insert(
+      Publisher&lt;DataBuffer&gt; body,
+      RequestBodyUriSpec requestBodyUriSpec) {
+
+    //noinspection rawtypes
+<span class="fc" id="L64">    return (RequestHeadersUriSpec) requestBodyUriSpec.body(BodyInserters.fromDataBuffers(body));</span>
+  }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

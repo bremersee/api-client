@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MultipartUtils.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Api Client WebFlux Spring</a> &gt; <a href="index.source.html" class="el_package">org.bremersee.apiclient.webflux.contract.spring.multipart</a> &gt; <span class="el_source">MultipartUtils.java</span></div><h1>MultipartUtils.java</h1><pre class="source lang-java linenums">package org.bremersee.apiclient.webflux.contract.spring.multipart;
+
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
+
+/**
+ * Various static utility methods for dealing with multipart parsing.
+ *
+ * @author Arjen Poutsma
+ */
+<span class="nc" id="L13">abstract class MultipartUtils {</span>
+
+  /**
+   * Return the character set of the given headers, as defined in the {@link
+   * HttpHeaders#getContentType()} header.
+   */
+  public static Charset charset(HttpHeaders headers) {
+<span class="fc" id="L20">    MediaType contentType = headers.getContentType();</span>
+<span class="fc bfc" id="L21" title="All 2 branches covered.">    if (contentType != null) {</span>
+<span class="fc" id="L22">      Charset charset = contentType.getCharset();</span>
+<span class="pc bpc" id="L23" title="1 of 2 branches missed.">      if (charset != null) {</span>
+<span class="nc" id="L24">        return charset;</span>
+      }
+    }
+<span class="fc" id="L27">    return StandardCharsets.UTF_8;</span>
+  }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

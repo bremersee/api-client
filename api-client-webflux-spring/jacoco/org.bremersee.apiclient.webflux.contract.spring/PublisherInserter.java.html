@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PublisherInserter.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Api Client WebFlux Spring</a> &gt; <a href="index.source.html" class="el_package">org.bremersee.apiclient.webflux.contract.spring</a> &gt; <span class="el_source">PublisherInserter.java</span></div><h1>PublisherInserter.java</h1><pre class="source lang-java linenums">/*
+ * Copyright 2022 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.bremersee.apiclient.webflux.contract.spring;
+
+import java.lang.reflect.Method;
+import java.util.Optional;
+import org.bremersee.apiclient.webflux.InvocationParameter;
+import org.reactivestreams.Publisher;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.core.ResolvableType;
+import org.springframework.web.reactive.function.client.WebClient.RequestBodyUriSpec;
+import org.springframework.web.reactive.function.client.WebClient.RequestHeadersUriSpec;
+
+/**
+ * The publisher inserter.
+ *
+ * @author Christian Bremer
+ */
+<span class="fc" id="L33">public class PublisherInserter extends SingleBodyInserter&lt;InvocationParameter&gt; {</span>
+
+  @Override
+  protected boolean isPossibleBodyValue(InvocationParameter invocationParameter) {
+<span class="fc" id="L37">    return invocationParameter.getValue() instanceof Publisher;</span>
+  }
+
+  @Override
+  protected InvocationParameter mapBody(InvocationParameter invocationParameter) {
+<span class="fc" id="L42">    return invocationParameter;</span>
+  }
+
+  @Override
+  protected RequestHeadersUriSpec&lt;?&gt; insert(
+      InvocationParameter invocationParameter,
+      RequestBodyUriSpec requestBodyUriSpec) {
+
+<span class="fc" id="L50">    Method method = invocationParameter.getMethod();</span>
+<span class="fc" id="L51">    int index = invocationParameter.getIndex();</span>
+    //noinspection rawtypes
+<span class="fc" id="L53">    return Optional.of(ResolvableType.forMethodParameter(method, index))</span>
+<span class="fc" id="L54">        .filter(ResolvableType::hasGenerics)</span>
+<span class="fc" id="L55">        .map(resolvableType -&gt; resolvableType.resolveGeneric(0))</span>
+<span class="fc" id="L56">        .map(ParameterizedTypeReference::forType)</span>
+<span class="fc" id="L57">        .map(ref -&gt; (RequestHeadersUriSpec) requestBodyUriSpec</span>
+<span class="fc" id="L58">            .body(invocationParameter.getValue(), ref))</span>
+<span class="fc" id="L59">        .orElse(requestBodyUriSpec);</span>
+  }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

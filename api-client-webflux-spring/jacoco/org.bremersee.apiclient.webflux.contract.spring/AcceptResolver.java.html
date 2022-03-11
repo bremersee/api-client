@@ -1,0 +1,72 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AcceptResolver.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Api Client WebFlux Spring</a> &gt; <a href="index.source.html" class="el_package">org.bremersee.apiclient.webflux.contract.spring</a> &gt; <span class="el_source">AcceptResolver.java</span></div><h1>AcceptResolver.java</h1><pre class="source lang-java linenums">/*
+ * Copyright 2022 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.bremersee.apiclient.webflux.contract.spring;
+
+import java.util.Arrays;
+import java.util.function.Function;
+import org.bremersee.apiclient.webflux.Invocation;
+import org.springframework.http.MediaType;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+/**
+ * The accept resolver.
+ *
+ * @author Christian Bremer
+ */
+<span class="fc" id="L35">public class AcceptResolver implements Function&lt;Invocation, MediaType&gt; {</span>
+
+  @Override
+  public MediaType apply(Invocation invocation) {
+<span class="fc" id="L39">    return Arrays.stream(</span>
+<span class="fc" id="L40">            invocation.findAnnotationValueOnMethod(</span>
+<span class="fc bfc" id="L41" title="All 2 branches covered.">                    RequestMapping.class, a -&gt; a.produces().length &gt; 0, RequestMapping::produces)</span>
+<span class="fc" id="L42">                .or(() -&gt; invocation.findAnnotationValueOnMethod(</span>
+<span class="fc bfc" id="L43" title="All 2 branches covered.">                    GetMapping.class, a -&gt; a.produces().length &gt; 0, GetMapping::produces))</span>
+<span class="fc" id="L44">                .or(() -&gt; invocation.findAnnotationValueOnMethod(</span>
+<span class="fc bfc" id="L45" title="All 2 branches covered.">                    PostMapping.class, a -&gt; a.produces().length &gt; 0, PostMapping::produces))</span>
+<span class="fc" id="L46">                .or(() -&gt; invocation.findAnnotationValueOnMethod(</span>
+<span class="pc bpc" id="L47" title="1 of 2 branches missed.">                    PutMapping.class, a -&gt; a.produces().length &gt; 0, PutMapping::produces))</span>
+<span class="fc" id="L48">                .or(() -&gt; invocation.findAnnotationValueOnMethod(</span>
+<span class="fc bfc" id="L49" title="All 2 branches covered.">                    PatchMapping.class, a -&gt; a.produces().length &gt; 0, PatchMapping::produces))</span>
+<span class="fc" id="L50">                .or(() -&gt; invocation.findAnnotationValueOnMethod(</span>
+<span class="fc bfc" id="L51" title="All 2 branches covered.">                    DeleteMapping.class, a -&gt; a.produces().length &gt; 0, DeleteMapping::produces))</span>
+<span class="fc" id="L52">                .orElse(new String[0]))</span>
+<span class="fc" id="L53">        .map(this::parseMediaType)</span>
+<span class="fc" id="L54">        .findFirst()</span>
+<span class="fc" id="L55">        .orElse(MediaType.ALL);</span>
+  }
+
+  /**
+   * Parse media type.
+   *
+   * @param mediaType the media type
+   * @return the media type (can be {@code null}
+   */
+  protected MediaType parseMediaType(String mediaType) {
+    try {
+<span class="fc" id="L66">      return MediaType.parseMediaType(mediaType);</span>
+<span class="fc" id="L67">    } catch (RuntimeException ignored) {</span>
+<span class="fc" id="L68">      return null;</span>
+    }
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

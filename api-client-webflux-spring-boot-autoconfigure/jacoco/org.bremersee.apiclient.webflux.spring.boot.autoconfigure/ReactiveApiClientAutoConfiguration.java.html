@@ -1,0 +1,306 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ReactiveApiClientAutoConfiguration.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Api Client WebFlux Spring Boot Autoconfiguration</a> &gt; <a href="index.source.html" class="el_package">org.bremersee.apiclient.webflux.spring.boot.autoconfigure</a> &gt; <span class="el_source">ReactiveApiClientAutoConfiguration.java</span></div><h1>ReactiveApiClientAutoConfiguration.java</h1><pre class="source lang-java linenums">/*
+ * Copyright 2022 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.bremersee.apiclient.webflux.spring.boot.autoconfigure;
+
+import java.util.List;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
+import org.bremersee.apiclient.webflux.Invocation;
+import org.bremersee.apiclient.webflux.ReactiveApiClient;
+import org.bremersee.apiclient.webflux.ReactiveContract;
+import org.bremersee.apiclient.webflux.ReactiveErrorHandler;
+import org.bremersee.apiclient.webflux.contract.HeadersConsumer;
+import org.bremersee.apiclient.webflux.contract.RequestBodyInserter;
+import org.bremersee.apiclient.webflux.contract.RequestBodyInserterRegistry;
+import org.bremersee.apiclient.webflux.contract.RequestUriFunction;
+import org.bremersee.apiclient.webflux.contract.spring.AcceptResolver;
+import org.bremersee.apiclient.webflux.contract.spring.ContentTypeResolver;
+import org.bremersee.apiclient.webflux.contract.spring.DataBuffersInserter;
+import org.bremersee.apiclient.webflux.contract.spring.FormDataInserter;
+import org.bremersee.apiclient.webflux.contract.spring.MultipartDataInserter;
+import org.bremersee.apiclient.webflux.contract.spring.PageableRequestParameterResolver;
+import org.bremersee.apiclient.webflux.contract.spring.PartToHttpEntityConverter;
+import org.bremersee.apiclient.webflux.contract.spring.PathVariablesResolver;
+import org.bremersee.apiclient.webflux.contract.spring.PublisherInserter;
+import org.bremersee.apiclient.webflux.contract.spring.QueryParametersResolver;
+import org.bremersee.apiclient.webflux.contract.spring.ReactiveSpringContract;
+import org.bremersee.apiclient.webflux.contract.spring.RequestHeadersResolver;
+import org.bremersee.apiclient.webflux.contract.spring.RequestParametersResolver;
+import org.bremersee.apiclient.webflux.contract.spring.RequestPathResolver;
+import org.bremersee.apiclient.webflux.contract.spring.ResourceInserter;
+import org.bremersee.apiclient.webflux.contract.spring.SortRequestParameterResolver;
+import org.bremersee.apiclient.webflux.contract.spring.ValueInserter;
+import org.springframework.beans.factory.ObjectProvider;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnClass;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnWebApplication;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+import org.springframework.context.event.EventListener;
+import org.springframework.core.annotation.Order;
+import org.springframework.core.convert.converter.Converter;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.codec.multipart.Part;
+import org.springframework.util.ClassUtils;
+import org.springframework.util.MultiValueMap;
+import org.springframework.web.reactive.function.client.WebClient;
+
+/**
+ * The reactive api client autoconfiguration.
+ *
+ * @author Christian Bremer
+ */
+@SuppressWarnings(&quot;SameNameButDifferent&quot;)
+@ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.REACTIVE)
+@ConditionalOnClass({ReactiveApiClient.class, ReactiveSpringContract.class})
+@Configuration
+<span class="fc" id="L73">@Slf4j</span>
+<span class="fc" id="L74">public class ReactiveApiClientAutoConfiguration {</span>
+
+  /**
+   * Init.
+   */
+  @EventListener(ApplicationReadyEvent.class)
+  public void init() {
+<span class="fc" id="L81">    log.info(&quot;\n&quot;</span>
+            + &quot;*********************************************************************************\n&quot;
+            + &quot;* {}\n&quot;
+            + &quot;*********************************************************************************&quot;,
+<span class="fc" id="L85">        ClassUtils.getUserClass(getClass()).getSimpleName());</span>
+<span class="fc" id="L86">  }</span>
+
+  /**
+   * Content type resolver.
+   *
+   * @return the content type resolver
+   */
+  @ConditionalOnMissingBean
+  @Bean
+  public ContentTypeResolver contentTypeResolver() {
+<span class="fc" id="L96">    return new ContentTypeResolver();</span>
+  }
+
+  /**
+   * Request parameters resolver.
+   *
+   * @return the request parameters resolver
+   */
+  @ConditionalOnMissingBean
+  @Bean
+  @Order(-1000)
+  public RequestParametersResolver requestParametersResolver() {
+<span class="fc" id="L108">    log.info(&quot;Creating {} with order {}&quot;, RequestParametersResolver.class.getSimpleName(), -1000);</span>
+<span class="fc" id="L109">    return new RequestParametersResolver();</span>
+  }
+
+  /**
+   * Sort request parameter resolver.
+   *
+   * @return the sort request parameter resolver
+   */
+  @ConditionalOnClass(name = &quot;org.springframework.data.domain.Sort&quot;)
+  @ConditionalOnMissingBean
+  @Bean
+  @Order(-500)
+  public SortRequestParameterResolver sortRequestParameterResolver() {
+<span class="fc" id="L122">    log.info(&quot;Creating {} with order {}&quot;, SortRequestParameterResolver.class.getSimpleName(), -500);</span>
+<span class="fc" id="L123">    return new SortRequestParameterResolver();</span>
+  }
+
+  /**
+   * Pageable request parameter resolver.
+   *
+   * @return the pageable request parameter resolver
+   */
+  @ConditionalOnClass(name = &quot;org.springframework.data.domain.Pageable&quot;)
+  @ConditionalOnMissingBean
+  @Bean
+  @Order(-510)
+  public PageableRequestParameterResolver pageableRequestParameterResolver() {
+<span class="fc" id="L136">    log.info(</span>
+        &quot;Creating {} with order {}&quot;,
+<span class="fc" id="L138">        PageableRequestParameterResolver.class.getSimpleName(),</span>
+<span class="fc" id="L139">        -510);</span>
+<span class="fc" id="L140">    return new PageableRequestParameterResolver();</span>
+  }
+
+  /**
+   * Form data inserter.
+   *
+   * @param contentTypeResolver the content type resolver
+   * @return the request body inserter
+   */
+  @Bean
+  @Order(100)
+  public RequestBodyInserter formDataInserter(ContentTypeResolver contentTypeResolver) {
+<span class="fc" id="L152">    log.info(&quot;Creating {} with order {}&quot;, FormDataInserter.class.getSimpleName(), 100);</span>
+<span class="fc" id="L153">    return new FormDataInserter()</span>
+<span class="fc" id="L154">        .withContentTypeResolver(contentTypeResolver);</span>
+  }
+
+  /**
+   * Multipart data inserter.
+   *
+   * @param contentTypeResolver the content type resolver
+   * @param partConverter the part converter
+   * @return the request body inserter
+   */
+  @Bean
+  @Order(200)
+  public RequestBodyInserter multipartDataInserter(
+      ContentTypeResolver contentTypeResolver,
+      ObjectProvider&lt;Converter&lt;Part, HttpEntity&lt;?&gt;&gt;&gt; partConverter) {
+
+<span class="fc" id="L170">    log.info(&quot;Creating {} with order {}&quot;, MultipartDataInserter.class.getSimpleName(), 200);</span>
+<span class="fc" id="L171">    return new MultipartDataInserter()</span>
+<span class="fc" id="L172">        .withContentTypeResolver(contentTypeResolver)</span>
+<span class="fc" id="L173">        .withPartConverter(partConverter.getIfAvailable(PartToHttpEntityConverter::new));</span>
+  }
+
+  /**
+   * Resource inserter.
+   *
+   * @return the request body inserter
+   */
+  @Bean
+  @Order(300)
+  public RequestBodyInserter resourceInserter() {
+<span class="fc" id="L184">    log.info(&quot;Creating {} with order {}&quot;, ResourceInserter.class.getSimpleName(), 300);</span>
+<span class="fc" id="L185">    return new ResourceInserter();</span>
+  }
+
+  /**
+   * Data buffers inserter.
+   *
+   * @return the request body inserter
+   */
+  @Bean
+  @Order(400)
+  public RequestBodyInserter dataBuffersInserter() {
+<span class="fc" id="L196">    log.info(&quot;Creating {} with order {}&quot;, DataBuffersInserter.class.getSimpleName(), 400);</span>
+<span class="fc" id="L197">    return new DataBuffersInserter();</span>
+  }
+
+  /**
+   * Publisher inserter.
+   *
+   * @return the request body inserter
+   */
+  @Bean
+  @Order(500)
+  public RequestBodyInserter publisherInserter() {
+<span class="fc" id="L208">    log.info(&quot;Creating {} with order {}&quot;, PublisherInserter.class.getSimpleName(), 500);</span>
+<span class="fc" id="L209">    return new PublisherInserter();</span>
+  }
+
+  /**
+   * Value inserter.
+   *
+   * @return the request body inserter
+   */
+  @Bean
+  @Order(600)
+  public RequestBodyInserter valueInserter() {
+<span class="fc" id="L220">    log.info(&quot;Creating {} with order {}&quot;, ValueInserter.class.getSimpleName(), 600);</span>
+<span class="fc" id="L221">    return new ValueInserter();</span>
+  }
+
+  /**
+   * Request body inserter registry.
+   *
+   * @param requestBodyInserters the request body inserters
+   * @return the request body inserter registry
+   */
+  @ConditionalOnMissingBean
+  @Bean
+  public RequestBodyInserterRegistry requestBodyInserterRegistry(
+      ObjectProvider&lt;RequestBodyInserter&gt; requestBodyInserters) {
+
+<span class="fc" id="L235">    List&lt;RequestBodyInserter&gt; requestBodyInserterList = requestBodyInserters</span>
+<span class="fc" id="L236">        .orderedStream()</span>
+<span class="fc" id="L237">        .collect(Collectors.toList());</span>
+<span class="fc" id="L238">    log.info(</span>
+        &quot;Creating {} with inserters {}&quot;,
+<span class="fc" id="L240">        RequestBodyInserterRegistry.class.getSimpleName(),</span>
+        requestBodyInserterList);
+<span class="fc" id="L242">    return RequestBodyInserterRegistry.builder()</span>
+<span class="fc" id="L243">        .requestBodyInserters(requestBodyInserterList)</span>
+<span class="fc" id="L244">        .build();</span>
+  }
+
+  /**
+   * Reactive spring contract.
+   *
+   * @param contentTypeResolver the content type resolver
+   * @param queryParametersResolvers the query parameters resolvers
+   * @param requestBodyInserterRegistry the request body inserter registry
+   * @return the reactive contract
+   */
+  @ConditionalOnMissingBean
+  @Bean
+  public ReactiveContract reactiveSpringContract(
+      ContentTypeResolver contentTypeResolver,
+      ObjectProvider&lt;QueryParametersResolver&gt; queryParametersResolvers,
+      RequestBodyInserterRegistry requestBodyInserterRegistry) {
+
+<span class="fc" id="L262">    List&lt;Function&lt;Invocation, MultiValueMap&lt;String, Object&gt;&gt;&gt; queryParametersResolverList</span>
+<span class="fc" id="L263">        = queryParametersResolvers.orderedStream().collect(Collectors.toList());</span>
+<span class="fc" id="L264">    log.info(</span>
+        &quot;Creating {} with queryParametersResolvers {}&quot;,
+<span class="fc" id="L266">        ReactiveContract.class.getSimpleName(),</span>
+        queryParametersResolverList);
+<span class="fc" id="L268">    ReactiveSpringContract reactiveSpringContract = new ReactiveSpringContract();</span>
+<span class="fc" id="L269">    return ReactiveContract.builder()</span>
+<span class="fc" id="L270">        .from(reactiveSpringContract)</span>
+<span class="fc" id="L271">        .headersConsumer(HeadersConsumer.builder()</span>
+<span class="fc" id="L272">            .contentTypeResolver(contentTypeResolver)</span>
+<span class="fc" id="L273">            .acceptResolver(new AcceptResolver())</span>
+<span class="fc" id="L274">            .headersResolver(new RequestHeadersResolver())</span>
+<span class="fc" id="L275">            .build())</span>
+<span class="fc" id="L276">        .requestUriFunction(RequestUriFunction.builder()</span>
+<span class="fc" id="L277">            .requestPathResolver(new RequestPathResolver())</span>
+<span class="fc" id="L278">            .pathVariablesResolver(new PathVariablesResolver())</span>
+<span class="fc" id="L279">            .requestParametersResolvers(queryParametersResolverList)</span>
+<span class="fc" id="L280">            .build())</span>
+<span class="fc" id="L281">        .requestBodyInserterFunction(requestBodyInserterRegistry)</span>
+<span class="fc" id="L282">        .build();</span>
+  }
+
+  /**
+   * Reactive api client.
+   *
+   * @param configurers the configurers
+   * @param reactiveContract the reactive contract
+   * @param errorHandler the error handler
+   * @return the reactive api client
+   */
+  @ConditionalOnMissingBean
+  @Bean
+  public ReactiveApiClient reactiveApiClient(
+      ObjectProvider&lt;ReactiveApiClientWebClientBuilderConfigurer&gt; configurers,
+      ReactiveContract reactiveContract,
+      ObjectProvider&lt;ReactiveErrorHandler&gt; errorHandler) {
+
+<span class="fc" id="L300">    WebClient.Builder webClientBuilder = WebClient.builder();</span>
+<span class="fc" id="L301">    configurers.orderedStream().forEach(configurer -&gt; configurer.configure(webClientBuilder));</span>
+<span class="fc" id="L302">    return new ReactiveApiClient(webClientBuilder, reactiveContract, errorHandler.getIfAvailable());</span>
+  }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>HttpRequestMethod.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Api Client WebFlux Spring</a> &gt; <a href="index.source.html" class="el_package">org.bremersee.apiclient.webflux.contract</a> &gt; <span class="el_source">HttpRequestMethod.java</span></div><h1>HttpRequestMethod.java</h1><pre class="source lang-java linenums">/*
+ * Copyright 2022 the original author or authors.
+ *
+ * Licensed under the Apache License, Version 2.0 (the &quot;License&quot;);
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an &quot;AS IS&quot; BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.bremersee.apiclient.webflux.contract;
+
+import java.util.Arrays;
+import java.util.Optional;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClient.RequestHeadersUriSpec;
+
+/**
+ * The http request method.
+ *
+ * @author Christian Bremer
+ */
+<span class="fc" id="L29">public enum HttpRequestMethod {</span>
+
+  /**
+   * Get http request method.
+   */
+<span class="fc" id="L34">  GET,</span>
+
+  /**
+   * Head http request method.
+   */
+<span class="fc" id="L39">  HEAD,</span>
+
+  /**
+   * Post http request method.
+   */
+<span class="fc" id="L44">  POST,</span>
+
+  /**
+   * Put http request method.
+   */
+<span class="fc" id="L49">  PUT,</span>
+
+  /**
+   * Patch http request method.
+   */
+<span class="fc" id="L54">  PATCH,</span>
+
+  /**
+   * Delete http request method.
+   */
+<span class="fc" id="L59">  DELETE,</span>
+
+  /**
+   * Options http request method.
+   */
+<span class="fc" id="L64">  OPTIONS;</span>
+
+  /**
+   * Invoke request headers uri spec.
+   *
+   * @param webClient the web client
+   * @return the request headers uri spec
+   */
+  public RequestHeadersUriSpec&lt;?&gt; invoke(WebClient webClient) {
+<span class="pc bpc" id="L73" title="1 of 8 branches missed.">    switch (this) {</span>
+      case GET:
+<span class="fc" id="L75">        return webClient.get();</span>
+      case HEAD:
+<span class="fc" id="L77">        return webClient.head();</span>
+      case POST:
+<span class="fc" id="L79">        return webClient.post();</span>
+      case PUT:
+<span class="fc" id="L81">        return webClient.put();</span>
+      case PATCH:
+<span class="fc" id="L83">        return webClient.patch();</span>
+      case DELETE:
+<span class="fc" id="L85">        return webClient.delete();</span>
+      case OPTIONS:
+<span class="fc" id="L87">        return webClient.options();</span>
+      default:
+<span class="nc" id="L89">        throw new IllegalStateException(String.format(</span>
+            &quot;There is no action defined for http method  %s&quot;,
+<span class="nc" id="L91">            this.name()));</span>
+    }
+  }
+
+  /**
+   * Resolve.
+   *
+   * @param method the method
+   * @return the optional
+   */
+  public static Optional&lt;HttpRequestMethod&gt; resolve(String method) {
+<span class="fc" id="L102">    return Arrays.stream(HttpRequestMethod.values())</span>
+<span class="fc" id="L103">        .filter(httpRequestMethod -&gt; httpRequestMethod.name().equalsIgnoreCase(method))</span>
+<span class="fc" id="L104">        .findFirst();</span>
+  }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

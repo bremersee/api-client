@@ -1,0 +1,321 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DefaultParts.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">Api Client WebFlux Spring</a> &gt; <a href="index.source.html" class="el_package">org.bremersee.apiclient.webflux.contract.spring.multipart</a> &gt; <span class="el_source">DefaultParts.java</span></div><h1>DefaultParts.java</h1><pre class="source lang-java linenums">package org.bremersee.apiclient.webflux.contract.spring.multipart;
+
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.nio.file.StandardOpenOption;
+import java.util.concurrent.Callable;
+import org.springframework.core.io.buffer.DataBuffer;
+import org.springframework.core.io.buffer.DataBufferUtils;
+import org.springframework.core.io.buffer.DefaultDataBufferFactory;
+import org.springframework.http.ContentDisposition;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.codec.multipart.FilePart;
+import org.springframework.http.codec.multipart.FormFieldPart;
+import org.springframework.http.codec.multipart.Part;
+import org.springframework.util.Assert;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
+import reactor.core.scheduler.Scheduler;
+
+/**
+ * Default implementations of {@link Part} and subtypes.
+ *
+ * @author Arjen Poutsma
+ */
+<span class="nc" id="L26">abstract class DefaultParts {</span>
+
+  /**
+   * Create a new {@link FormFieldPart} with the given parameters.
+   *
+   * @param headers the part headers
+   * @param value the form field value
+   * @return the created part
+   */
+  public static FormFieldPart formFieldPart(HttpHeaders headers, String value) {
+<span class="fc" id="L36">    Assert.notNull(headers, &quot;Headers must not be null&quot;);</span>
+<span class="fc" id="L37">    Assert.notNull(value, &quot;Value must not be null&quot;);</span>
+
+<span class="fc" id="L39">    return new DefaultParts.DefaultFormFieldPart(headers, value);</span>
+  }
+
+  /**
+   * Create a new {@link Part} or {@link FilePart} based on a flux of data buffers. Returns {@link
+   * FilePart} if the {@code Content-Disposition} of the given headers contains a filename, or a
+   * &quot;normal&quot; {@link Part} otherwise.
+   *
+   * @param headers the part headers
+   * @param dataBuffers the content of the part
+   * @return {@link Part} or {@link FilePart}, depending on {@link HttpHeaders#getContentDisposition()}
+   */
+  public static Part part(HttpHeaders headers, Flux&lt;DataBuffer&gt; dataBuffers) {
+<span class="fc" id="L52">    Assert.notNull(headers, &quot;Headers must not be null&quot;);</span>
+<span class="fc" id="L53">    Assert.notNull(dataBuffers, &quot;DataBuffers must not be null&quot;);</span>
+
+<span class="fc" id="L55">    return partInternal(headers, new DefaultParts.FluxContent(dataBuffers));</span>
+  }
+
+  /**
+   * Create a new {@link Part} or {@link FilePart} based on the given file. Returns {@link FilePart}
+   * if the {@code Content-Disposition} of the given headers contains a filename, or a &quot;normal&quot;
+   * {@link Part} otherwise
+   *
+   * @param headers the part headers
+   * @param file the file
+   * @param scheduler the scheduler used for reading the file
+   * @return {@link Part} or {@link FilePart}, depending on {@link HttpHeaders#getContentDisposition()}
+   */
+  public static Part part(HttpHeaders headers, Path file, Scheduler scheduler) {
+<span class="fc" id="L69">    Assert.notNull(headers, &quot;Headers must not be null&quot;);</span>
+<span class="fc" id="L70">    Assert.notNull(file, &quot;File must not be null&quot;);</span>
+<span class="fc" id="L71">    Assert.notNull(scheduler, &quot;Scheduler must not be null&quot;);</span>
+
+<span class="fc" id="L73">    return partInternal(headers, new DefaultParts.FileContent(file, scheduler));</span>
+  }
+
+
+  private static Part partInternal(HttpHeaders headers, DefaultParts.Content content) {
+<span class="fc" id="L78">    String filename = headers.getContentDisposition().getFilename();</span>
+<span class="fc bfc" id="L79" title="All 2 branches covered.">    if (filename != null) {</span>
+<span class="fc" id="L80">      return new DefaultParts.DefaultFilePart(headers, content);</span>
+    } else {
+<span class="fc" id="L82">      return new DefaultParts.DefaultPart(headers, content);</span>
+    }
+  }
+
+
+  /**
+   * Abstract base class.
+   */
+  private abstract static class AbstractPart implements Part {
+
+    private final HttpHeaders headers;
+
+
+<span class="fc" id="L95">    protected AbstractPart(HttpHeaders headers) {</span>
+<span class="fc" id="L96">      Assert.notNull(headers, &quot;HttpHeaders is required&quot;);</span>
+<span class="fc" id="L97">      this.headers = headers;</span>
+<span class="fc" id="L98">    }</span>
+
+    @Override
+    public String name() {
+<span class="fc" id="L102">      String name = headers().getContentDisposition().getName();</span>
+<span class="pc bpc" id="L103" title="1 of 2 branches missed.">      Assert.state(name != null, &quot;No name available&quot;);</span>
+<span class="fc" id="L104">      return name;</span>
+    }
+
+
+    @Override
+    public HttpHeaders headers() {
+<span class="fc" id="L110">      return this.headers;</span>
+    }
+  }
+
+
+  /**
+   * Default implementation of {@link FormFieldPart}.
+   */
+  private static class DefaultFormFieldPart extends
+      DefaultParts.AbstractPart implements FormFieldPart {
+
+    private final String value;
+
+    public DefaultFormFieldPart(HttpHeaders headers, String value) {
+<span class="fc" id="L124">      super(headers);</span>
+<span class="fc" id="L125">      this.value = value;</span>
+<span class="fc" id="L126">    }</span>
+
+    @Override
+    public Flux&lt;DataBuffer&gt; content() {
+<span class="fc" id="L130">      return Flux.defer(() -&gt; {</span>
+<span class="fc" id="L131">        byte[] bytes = this.value.getBytes(MultipartUtils.charset(headers()));</span>
+<span class="fc" id="L132">        return Flux.just(DefaultDataBufferFactory.sharedInstance.wrap(bytes));</span>
+      });
+    }
+
+    @Override
+    public String value() {
+<span class="fc" id="L138">      return this.value;</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="fc" id="L143">      String name = headers().getContentDisposition().getName();</span>
+<span class="pc bpc" id="L144" title="1 of 2 branches missed.">      if (name != null) {</span>
+<span class="fc" id="L145">        return &quot;DefaultFormFieldPart{&quot; + name() + &quot;}&quot;;</span>
+      } else {
+<span class="nc" id="L147">        return &quot;DefaultFormFieldPart&quot;;</span>
+      }
+    }
+  }
+
+
+  /**
+   * Default implementation of {@link Part}.
+   */
+  private static class DefaultPart extends DefaultParts.AbstractPart {
+
+    protected final DefaultParts.Content content;
+
+    public DefaultPart(HttpHeaders headers, DefaultParts.Content content) {
+<span class="fc" id="L161">      super(headers);</span>
+<span class="fc" id="L162">      this.content = content;</span>
+<span class="fc" id="L163">    }</span>
+
+    @Override
+    public Flux&lt;DataBuffer&gt; content() {
+<span class="fc" id="L167">      return this.content.content();</span>
+    }
+
+    @Override
+    public Mono&lt;Void&gt; delete() {
+<span class="fc" id="L172">      return this.content.delete();</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="fc" id="L177">      String name = headers().getContentDisposition().getName();</span>
+<span class="pc bpc" id="L178" title="1 of 2 branches missed.">      if (name != null) {</span>
+<span class="fc" id="L179">        return &quot;DefaultPart{&quot; + name + &quot;}&quot;;</span>
+      } else {
+<span class="nc" id="L181">        return &quot;DefaultPart&quot;;</span>
+      }
+    }
+
+  }
+
+
+  /**
+   * Default implementation of {@link FilePart}.
+   */
+  private static final class DefaultFilePart extends
+      DefaultParts.DefaultPart implements FilePart {
+
+    public DefaultFilePart(HttpHeaders headers, DefaultParts.Content content) {
+<span class="fc" id="L195">      super(headers, content);</span>
+<span class="fc" id="L196">    }</span>
+
+    @Override
+    public String filename() {
+<span class="nc" id="L200">      String filename = this.headers().getContentDisposition().getFilename();</span>
+<span class="nc bnc" id="L201" title="All 2 branches missed.">      Assert.state(filename != null, &quot;No filename found&quot;);</span>
+<span class="nc" id="L202">      return filename;</span>
+    }
+
+    @Override
+    public Mono&lt;Void&gt; transferTo(Path dest) {
+<span class="fc" id="L207">      return this.content.transferTo(dest);</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="fc" id="L212">      ContentDisposition contentDisposition = headers().getContentDisposition();</span>
+<span class="fc" id="L213">      String name = contentDisposition.getName();</span>
+<span class="fc" id="L214">      String filename = contentDisposition.getFilename();</span>
+<span class="pc bpc" id="L215" title="1 of 2 branches missed.">      if (name != null) {</span>
+<span class="fc" id="L216">        return &quot;DefaultFilePart{&quot; + name + &quot; (&quot; + filename + &quot;)}&quot;;</span>
+      } else {
+<span class="nc" id="L218">        return &quot;DefaultFilePart{(&quot; + filename + &quot;)}&quot;;</span>
+      }
+    }
+
+  }
+
+
+  /**
+   * Part content abstraction.
+   */
+  private interface Content {
+
+    Flux&lt;DataBuffer&gt; content();
+
+    Mono&lt;Void&gt; transferTo(Path dest);
+
+    Mono&lt;Void&gt; delete();
+
+  }
+
+  /**
+   * {@code Content} implementation based on a flux of data buffers.
+   */
+  private static final class FluxContent implements DefaultParts.Content {
+
+    private final Flux&lt;DataBuffer&gt; content;
+
+
+<span class="fc" id="L246">    public FluxContent(Flux&lt;DataBuffer&gt; content) {</span>
+<span class="fc" id="L247">      this.content = content;</span>
+<span class="fc" id="L248">    }</span>
+
+
+    @Override
+    public Flux&lt;DataBuffer&gt; content() {
+<span class="fc" id="L253">      return this.content;</span>
+    }
+
+    @Override
+    public Mono&lt;Void&gt; transferTo(Path dest) {
+<span class="fc" id="L258">      return DataBufferUtils.write(this.content, dest);</span>
+    }
+
+    @Override
+    public Mono&lt;Void&gt; delete() {
+<span class="fc" id="L263">      return Mono.empty();</span>
+    }
+
+  }
+
+
+  /**
+   * {@code Content} implementation based on a file.
+   */
+  private static final class FileContent implements DefaultParts.Content {
+
+    private final Path file;
+
+    private final Scheduler scheduler;
+
+
+<span class="fc" id="L279">    public FileContent(Path file, Scheduler scheduler) {</span>
+<span class="fc" id="L280">      this.file = file;</span>
+<span class="fc" id="L281">      this.scheduler = scheduler;</span>
+<span class="fc" id="L282">    }</span>
+
+
+    @Override
+    public Flux&lt;DataBuffer&gt; content() {
+<span class="fc" id="L287">      return DataBufferUtils.readByteChannel(</span>
+<span class="fc" id="L288">              () -&gt; Files.newByteChannel(this.file, StandardOpenOption.READ),</span>
+              DefaultDataBufferFactory.sharedInstance, 1024)
+<span class="fc" id="L290">          .subscribeOn(this.scheduler);</span>
+    }
+
+    @Override
+    public Mono&lt;Void&gt; transferTo(Path dest) {
+<span class="fc" id="L295">      return blockingOperation(</span>
+<span class="fc" id="L296">          () -&gt; Files.copy(this.file, dest, StandardCopyOption.REPLACE_EXISTING));</span>
+    }
+
+    @Override
+    public Mono&lt;Void&gt; delete() {
+<span class="nc" id="L301">      return blockingOperation(() -&gt; {</span>
+<span class="nc" id="L302">        Files.delete(this.file);</span>
+<span class="nc" id="L303">        return null;</span>
+      });
+    }
+
+    private Mono&lt;Void&gt; blockingOperation(Callable&lt;?&gt; callable) {
+<span class="fc" id="L308">      return Mono.&lt;Void&gt;create(sink -&gt; {</span>
+            try {
+<span class="fc" id="L310">              callable.call();</span>
+<span class="fc" id="L311">              sink.success();</span>
+<span class="nc" id="L312">            } catch (Exception ex) {</span>
+<span class="nc" id="L313">              sink.error(ex);</span>
+<span class="fc" id="L314">            }</span>
+<span class="fc" id="L315">          })</span>
+<span class="fc" id="L316">          .subscribeOn(this.scheduler);</span>
+    }
+  }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.7.202105040129</span></div></body></html>

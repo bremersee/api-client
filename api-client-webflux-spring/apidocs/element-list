@@ -1,0 +1,5 @@
+org.bremersee.apiclient
+org.bremersee.apiclient.webflux
+org.bremersee.apiclient.webflux.contract
+org.bremersee.apiclient.webflux.contract.spring
+org.bremersee.apiclient.webflux.contract.spring.multipart
