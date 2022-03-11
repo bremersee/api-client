@@ -33,6 +33,7 @@ import org.springframework.web.reactive.function.client.WebClient.ResponseSpec;
  *
  * @author Christian Bremer
  */
+@SuppressWarnings("SameNameButDifferent")
 @Slf4j
 class ReactiveInvocationHandler implements InvocationHandler {
 

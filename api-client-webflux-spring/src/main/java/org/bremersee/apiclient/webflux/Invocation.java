@@ -40,6 +40,7 @@ import org.springframework.util.Assert;
  *
  * @author Christian Bremer
  */
+@SuppressWarnings("SameNameButDifferent")
 @Getter
 @EqualsAndHashCode
 @AllArgsConstructor

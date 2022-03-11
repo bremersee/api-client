@@ -46,6 +46,7 @@ import org.springframework.util.MultiValueMap;
  *
  * @author Christian Bremer
  */
+@SuppressWarnings("SameNameButDifferent")
 @Getter
 @EqualsAndHashCode(callSuper = true)
 public class InvocationParameter extends Invocation {

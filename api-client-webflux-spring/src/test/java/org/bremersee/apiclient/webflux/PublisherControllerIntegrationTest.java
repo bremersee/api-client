@@ -35,6 +35,7 @@ import reactor.test.StepVerifier;
  *
  * @author Christian Bremer
  */
+@SuppressWarnings("SameNameButDifferent")
 @SpringBootTest(
     classes = {TestConfiguration.class},
     webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT,

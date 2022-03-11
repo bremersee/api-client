@@ -28,6 +28,7 @@ import org.springframework.context.annotation.ComponentScan;
  *
  * @author Christian Bremer
  */
+@SuppressWarnings("SameNameButDifferent")
 @SpringBootConfiguration
 @EnableAutoConfiguration
 @ComponentScan(basePackageClasses = {TestConfiguration.class})
