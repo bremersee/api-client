@@ -69,7 +69,8 @@ class FormDataInserterTest {
     Method method = Example.class.getMethod("methodA", MultiValueMap.class);
     MultiValueMap<String, String> value = new LinkedMultiValueMap<>();
     Invocation invocation = new Invocation(Example.class, method, new Object[]{value});
-    when(contentTypeResolver.apply(eq(invocation))).thenReturn(Optional.of(MediaType.APPLICATION_FORM_URLENCODED));
+    when(contentTypeResolver.apply(eq(invocation)))
+        .thenReturn(Optional.of(MediaType.APPLICATION_FORM_URLENCODED));
     assertThat(target.canInsert(invocation))
         .isTrue();
   }
@@ -84,7 +85,8 @@ class FormDataInserterTest {
     Method method = Example.class.getMethod("methodA", MultiValueMap.class);
     MultiValueMap<String, String> value = new LinkedMultiValueMap<>();
     Invocation invocation = new Invocation(Example.class, method, new Object[]{value});
-    when(contentTypeResolver.apply(eq(invocation))).thenReturn(Optional.of(MediaType.MULTIPART_FORM_DATA));
+    when(contentTypeResolver.apply(eq(invocation)))
+        .thenReturn(Optional.of(MediaType.MULTIPART_FORM_DATA));
     assertThat(target.canInsert(invocation))
         .isFalse();
   }
@@ -99,7 +101,8 @@ class FormDataInserterTest {
     Method method = Example.class.getMethod("methodB", MultiValueMap.class);
     MultiValueMap<Object, Object> value = new LinkedMultiValueMap<>();
     Invocation invocation = new Invocation(Example.class, method, new Object[]{value});
-    when(contentTypeResolver.apply(eq(invocation))).thenReturn(Optional.of(MediaType.MULTIPART_FORM_DATA));
+    when(contentTypeResolver.apply(eq(invocation)))
+        .thenReturn(Optional.of(MediaType.MULTIPART_FORM_DATA));
     assertThat(target.canInsert(invocation))
         .isFalse();
   }

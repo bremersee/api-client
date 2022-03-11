@@ -57,27 +57,30 @@ class RequestUriFunctionTest {
     when(pathVariablesResolver.apply(any())).thenReturn(Map.of("id", "1234"));
     when(target.getPathVariablesResolver()).thenReturn(pathVariablesResolver);
 
-    //noinspection unchecked
-    Function<Invocation, MultiValueMap<String, Object>> requestParametersResolver0 = mock(Function.class);
     MultiValueMap<String, Object> parameterMap0 = new LinkedMultiValueMap<>();
     parameterMap0.add("sort", "a");
     parameterMap0.add("sort", "b");
     parameterMap0.add("size", 25);
+    //noinspection unchecked
+    Function<Invocation, MultiValueMap<String, Object>> requestParametersResolver0 = mock(
+        Function.class);
     when(requestParametersResolver0.apply(any())).thenReturn(parameterMap0);
 
-    //noinspection unchecked
-    Function<Invocation, MultiValueMap<String, Object>> requestParametersResolver1 = mock(Function.class);
     MultiValueMap<String, Object> parameterMap1 = new LinkedMultiValueMap<>();
     parameterMap1.add("sort", "c");
     parameterMap1.add("sort", "d");
     parameterMap1.add("page", 10);
+    //noinspection unchecked
+    Function<Invocation, MultiValueMap<String, Object>> requestParametersResolver1 = mock(
+        Function.class);
     when(requestParametersResolver1.apply(any())).thenReturn(parameterMap1);
 
-    //noinspection unchecked
-    Function<Invocation, MultiValueMap<String, Object>> requestParametersResolver2 = mock(Function.class);
     MultiValueMap<String, Object> parameterMap2 = new LinkedMultiValueMap<>();
     parameterMap2.add("sort", "e");
     parameterMap2.add("foo", "bar");
+    //noinspection unchecked
+    Function<Invocation, MultiValueMap<String, Object>> requestParametersResolver2 = mock(
+        Function.class);
     when(requestParametersResolver2.apply(any())).thenReturn(parameterMap2);
 
     List<Function<Invocation, MultiValueMap<String, Object>>> requestParametersResolvers = List.of(

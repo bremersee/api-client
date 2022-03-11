@@ -58,15 +58,14 @@ class SortRequestParameterResolverTest {
     softly.assertThat(actual)
         .containsExactlyInAnyOrderEntriesOf(expected);
 
-    SortRequestParameterResolver configuredTarget = target
-        .withRequestParamName("s")
-        .withSeparatorValue(";")
-        .withDescValue("d");
-
     expected = new LinkedMultiValueMap<>();
     expected.add("s", "a");
     expected.add("s", "b;d");
 
+    SortRequestParameterResolver configuredTarget = target
+        .withRequestParamName("s")
+        .withSeparatorValue(";")
+        .withDescValue("d");
     actual = configuredTarget.apply(invocation);
     softly.assertThat(actual)
         .containsExactlyInAnyOrderEntriesOf(expected);
@@ -75,6 +74,7 @@ class SortRequestParameterResolverTest {
   /**
    * The interface Example.
    */
+  @SuppressWarnings("unused")
   interface Example {
 
     /**

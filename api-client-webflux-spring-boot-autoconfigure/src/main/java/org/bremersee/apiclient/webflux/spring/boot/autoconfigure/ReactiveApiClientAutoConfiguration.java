@@ -133,7 +133,10 @@ public class ReactiveApiClientAutoConfiguration {
   @Bean
   @Order(-510)
   public PageableRequestParameterResolver pageableRequestParameterResolver() {
-    log.info("Creating {} with order {}", PageableRequestParameterResolver.class.getSimpleName(), -510);
+    log.info(
+        "Creating {} with order {}",
+        PageableRequestParameterResolver.class.getSimpleName(),
+        -510);
     return new PageableRequestParameterResolver();
   }
 

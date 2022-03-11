@@ -37,12 +37,14 @@ public class RequestPathResolver implements Function<Invocation, String> {
   public String apply(Invocation invocation) {
     // Request mapping on class
     String clsPath = invocation
-        .findAnnotationValueOnTargetClass(RequestMapping.class, a -> a.value().length > 0, a -> a.value()[0])
+        .findAnnotationValueOnTargetClass(
+            RequestMapping.class, a -> a.value().length > 0, a -> a.value()[0])
         .orElse("");
 
     // Request mapping on method
     String path = invocation
-        .findAnnotationValueOnMethod(RequestMapping.class, a -> a.value().length > 0, a -> a.value()[0])
+        .findAnnotationValueOnMethod(
+            RequestMapping.class, a -> a.value().length > 0, a -> a.value()[0])
         .orElse("");
     if (StringUtils.hasText(path)) {
       return clsPath + path;
@@ -50,7 +52,8 @@ public class RequestPathResolver implements Function<Invocation, String> {
 
     // Get mapping on method
     path = invocation
-        .findAnnotationValueOnMethod(GetMapping.class, a -> a.value().length > 0, a -> a.value()[0])
+        .findAnnotationValueOnMethod(
+            GetMapping.class, a -> a.value().length > 0, a -> a.value()[0])
         .orElse("");
     if (StringUtils.hasText(path)) {
       return clsPath + path;
@@ -58,7 +61,8 @@ public class RequestPathResolver implements Function<Invocation, String> {
 
     // Post mapping on method
     path = invocation
-        .findAnnotationValueOnMethod(PostMapping.class, a -> a.value().length > 0, a -> a.value()[0])
+        .findAnnotationValueOnMethod(
+            PostMapping.class, a -> a.value().length > 0, a -> a.value()[0])
         .orElse("");
     if (StringUtils.hasText(path)) {
       return clsPath + path;
@@ -66,7 +70,8 @@ public class RequestPathResolver implements Function<Invocation, String> {
 
     // Put mapping on method
     path = invocation
-        .findAnnotationValueOnMethod(PutMapping.class, a -> a.value().length > 0, a -> a.value()[0])
+        .findAnnotationValueOnMethod(
+            PutMapping.class, a -> a.value().length > 0, a -> a.value()[0])
         .orElse("");
     if (StringUtils.hasText(path)) {
       return clsPath + path;
@@ -74,7 +79,8 @@ public class RequestPathResolver implements Function<Invocation, String> {
 
     // Patch mapping on method
     path = invocation
-        .findAnnotationValueOnMethod(PatchMapping.class, a -> a.value().length > 0, a -> a.value()[0])
+        .findAnnotationValueOnMethod(
+            PatchMapping.class, a -> a.value().length > 0, a -> a.value()[0])
         .orElse("");
     if (StringUtils.hasText(path)) {
       return clsPath + path;
@@ -82,7 +88,8 @@ public class RequestPathResolver implements Function<Invocation, String> {
 
     // Delete mapping on method
     path = invocation
-        .findAnnotationValueOnMethod(DeleteMapping.class, a -> a.value().length > 0, a -> a.value()[0])
+        .findAnnotationValueOnMethod(
+            DeleteMapping.class, a -> a.value().length > 0, a -> a.value()[0])
         .orElse("");
     return clsPath + path;
   }

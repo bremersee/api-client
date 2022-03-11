@@ -26,7 +26,7 @@ import reactor.core.publisher.Mono;
  * @author Christian Bremer
  */
 @RestController
-public class PublisherControllerImpl implements PublisherController{
+public class PublisherControllerImpl implements PublisherController {
 
   @Override
   public Mono<String> postPublisher(Publisher<String> publisher) {

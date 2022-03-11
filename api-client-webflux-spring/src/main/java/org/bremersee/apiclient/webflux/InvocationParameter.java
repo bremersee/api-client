@@ -180,7 +180,8 @@ public class InvocationParameter extends Invocation {
         .orElseGet(LinkedMultiValueMap::new);
   }
 
-  private <E> MultiValueMap<String, E> toMultiValueMap(Map<?, ?> map, Function<Object, E> valueMapper) {
+  private <E> MultiValueMap<String, E> toMultiValueMap(
+      Map<?, ?> map, Function<Object, E> valueMapper) {
     MultiValueMap<String, E> multiValueMap = new LinkedMultiValueMap<>();
     if (!isEmpty(map)) {
       for (Map.Entry<?, ?> entry : map.entrySet()) {

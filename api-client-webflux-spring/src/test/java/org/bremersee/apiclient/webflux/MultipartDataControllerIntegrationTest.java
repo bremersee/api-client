@@ -140,7 +140,10 @@ class MultipartDataControllerIntegrationTest {
   }
 
   private Flux<DataBuffer> toDataBuffer(byte[] bytes, int bufferSize) {
-    return DataBufferUtils.read(new ByteArrayResource(bytes), new DefaultDataBufferFactory(), bufferSize);
+    return DataBufferUtils.read(
+        new ByteArrayResource(bytes),
+        new DefaultDataBufferFactory(),
+        bufferSize);
   }
 
   /**
@@ -224,7 +227,8 @@ class MultipartDataControllerIntegrationTest {
     MultiValueMap<String, Part> partMap = new LinkedMultiValueMap<>();
     partMap.add(
         FORM_FIELD_NAME,
-        partBuilder.part(FORM_FIELD_NAME, FORM_FIELD_VALUE).contentType(MediaType.TEXT_PLAIN).build());
+        partBuilder.part(FORM_FIELD_NAME, FORM_FIELD_VALUE).contentType(MediaType.TEXT_PLAIN)
+            .build());
     partMap.add(
         FILE_PART_NAME,
         partBuilder.part(FILE_PART_NAME, new ClassPathResource(FILE_PART_RESOURCE)).build());
@@ -281,7 +285,8 @@ class MultipartDataControllerIntegrationTest {
     MultiValueMap<String, Part> partMap = new LinkedMultiValueMap<>();
     partMap.add(
         FORM_FIELD_NAME,
-        partBuilder.part(FORM_FIELD_NAME, FORM_FIELD_VALUE).contentType(MediaType.TEXT_PLAIN).build());
+        partBuilder.part(FORM_FIELD_NAME, FORM_FIELD_VALUE).contentType(MediaType.TEXT_PLAIN)
+            .build());
     partMap.add(
         FILE_PART_NAME,
         partBuilder.part(FILE_PART_NAME, new ClassPathResource(FILE_PART_RESOURCE)).build());
@@ -320,8 +325,10 @@ class MultipartDataControllerIntegrationTest {
    */
   @Test
   void postParts() {
-    Part stringPart = partBuilder.part(FORM_FIELD_NAME, FORM_FIELD_VALUE).contentType(MediaType.TEXT_PLAIN).build();
-    Part resourcePart = partBuilder.part(FILE_PART_NAME, new ClassPathResource(FILE_PART_RESOURCE)).build();
+    Part stringPart = partBuilder.part(FORM_FIELD_NAME, FORM_FIELD_VALUE)
+        .contentType(MediaType.TEXT_PLAIN).build();
+    Part resourcePart = partBuilder.part(FILE_PART_NAME, new ClassPathResource(FILE_PART_RESOURCE))
+        .build();
 
     StepVerifier.create(apiClient.postParts(stringPart, resourcePart, null, null))
         .assertNext(response -> assertThat(response)
@@ -357,11 +364,17 @@ class MultipartDataControllerIntegrationTest {
    */
   @Test
   void postMonoParts() {
-    Part stringPart = partBuilder.part(FORM_FIELD_NAME, FORM_FIELD_VALUE).contentType(MediaType.TEXT_PLAIN).build();
-    Part resourcePart = partBuilder.part(FILE_PART_NAME, new ClassPathResource(FILE_PART_RESOURCE)).build();
+    Part stringPart = partBuilder.part(FORM_FIELD_NAME, FORM_FIELD_VALUE)
+        .contentType(MediaType.TEXT_PLAIN).build();
+    Part resourcePart = partBuilder.part(FILE_PART_NAME, new ClassPathResource(FILE_PART_RESOURCE))
+        .build();
 
     StepVerifier.create(apiClient
-            .postMonoParts(Mono.just(stringPart), Mono.just(resourcePart), Mono.empty(), Mono.empty()))
+            .postMonoParts(
+                Mono.just(stringPart),
+                Mono.just(resourcePart),
+                Mono.empty(),
+                Mono.empty()))
         .assertNext(response -> assertThat(response)
             .containsExactlyInAnyOrderEntriesOf(expected()))
         .expectNextCount(0)
@@ -397,7 +410,8 @@ class MultipartDataControllerIntegrationTest {
   void postFluxParts() {
     List<Part> parts = new ArrayList<>();
     parts.add(
-        partBuilder.part(FORM_FIELD_NAME, FORM_FIELD_VALUE).contentType(MediaType.TEXT_PLAIN).build());
+        partBuilder.part(FORM_FIELD_NAME, FORM_FIELD_VALUE).contentType(MediaType.TEXT_PLAIN)
+            .build());
     parts.add(
         partBuilder.part(FILE_PART_NAME, new ClassPathResource(FILE_PART_RESOURCE)).build());
 
@@ -478,8 +492,9 @@ class MultipartDataControllerIntegrationTest {
         partBuilder.part("parts", new ClassPathResource(FILE_PART_RESOURCE)).build());
 
     // This part will be ignored, because it's name is not 'parts'.
-    parts.add(
-        partBuilder.part(FORM_FIELD_NAME, FORM_FIELD_VALUE).contentType(MediaType.TEXT_PLAIN).build());
+    parts.add(partBuilder
+        .part(FORM_FIELD_NAME, FORM_FIELD_VALUE).contentType(MediaType.TEXT_PLAIN)
+        .build());
 
     MultipartBodyBuilder builder = new MultipartBodyBuilder();
     builder.part("parts", new ClassPathResource(FILE_PART_RESOURCE));

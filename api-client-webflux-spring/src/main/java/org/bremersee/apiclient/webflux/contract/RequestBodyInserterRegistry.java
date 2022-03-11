@@ -55,7 +55,10 @@ public interface RequestBodyInserterRegistry extends
   List<RequestBodyInserter> getRequestBodyInserters();
 
   @Override
-  default RequestHeadersUriSpec<?> apply(Invocation invocation, RequestBodyUriSpec requestBodyUriSpec) {
+  default RequestHeadersUriSpec<?> apply(
+      Invocation invocation,
+      RequestBodyUriSpec requestBodyUriSpec) {
+
     //noinspection unchecked,rawtypes
     return getRequestBodyInserters().stream()
         .filter(inserter -> inserter.canInsert(invocation))

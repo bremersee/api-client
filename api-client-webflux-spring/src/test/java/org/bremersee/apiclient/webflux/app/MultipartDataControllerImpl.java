@@ -50,7 +50,8 @@ public class MultipartDataControllerImpl implements MultipartDataController {
           return bytes;
         })
         .map(bytes -> {
-          if (MediaType.APPLICATION_OCTET_STREAM.isCompatibleWith(part.headers().getContentType())) {
+          if (MediaType.APPLICATION_OCTET_STREAM.isCompatibleWith(
+              part.headers().getContentType())) {
             return Base64.getEncoder().encodeToString(bytes);
           }
           return new String(bytes, StandardCharsets.UTF_8).trim();
@@ -60,14 +61,18 @@ public class MultipartDataControllerImpl implements MultipartDataController {
   @Override
   public Mono<Map<String, Object>> postMultipartDataMap(MultiValueMap<String, Part> data) {
     return Flux.fromStream(data.entrySet().stream())
-        .flatMap(entry -> content(entry.getValue().get(0)).map(content -> Tuples.of(entry.getKey(), content)))
+        .flatMap(entry -> content(entry.getValue().get(0)).map(
+            content -> Tuples.of(entry.getKey(), content)))
         .collectMap(Tuple2::getT1, Tuple2::getT2);
   }
 
   @Override
-  public Mono<Map<String, Object>> postMonoMultipartDataMap(Mono<MultiValueMap<String, Part>> data) {
+  public Mono<Map<String, Object>> postMonoMultipartDataMap(
+      Mono<MultiValueMap<String, Part>> data) {
+
     return data.flatMap(map -> Flux.fromStream(map.entrySet().stream())
-        .flatMap(entry -> content(entry.getValue().get(0)).map(content -> Tuples.of(entry.getKey(), content)))
+        .flatMap(entry -> content(entry.getValue().get(0)).map(
+            content -> Tuples.of(entry.getKey(), content)))
         .collectMap(Tuple2::getT1, Tuple2::getT2));
   }
 

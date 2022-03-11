@@ -42,7 +42,9 @@ public class PageableRequestParameterResolver extends SortRequestParameterResolv
    * @param pageNumberRequestParamName the page number request param name
    * @return the pageable request parameter resolver
    */
-  public PageableRequestParameterResolver withPageNumberRequestParamName(String pageNumberRequestParamName) {
+  public PageableRequestParameterResolver withPageNumberRequestParamName(
+      String pageNumberRequestParamName) {
+
     if (!isEmpty(pageNumberRequestParamName)) {
       this.pageNumberRequestParamName = pageNumberRequestParamName;
     }
@@ -55,7 +57,9 @@ public class PageableRequestParameterResolver extends SortRequestParameterResolv
    * @param pageSizeRequestParamName the page size request param name
    * @return the pageable request parameter resolver
    */
-  public PageableRequestParameterResolver withPageSizeRequestParamName(String pageSizeRequestParamName) {
+  public PageableRequestParameterResolver withPageSizeRequestParamName(
+      String pageSizeRequestParamName) {
+
     if (!isEmpty(pageSizeRequestParamName)) {
       this.pageSizeRequestParamName = pageSizeRequestParamName;
     }
@@ -76,8 +80,8 @@ public class PageableRequestParameterResolver extends SortRequestParameterResolv
 
   @Override
   public boolean test(InvocationParameter invocationParameter) {
-    return invocationParameter.getValue() instanceof Pageable
-        && invocationParameter.hasNoneParameterAnnotation(Extensions.ILLEGAL_EXTENSIONS_ANNOTATIONS);
+    return invocationParameter.getValue() instanceof Pageable && invocationParameter
+        .hasNoneParameterAnnotation(Extensions.ILLEGAL_EXTENSIONS_ANNOTATIONS);
   }
 
   /**

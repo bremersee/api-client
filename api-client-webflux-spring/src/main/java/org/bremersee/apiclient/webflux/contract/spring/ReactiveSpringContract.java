@@ -78,7 +78,9 @@ public class ReactiveSpringContract implements ReactiveContract {
    *
    * @return the request parameters resolvers
    */
-  protected List<Function<Invocation, MultiValueMap<String, Object>>> getRequestParametersResolvers() {
+  protected List<Function<Invocation, MultiValueMap<String, Object>>>
+  getRequestParametersResolvers() {
+
     List<Function<Invocation, MultiValueMap<String, Object>>> list = new ArrayList<>();
     list.add(new RequestParametersResolver());
     if (Extensions.isSortPresent) {
@@ -98,7 +100,9 @@ public class ReactiveSpringContract implements ReactiveContract {
   }
 
   @Override
-  public BiFunction<Invocation, RequestBodyUriSpec, RequestHeadersUriSpec<?>> getRequestBodyInserterFunction() {
+  public BiFunction<Invocation, RequestBodyUriSpec, RequestHeadersUriSpec<?>>
+  getRequestBodyInserterFunction() {
+
     return RequestBodyInserterRegistry.builder()
         .addRequestBodyInserters(new FormDataInserter()
             .withContentTypeResolver(contentTypeResolver))

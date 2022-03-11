@@ -29,7 +29,9 @@ public class FormDataInserter extends SingleBodyInserter<MultiValueMap<String, ?
    * @param contentTypeResolver the content type resolver
    * @return the form data inserter
    */
-  public FormDataInserter withContentTypeResolver(Function<Invocation, Optional<MediaType>> contentTypeResolver) {
+  public FormDataInserter withContentTypeResolver(
+      Function<Invocation, Optional<MediaType>> contentTypeResolver) {
+
     if (nonNull(contentTypeResolver)) {
       this.contentTypeResolver = contentTypeResolver;
     }

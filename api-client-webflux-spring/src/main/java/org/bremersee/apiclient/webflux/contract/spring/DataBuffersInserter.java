@@ -56,7 +56,10 @@ public class DataBuffersInserter extends SingleBodyInserter<Publisher<DataBuffer
   }
 
   @Override
-  protected RequestHeadersUriSpec<?> insert(Publisher<DataBuffer> body, RequestBodyUriSpec requestBodyUriSpec) {
+  protected RequestHeadersUriSpec<?> insert(
+      Publisher<DataBuffer> body,
+      RequestBodyUriSpec requestBodyUriSpec) {
+
     //noinspection rawtypes
     return (RequestHeadersUriSpec) requestBodyUriSpec.body(BodyInserters.fromDataBuffers(body));
   }

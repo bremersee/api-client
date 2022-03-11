@@ -32,7 +32,10 @@ public abstract class SingleBodyInserter<T> extends AbstractRequestBodyInserter 
   protected abstract boolean isPossibleBodyValue(InvocationParameter invocationParameter);
 
   @Override
-  public RequestHeadersUriSpec<?> apply(Invocation invocation, RequestBodyUriSpec requestBodyUriSpec) {
+  public RequestHeadersUriSpec<?> apply(
+      Invocation invocation,
+      RequestBodyUriSpec requestBodyUriSpec) {
+
     //noinspection unchecked,rawtypes
     return findPossibleBodies(invocation)
         .stream()

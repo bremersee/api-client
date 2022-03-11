@@ -13,7 +13,8 @@ import org.springframework.http.MediaType;
 abstract class MultipartUtils {
 
   /**
-   * Return the character set of the given headers, as defined in the {@link HttpHeaders#getContentType()} header.
+   * Return the character set of the given headers, as defined in the {@link
+   * HttpHeaders#getContentType()} header.
    */
   public static Charset charset(HttpHeaders headers) {
     MediaType contentType = headers.getContentType();

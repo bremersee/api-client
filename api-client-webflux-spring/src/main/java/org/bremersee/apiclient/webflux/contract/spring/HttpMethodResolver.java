@@ -46,11 +46,16 @@ public class HttpMethodResolver implements Function<Invocation, HttpRequestMetho
     return Optional.ofNullable(findAnnotation(method, RequestMapping.class))
         .filter(requestMapping -> requestMapping.method().length > 0)
         .flatMap(requestMapping -> HttpRequestMethod.resolve(requestMapping.method()[0].name()))
-        .or(() -> Optional.ofNullable(findAnnotation(method, GetMapping.class)).map(a -> HttpRequestMethod.GET))
-        .or(() -> Optional.ofNullable(findAnnotation(method, PostMapping.class)).map(a -> HttpRequestMethod.POST))
-        .or(() -> Optional.ofNullable(findAnnotation(method, PutMapping.class)).map(a -> HttpRequestMethod.PUT))
-        .or(() -> Optional.ofNullable(findAnnotation(method, PatchMapping.class)).map(a -> HttpRequestMethod.PATCH))
-        .or(() -> Optional.ofNullable(findAnnotation(method, DeleteMapping.class)).map(a -> HttpRequestMethod.DELETE))
+        .or(() -> Optional.ofNullable(findAnnotation(method, GetMapping.class))
+            .map(a -> HttpRequestMethod.GET))
+        .or(() -> Optional.ofNullable(findAnnotation(method, PostMapping.class))
+            .map(a -> HttpRequestMethod.POST))
+        .or(() -> Optional.ofNullable(findAnnotation(method, PutMapping.class))
+            .map(a -> HttpRequestMethod.PUT))
+        .or(() -> Optional.ofNullable(findAnnotation(method, PatchMapping.class))
+            .map(a -> HttpRequestMethod.PATCH))
+        .or(() -> Optional.ofNullable(findAnnotation(method, DeleteMapping.class))
+            .map(a -> HttpRequestMethod.DELETE))
         .orElseThrow(() -> new IllegalStateException(
             String.format("Cannot find request method on method '%s'.", method.getName())));
   }

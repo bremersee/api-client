@@ -63,8 +63,9 @@ public interface RequestUriSpecFunction
     Assert.notNull(webClient, "Web client must be present.");
     return Optional.ofNullable(getHttpMethodResolver().apply(invocation))
         .map(httpRequestMethod -> httpRequestMethod.invoke(webClient))
-        .orElseThrow(() -> new IllegalStateException(
-            String.format("Cannot find request method on method '%s'.", invocation.getMethod().getName())));
+        .orElseThrow(() -> new IllegalStateException(String.format(
+            "Cannot find request method on method '%s'.",
+            invocation.getMethod().getName())));
   }
 
 }

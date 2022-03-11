@@ -54,7 +54,8 @@ public class PublisherInserter extends SingleBodyInserter<InvocationParameter> {
         .filter(ResolvableType::hasGenerics)
         .map(resolvableType -> resolvableType.resolveGeneric(0))
         .map(ParameterizedTypeReference::forType)
-        .map(ref -> (RequestHeadersUriSpec) requestBodyUriSpec.body(invocationParameter.getValue(), ref))
+        .map(ref -> (RequestHeadersUriSpec) requestBodyUriSpec
+            .body(invocationParameter.getValue(), ref))
         .orElse(requestBodyUriSpec);
   }
 

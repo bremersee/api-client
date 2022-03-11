@@ -116,7 +116,9 @@ class InvocationParameterTest {
   @Test
   void toMultiValueMapOfNull() throws Exception {
     InvocationParameter target = createTarget("methodB", String.class, null);
-    MultiValueMap<String, Object> actual = target.toMultiValueMap(RequestParam.class, RequestParam::value, v -> v);
+    MultiValueMap<String, Object> actual = target.toMultiValueMap(
+        RequestParam.class,
+        RequestParam::value, v -> v);
     assertThat(actual)
         .isEqualTo(Map.of("name", List.of()));
   }
@@ -129,7 +131,9 @@ class InvocationParameterTest {
   @Test
   void toMultiValueMapOfSingleValue() throws Exception {
     InvocationParameter target = createTarget("methodB", String.class, "456");
-    MultiValueMap<String, Object> actual = target.toMultiValueMap(RequestParam.class, RequestParam::value, v -> v);
+    MultiValueMap<String, Object> actual = target.toMultiValueMap(
+        RequestParam.class,
+        RequestParam::value, v -> v);
     assertThat(actual)
         .isEqualTo(Map.of("name", List.of("456")));
   }
@@ -142,7 +146,9 @@ class InvocationParameterTest {
   @Test
   void toMultiValueMapOfList() throws Exception {
     InvocationParameter target = createTarget("methodC", List.class, List.of("456", "789"));
-    MultiValueMap<String, Object> actual = target.toMultiValueMap(RequestParam.class, RequestParam::value, v -> v);
+    MultiValueMap<String, Object> actual = target.toMultiValueMap(
+        RequestParam.class,
+        RequestParam::value, v -> v);
     assertThat(actual)
         .isEqualTo(Map.of("name", List.of("456", "789")));
   }
@@ -155,7 +161,9 @@ class InvocationParameterTest {
   @Test
   void toMultiValueMapOfArray() throws Exception {
     InvocationParameter target = createTarget("methodD", int[].class, new int[]{1, 2, 3});
-    MultiValueMap<String, Object> actual = target.toMultiValueMap(RequestParam.class, RequestParam::value, v -> v);
+    MultiValueMap<String, Object> actual = target.toMultiValueMap(
+        RequestParam.class,
+        RequestParam::value, v -> v);
     assertThat(actual)
         .isEqualTo(Map.of("numbers", List.of(1, 2, 3)));
   }
@@ -172,7 +180,9 @@ class InvocationParameterTest {
     source.put("sort", List.of("lastName", "firstName"));
     source.put("numbers", new int[]{5, 6, 7});
     InvocationParameter target = createTarget("methodE", Map.class, source);
-    MultiValueMap<String, Object> actual = target.toMultiValueMap(RequestParam.class, RequestParam::value, v -> v);
+    MultiValueMap<String, Object> actual = target.toMultiValueMap(
+        RequestParam.class,
+        RequestParam::value, v -> v);
     MultiValueMap<String, Object> expected = new LinkedMultiValueMap<>();
     expected.add("name", "123");
     expected.addAll("sort", List.of("lastName", "firstName"));
@@ -214,12 +224,14 @@ class InvocationParameterTest {
         .isEqualTo(0);
   }
 
-  private Invocation createInvocation(String methodName, Class<?> paramClass, Object value) throws Exception {
+  private Invocation createInvocation(String methodName, Class<?> paramClass, Object value)
+      throws Exception {
     Method method = Example.class.getMethod(methodName, paramClass);
     return new Invocation(InvocationTest.Example.class, method, new Object[]{value});
   }
 
-  private InvocationParameter createTarget(String methodName, Class<?> paramClass, Object value) throws Exception {
+  private InvocationParameter createTarget(String methodName, Class<?> paramClass, Object value)
+      throws Exception {
     Invocation invocation = createInvocation(methodName, paramClass, value);
     return new InvocationParameter(
         createInvocation(methodName, paramClass, value),

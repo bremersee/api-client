@@ -58,7 +58,9 @@ public class MultipartDataInserter extends AbstractRequestBodyInserter {
    * @param contentTypeResolver the content type resolver
    * @return the multipart data inserter
    */
-  public MultipartDataInserter withContentTypeResolver(Function<Invocation, Optional<MediaType>> contentTypeResolver) {
+  public MultipartDataInserter withContentTypeResolver(
+      Function<Invocation, Optional<MediaType>> contentTypeResolver) {
+
     if (nonNull(contentTypeResolver)) {
       this.contentTypeResolver = contentTypeResolver;
     }
@@ -168,7 +170,7 @@ public class MultipartDataInserter extends AbstractRequestBodyInserter {
    */
   protected boolean isRequestPart(InvocationParameter invocationParameter) {
     return invocationParameter.hasParameterAnnotation(RequestPart.class)
-        && (isPart(invocationParameter));
+        && isPart(invocationParameter);
   }
 
   private boolean isPart(InvocationParameter invocationParameter) {
@@ -187,10 +189,12 @@ public class MultipartDataInserter extends AbstractRequestBodyInserter {
   }
 
   @Override
-  public RequestHeadersUriSpec<?> apply(Invocation invocation, RequestBodyUriSpec requestBodyUriSpec) {
+  public RequestHeadersUriSpec<?> apply(Invocation invocation,
+      RequestBodyUriSpec requestBodyUriSpec) {
     List<InvocationParameter> possibleBodies = findPossibleBodies(invocation);
     List<Publisher<Part>> partPublishers = possibleBodies.stream()
-        .filter(invocationParameter -> isRequestPart(invocationParameter) || isFluxWithPart(invocationParameter))
+        .filter(invocationParameter -> isRequestPart(invocationParameter)
+            || isFluxWithPart(invocationParameter))
         .map(invocationParameter -> toPublisher(invocationParameter.getValue()))
         .collect(Collectors.toList());
     Mono<MultiValueMap<String, HttpEntity<?>>> httpEntityMap;
@@ -216,7 +220,8 @@ public class MultipartDataInserter extends AbstractRequestBodyInserter {
     return partPublisher;
   }
 
-  private Mono<MultiValueMap<String, HttpEntity<?>>> toHttpEntityMap(List<Publisher<Part>> partPublishers) {
+  private Mono<MultiValueMap<String, HttpEntity<?>>> toHttpEntityMap(
+      List<Publisher<Part>> partPublishers) {
     return Flux.concat(partPublishers)
         .collect(
             LinkedMultiValueMap::new,
@@ -224,7 +229,8 @@ public class MultipartDataInserter extends AbstractRequestBodyInserter {
   }
 
   @SuppressWarnings("unchecked")
-  private Publisher<MultiValueMap<String, Part>> findRequestBody(List<InvocationParameter> possibleBodies) {
+  private Publisher<MultiValueMap<String, Part>> findRequestBody(
+      List<InvocationParameter> possibleBodies) {
     return possibleBodies.stream()
         .findFirst()
         .map(InvocationParameter::getValue)

@@ -65,6 +65,8 @@ class RequestHeadersResolverTest {
      * @param id the id
      * @param name the name
      */
-    void methodA(@RequestHeader(name = "Authorization") String id, @RequestParam(name = "name") String name);
+    void methodA(
+        @RequestHeader(name = "Authorization") String id,
+        @RequestParam(name = "name") String name);
   }
 }

@@ -95,8 +95,8 @@ public class SortRequestParameterResolver implements
 
   @Override
   public boolean test(InvocationParameter invocationParameter) {
-    return invocationParameter.getValue() instanceof Sort
-        && invocationParameter.hasNoneParameterAnnotation(Extensions.ILLEGAL_EXTENSIONS_ANNOTATIONS);
+    return invocationParameter.getValue() instanceof Sort && invocationParameter
+        .hasNoneParameterAnnotation(Extensions.ILLEGAL_EXTENSIONS_ANNOTATIONS);
   }
 
   /**
@@ -108,7 +108,9 @@ public class SortRequestParameterResolver implements
   protected MultiValueMap<String, Object> getRequestParameters(Sort sort) {
     MultiValueMap<String, Object> map = new LinkedMultiValueMap<>();
     if (sort.isSorted()) {
-      map.put(requestParamName, sort.stream().map(this::getRequestParamValue).collect(Collectors.toList()));
+      map.put(
+          requestParamName,
+          sort.stream().map(this::getRequestParamValue).collect(Collectors.toList()));
     }
     return map;
   }

@@ -109,7 +109,7 @@ public class PartBuilder {
    *
    * @param <T> the type parameter
    */
-  public static abstract class AbstractPartBuilder<T extends Part> {
+  public abstract static class AbstractPartBuilder<T extends Part> {
 
     private DataBufferFactory dataBufferFactory = new DefaultDataBufferFactory();
 
@@ -252,7 +252,7 @@ public class PartBuilder {
   /**
    * The abstract file part builder.
    */
-  public static abstract class AbstractFilePartBuilder extends AbstractPartBuilder<Part> {
+  public abstract static class AbstractFilePartBuilder extends AbstractPartBuilder<Part> {
 
     /**
      * Instantiates a new abstract file part builder.
@@ -340,7 +340,8 @@ public class PartBuilder {
 
     @Override
     public Part build() {
-      return DefaultParts.part(getHeaders(), DataBufferUtils.read(resource, getDataBufferFactory(), getBufferSize()));
+      return DefaultParts.part(getHeaders(),
+          DataBufferUtils.read(resource, getDataBufferFactory(), getBufferSize()));
     }
   }
 

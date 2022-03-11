@@ -40,8 +40,9 @@ abstract class DefaultParts {
   }
 
   /**
-   * Create a new {@link Part} or {@link FilePart} based on a flux of data buffers. Returns {@link FilePart} if the
-   * {@code Content-Disposition} of the given headers contains a filename, or a "normal" {@link Part} otherwise.
+   * Create a new {@link Part} or {@link FilePart} based on a flux of data buffers. Returns {@link
+   * FilePart} if the {@code Content-Disposition} of the given headers contains a filename, or a
+   * "normal" {@link Part} otherwise.
    *
    * @param headers the part headers
    * @param dataBuffers the content of the part
@@ -55,8 +56,9 @@ abstract class DefaultParts {
   }
 
   /**
-   * Create a new {@link Part} or {@link FilePart} based on the given file. Returns {@link FilePart} if the {@code
-   * Content-Disposition} of the given headers contains a filename, or a "normal" {@link Part} otherwise
+   * Create a new {@link Part} or {@link FilePart} based on the given file. Returns {@link FilePart}
+   * if the {@code Content-Disposition} of the given headers contains a filename, or a "normal"
+   * {@link Part} otherwise
    *
    * @param headers the part headers
    * @param file the file
@@ -154,7 +156,6 @@ abstract class DefaultParts {
   private static class DefaultPart extends DefaultParts.AbstractPart {
 
     protected final DefaultParts.Content content;
-
 
     public DefaultPart(HttpHeaders headers, DefaultParts.Content content) {
       super(headers);
@@ -291,7 +292,8 @@ abstract class DefaultParts {
 
     @Override
     public Mono<Void> transferTo(Path dest) {
-      return blockingOperation(() -> Files.copy(this.file, dest, StandardCopyOption.REPLACE_EXISTING));
+      return blockingOperation(
+          () -> Files.copy(this.file, dest, StandardCopyOption.REPLACE_EXISTING));
     }
 
     @Override

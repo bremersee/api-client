@@ -20,7 +20,6 @@ import java.lang.reflect.Method;
 import org.assertj.core.api.SoftAssertions;
 import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
 import org.bremersee.apiclient.webflux.Invocation;
-import org.bremersee.apiclient.webflux.InvocationParameter;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.data.domain.PageRequest;
@@ -40,7 +39,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 @ExtendWith(SoftAssertionsExtension.class)
 class PageableRequestParameterResolverTest {
 
-  private static final PageableRequestParameterResolver target = new PageableRequestParameterResolver();
+  private static final PageableRequestParameterResolver target
+      = new PageableRequestParameterResolver();
 
   /**
    * Apply.
@@ -51,7 +51,9 @@ class PageableRequestParameterResolverTest {
   @Test
   void apply(SoftAssertions softly) throws Exception {
     Method method = Example.class.getMethod("methodA", Pageable.class);
-    Pageable pageable = PageRequest.of(4, 25, Sort.by(Order.by("a"), Order.by("b").with(Direction.DESC)));
+    Pageable pageable = PageRequest.of(
+        4, 25,
+        Sort.by(Order.by("a"), Order.by("b").with(Direction.DESC)));
     Invocation invocation = new Invocation(Example.class, method, new Object[]{pageable});
 
     MultiValueMap<String, Object> expected = new LinkedMultiValueMap<>();
@@ -82,6 +84,7 @@ class PageableRequestParameterResolverTest {
   /**
    * The interface Example.
    */
+  @SuppressWarnings("unused")
   interface Example {
 
     /**

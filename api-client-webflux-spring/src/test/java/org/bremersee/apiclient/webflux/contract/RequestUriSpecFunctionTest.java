@@ -59,7 +59,8 @@ class RequestUriSpecFunctionTest {
   void apply() {
     when(httpMethodResolver.apply(any())).thenReturn(HttpRequestMethod.GET);
     WebClient webClient = mock(WebClient.class);
-    WebClient.RequestHeadersUriSpec<?> requestHeadersUriSpec = mock(WebClient.RequestHeadersUriSpec.class);
+    WebClient.RequestHeadersUriSpec<?> requestHeadersUriSpec = mock(
+        WebClient.RequestHeadersUriSpec.class);
     //noinspection unchecked,rawtypes
     when(webClient.get()).thenReturn((WebClient.RequestHeadersUriSpec) requestHeadersUriSpec);
     WebClient.RequestHeadersUriSpec<?> actual = target.apply(mock(Invocation.class), webClient);

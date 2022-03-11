@@ -89,7 +89,8 @@ public interface ReactiveContract {
    * @return the request body inserter function
    */
   @NotNull
-  BiFunction<Invocation, RequestBodyUriSpec, RequestHeadersUriSpec<?>> getRequestBodyInserterFunction();
+  BiFunction<Invocation, RequestBodyUriSpec, RequestHeadersUriSpec<?>>
+  getRequestBodyInserterFunction();
 
   /**
    * Gets response function.
